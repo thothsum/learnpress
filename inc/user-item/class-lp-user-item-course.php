@@ -60,7 +60,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 		if ( ! $this->_loaded ) {
 			$this->read_items();
 
-			//$this->read_items_meta();
+			// $this->read_items_meta();
 			$this->_loaded = true;
 		}
 	}
@@ -113,7 +113,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 				$user_course_item = array(
 					'item_id'   => $item_id,
 					'ref_id'    => $this->get_id(),
-					'parent_id' => $user_course_item_id
+					'parent_id' => $user_course_item_id,
 				);
 			}
 
@@ -128,7 +128,6 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 			}
 		}
 		LP_Object_Cache::set( $this->get_user_id() . '-' . $this->get_id(), $items, 'learn-press/user-course-item-objects' );
-
 
 		return $items;
 	}
@@ -180,11 +179,14 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 		global $wpdb;
 		$meta_ids = array_keys( $item_ids );
 		$format   = array_fill( 0, sizeof( $meta_ids ), '%d' );
-		$sql      = $wpdb->prepare( "
+		$sql      = $wpdb->prepare(
+			"
 			SELECT *
 			FROM {$wpdb->learnpress_user_itemmeta}
-			WHERE learnpress_user_item_id IN(" . join( ',', $format ) . ")
-		", $meta_ids );
+			WHERE learnpress_user_item_id IN(" . join( ',', $format ) . ')
+		',
+			$meta_ids
+		);
 
 		if ( $results = $wpdb->get_results( $sql ) ) {
 			foreach ( $results as $result ) {
@@ -205,7 +207,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 	}
 
 	public function offsetSet( $offset, $value ) {
-		//$this->set_data( $offset, $value );
+		// $this->set_data( $offset, $value );
 		// Do not allow to set value directly!
 	}
 
@@ -310,13 +312,19 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 			case 'evaluate_quizzes':
 				$results = $this->_evaluate_course_by_quizzes();
 				break;
-			// Points of passed quizzes per points of all quizzes
-			case 'evaluate_passed_quizzes':
-				$results = $this->_evaluate_course_by_passed_quizzes();
-				break;
+			// @nhamdv: remove after version 3.2.7.3
+			// case 'evaluate_passed_quizzes':
+			// $results = $this->_evaluate_course_by_passed_quizzes();
+			// break;
 			// Points of completed (may not passed) quizzes per points of all quizzes
 			case 'evaluate_quiz':
 				$results = $this->_evaluate_course_by_completed_quizzes();
+				break;
+			case 'evaluate_questions':
+				$results = $this->_evaluate_course_by_question();
+				break;
+			case 'evaluate_mark':
+				$results = $this->_evaluate_course_by_mark();
 				break;
 			default:
 				$results = array();
@@ -337,7 +345,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 				'completed_items' => $completed_items,
 				'skipped_items'   => $count_items - $completed_items,
 				'status'          => $this->get_status(),
-				'grade'           => ''
+				'grade'           => '',
 			)
 		);
 
@@ -396,10 +404,10 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 				$result = 0;
 			}
 			$result *= 100;
-			$data   = array(
+			$data    = array(
 				'result' => $result,
 				'grade'  => $this->is_finished() ? $this->_is_passed( $result ) : '',
-				'status' => $this->get_status()
+				'status' => $this->get_status(),
 			);
 
 			settype( $cached_data, 'array' );
@@ -469,7 +477,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 			$data    = array(
 				'result' => $percent,
 				'grade'  => $this->is_finished() ? $this->_is_passed( $percent ) : '',
-				'status' => $this->get_status()
+				'status' => $this->get_status(),
 			);
 			settype( $cached_data, 'array' );
 			$cached_data['final-quiz'] = $data;
@@ -491,7 +499,11 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 
 		if ( ( false === ( $cached_data = LP_Object_Cache::get( $cache_key, 'learn-press/course-results' ) ) ) || ! array_key_exists( 'quizzes', $cached_data ) ) {
 
-			$data            = array( 'result' => 0, 'grade' => '', 'status' => $this->get_status() );
+			$data            = array(
+				'result' => 0,
+				'grade'  => '',
+				'status' => $this->get_status(),
+			);
 			$result          = 0;
 			$result_of_items = 0;
 
@@ -524,6 +536,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 	/**
 	 * Evaluate course result by point of quizzes doing/done per total quizzes.
 	 *
+	 * @todo @nhamdv: will remove in next version.
 	 * @return array
 	 */
 	protected function _evaluate_course_by_passed_quizzes() {
@@ -532,7 +545,11 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 
 		if ( false === ( $cached_data = LP_Object_Cache::get( $cache_key, 'learn-press/course-results' ) ) || ! array_key_exists( 'passed-quizzes', $cached_data ) ) {
 
-			$data            = array( 'result' => 0, 'grade' => '', 'status' => $this->get_status() );
+			$data            = array(
+				'result' => 0,
+				'grade'  => '',
+				'status' => $this->get_status(),
+			);
 			$result          = 0;
 			$result_of_items = 0;
 			if ( $items = $this->get_items() ) {
@@ -562,6 +579,108 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 		return isset( $cached_data['passed-quizzes'] ) ? $cached_data['passed-quizzes'] : array();
 	}
 
+	protected function _evaluate_course_by_question() {
+		$cache_key   = 'user-course-' . $this->get_user_id() . '-' . $this->get_id();
+		$cached_data = LP_Object_Cache::get( $cache_key, 'learn-press/course-results' );
+
+		if ( false === $cached_data || ! array_key_exists( 'questions', $cached_data ) ) {
+			$data = array(
+				'result' => 0,
+				'grade'  => '',
+				'status' => $this->get_status(),
+			);
+
+			$result          = 0;
+			$result_of_items = 0;
+
+			$items = $this->get_items();
+
+			if ( $items ) {
+				foreach ( $items as $item ) {
+					if ( $item->get_type() !== LP_QUIZ_CPT ) {
+						continue;
+					}
+
+					$questions = $item->calculate_results();
+
+					if ( $questions ) {
+						if ( $questions['question_correct'] ) {
+							$result += absint( $questions['question_correct'] );
+						}
+
+						$result_of_items += $questions['question_count'] ? absint( $questions['question_count'] ) : 0;
+					}
+				}
+
+				$result         = $result_of_items ? ( $result * 100 ) / $result_of_items : 0;
+				$data['result'] = $result;
+
+				if ( $this->is_finished() ) {
+					$data['grade'] = $this->_is_passed( $result );
+				}
+			}
+
+			settype( $cached_data, 'array' );
+			$cached_data['questions'] = $data;
+
+			LP_Object_Cache::set( $cache_key, $cached_data, 'learn-press/course-results' );
+
+		}
+
+		return isset( $cached_data['questions'] ) ? $cached_data['questions'] : array();
+	}
+
+	protected function _evaluate_course_by_mark() {
+		$cache_key   = 'user-course-' . $this->get_user_id() . '-' . $this->get_id();
+		$cached_data = LP_Object_Cache::get( $cache_key, 'learn-press/course-results' );
+
+		if ( false === $cached_data || ! array_key_exists( 'marks', $cached_data ) ) {
+			$data = array(
+				'result' => 0,
+				'grade'  => '',
+				'status' => $this->get_status(),
+			);
+
+			$result          = 0;
+			$result_of_items = 0;
+
+			$items = $this->get_items();
+
+			if ( $items ) {
+				foreach ( $items as $item ) {
+					if ( $item->get_type() !== LP_QUIZ_CPT ) {
+						continue;
+					}
+
+					$questions = $item->calculate_results();
+
+					if ( $questions ) {
+						if ( $questions['user_mark'] ) {
+							$result += $questions['user_mark'];
+						}
+
+						$result_of_items += $questions['mark'] ? $questions['mark'] : 0;
+					}
+				}
+
+				$result         = $result_of_items ? ( $result * 100 ) / $result_of_items : 0;
+				$data['result'] = $result;
+
+				if ( $this->is_finished() ) {
+					$data['grade'] = $this->_is_passed( $result );
+				}
+			}
+
+			settype( $cached_data, 'array' );
+			$cached_data['marks'] = $data;
+
+			LP_Object_Cache::set( $cache_key, $cached_data, 'learn-press/course-results' );
+
+		}
+
+		return isset( $cached_data['marks'] ) ? $cached_data['marks'] : array();
+	}
+
 	/**
 	 * Evaluate course result by number of passed quizzes per total quizzes.
 	 *
@@ -573,7 +692,11 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 		if ( false === ( $cached_data = LP_Object_Cache::get( $cache_key, 'learn-press/course-results' ) ) || ! array_key_exists( 'completed-quizzes', $cached_data ) ) {
 			$course = $this->get_course();
 
-			$data   = array( 'result' => 0, 'grade' => '', 'status' => $this->get_status() );
+			$data   = array(
+				'result' => 0,
+				'grade'  => '',
+				'status' => $this->get_status(),
+			);
 			$result = 0;
 
 			if ( $items = $this->get_items() ) {
@@ -620,12 +743,10 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 	 */
 	public function get_completed_items( $type = '', $with_total = false, $section_id = 0 ) {
 
-
 		$this->read_items();
 
-//		$completed_items = array(0,100);
-//		return $with_total ? $completed_items : $completed_items[0];
-
+		// $completed_items = array(0,100);
+		// return $with_total ? $completed_items : $completed_items[0];
 
 		$key = sprintf( '%d-%d-%s', $this->get_user_id(), $this->_course->get_id(), md5( build_query( func_get_args() ) ) );
 
@@ -660,9 +781,9 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 							$completed ++;
 						}
 						$completed = apply_filters( 'learn-press/course-item/completed', $completed, $item, $item->get_status() );
-						//if ( ! $item->is_preview() ) {
+						// if ( ! $item->is_preview() ) {
 						$total ++;
-						//}
+						// }
 					}
 				}
 			}
@@ -743,13 +864,17 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 
 		if ( false === ( $history = LP_Object_Cache::get( 'course-' . $this->get_item_id() . '-' . $this->get_user_id(), 'learn-press/items-history' ) ) ) {
 			global $wpdb;
-			$query = $wpdb->prepare( "
+			$query = $wpdb->prepare(
+				"
 				SELECT item_id, COUNT(user_item_id) `count`
 				FROM {$wpdb->learnpress_user_items}
 				WHERE user_id = %d 
 					AND parent_id = %d
 				GROUP BY item_id	
-			", $this->get_user_id(), $this->get_user_item_id() );
+			",
+				$this->get_user_id(),
+				$this->get_user_item_id()
+			);
 
 			$history = array();
 			if ( $results = $wpdb->get_results( $query ) ) {
@@ -820,7 +945,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 
 	/**
 	 * @param        $item_id
-	 * @param string $prop
+	 * @param string  $prop
 	 *
 	 * @return bool|float|int
 	 */
@@ -877,7 +1002,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 				'url'          => $course->get_permalink(),
 				'result'       => $this->get_results(),
 				'current_item' => $item ? $item->get_id() : false,
-				'items'        => $this->get_items_for_js()
+				'items'        => $this->get_items_for_js(),
 			);
 		}
 
@@ -937,7 +1062,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 	 */
 	public function get_items_for_js() {
 
-		/*** TEST CACHE ***/
+		/*** TEST CACHE */
 		return false;
 		$args = array();
 		if ( $items = $this->get_items() ) {
@@ -985,7 +1110,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 			'status'         => '',
 			'ref_id'         => $this->get_id(),
 			'ref_type'       => learn_press_get_post_type( $this->get_id() ),
-			'parent_id'      => $this->get_user_item_id()
+			'parent_id'      => $this->get_user_item_id(),
 		);
 		$item_data    = wp_parse_args(
 			$item_data,
@@ -1016,9 +1141,9 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 			$item->update();
 		}
 
-//global $wp_object_cache;
-//
-//		learn_press_debug($wp_object_cache);
+		// global $wp_object_cache;
+		//
+		// learn_press_debug($wp_object_cache);
 
 		return true;
 	}
