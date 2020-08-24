@@ -121,7 +121,8 @@ function learn_press_verify_course_action_nonce( $nonce, $action, $course_id = 0
 function learn_press_get_course_item_types() {
 	return apply_filters( 'learn-press/course-item-type', array(
 		'lp_lesson',
-		'lp_quiz'
+		'lp_quiz',
+		'lp_question'
 	) );
 }
 

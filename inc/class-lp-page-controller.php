@@ -723,7 +723,7 @@ class LP_Page_Controller {
                 // Check is elementor action
                 if (!strpos($_SERVER['REQUEST_URI'], 'elementor')) {
                     // check user has edit &  is preview mode
-                    if (!is_preview() || current_user_can('edit_posts') == false):
+                    if (current_user_can('edit_posts') == false):
                         learn_press_404_page();
                         $q->set('post_type', '__unknown');
                         return $q;
