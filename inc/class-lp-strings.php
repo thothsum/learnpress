@@ -13,11 +13,12 @@ if ( isset( $strings ) ) {
 if ( false === ( $strings = LP_Object_Cache::get( 'strings', 'learn-press' ) ) ) {
 
 	$strings = array(
-		'confirm-redo-quiz'       => __( 'Do you want to redo quiz "%s"?', 'learnpress' ),
-		'confirm-complete-quiz'   => __( 'Do you want to complete quiz "%s"?', 'learnpress' ),
-		'confirm-complete-lesson' => __( 'Do you want to complete lesson "%s"?', 'learnpress' ),
-		'confirm-finish-course'   => __( 'Do you want to finish course "%s"?', 'learnpress' ),
-		'confirm-retake-course'   => __( 'Do you want to retake course "%s"?', 'learnpress' ),
+		'confirm-redo-quiz'                => __( 'Do you want to redo quiz "%s"?', 'learnpress' ),
+		'confirm-complete-quiz'            => __( 'Do you want to complete quiz "%s"?', 'learnpress' ),
+		'confirm-complete-lesson'          => __( 'Do you want to complete lesson "%s"?', 'learnpress' ),
+		'confirm-finish-course'            => __( 'Do you want to finish course "%s"?', 'learnpress' ),
+		'confirm-retake-course'            => __( 'Do you want to retake course "%s"?', 'learnpress' ),
+		'confirm-finish-course-not-passed' => __( 'You have not passed the course\' assessment (%s), are you sure to finish this course?', 'learnpress' ),
 	);
 
 	LP_Object_Cache::set( 'strings', $strings, 'learn-press' );
@@ -47,7 +48,7 @@ class LP_Strings {
 	 */
 	public static function load() {
 		$strings = array();
-		include_once "lp-strings.php";
+		include_once 'lp-strings.php';
 		self::$strings = $strings;
 	}
 
@@ -66,7 +67,7 @@ class LP_Strings {
 
 				if ( is_string( $texts ) ) {
 					$string = $texts;
-				} else if ( $context && array_key_exists( $context, $texts ) ) {
+				} elseif ( $context && array_key_exists( $context, $texts ) ) {
 					$string = $texts[ $context ];
 				} else {
 					$string = reset( $texts );
