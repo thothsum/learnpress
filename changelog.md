@@ -2,6 +2,7 @@
 
 - Show finish course button when complete but not passed.
 - New 2 option for Assessment: Evaluate via questions, Evaluate via mark.
+- Fix can't show Question Explanation when review.
 
 ** 3.0.0 **
 
