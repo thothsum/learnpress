@@ -14,37 +14,26 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-/**
- * @var LP_Course_Item    $item
- * @var LP_Course_Section $section
- */
-
-$user = LP_Global::user();
+if ( ! isset( $item ) && ! isset( $section ) ) {
+	return;
+}
 ?>
 
 <div class="course-item-meta">
 
 	<?php
-	/**
-	 * LP Hook
-	 */
 	do_action( 'learn-press/course-section-item/before-' . $item->get_item_type() . '-meta', $item );
-	?>
-	<?php
+
 	if ( $item->is_preview() ) {
-		?>
-        <span class="item-meta course-item-preview"
-              data-preview="<?php esc_html_e( 'Preview', 'learnpress' ); ?>"></span>
-		<?php
+		$course_id = $section->get_course_id();
+		if ( get_post_meta( $course_id, '_lp_required_enroll', true ) == 'yes' ) {
+			echo '<i class="item-meta course-item-status"
+			   data-preview="' . esc_html__( 'Preview', 'learnpress' ) . '"></i>';
+		}
 	} else {
-		$status_message = $item->get_status_title();
-		?>
-        <span class="item-meta course-item-status"
-              title="<?php echo isset( $status_message ) ? esc_attr( $status_message ) : ''; ?>"></span>
-		<?php
+		echo '<i class="fa item-meta course-item-status trans"></i>';
 	}
+
+	do_action( 'learn-press/course-section-item/after-' . $item->get_item_type() . '-meta', $item );
 	?>
-
-	<?php do_action( 'learn-press/course-section-item/after-' . $item->get_item_type() . '-meta', $item ); ?>
-
 </div>

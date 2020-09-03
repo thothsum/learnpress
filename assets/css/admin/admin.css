@@ -82,7 +82,7 @@
     .lp-toolbar-buttons .lp-toolbar-btn.lp-btn-remove {
       cursor: pointer; }
       .lp-toolbar-buttons .lp-toolbar-btn.lp-btn-remove:hover a, .lp-toolbar-buttons .lp-toolbar-btn.lp-btn-remove:hover span {
-        color: #e74c3c; }
+        color: #d05d5d; }
     .lp-toolbar-buttons .lp-toolbar-btn.lp-btn-toggle .dashicons-arrow-down,
     .lp-toolbar-buttons .lp-toolbar-btn.lp-btn-toggle .dashicons-arrow-down-alt2 {
       display: none; }
@@ -236,7 +236,7 @@
     .lp-list-options tbody td.lp-remove-list-option {
       cursor: pointer; }
       .lp-list-options tbody td.lp-remove-list-option:hover a {
-        color: #e74c3c; }
+        color: #d05d5d; }
 
 .lp-animation {
   -webkit-animation: spin 4s linear infinite;
@@ -336,16 +336,11 @@
   z-index: 100000; }
 
 .advanced-list {
-  list-style: none;
-  background: #FFF;
-  padding: 5px 0 0 8px;
-  border: 1px solid #DDD;
-  border-radius: 3px; }
+  list-style: none; }
   .advanced-list li {
     display: inline-block;
     background: #EEE;
     padding: 3px 8px;
-    margin: 0 5px 5px -3px;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px; }
@@ -366,10 +361,6 @@
       display: inline-block; }
   .advanced-list.locked .remove-item {
     display: none; }
-  .advanced-list:after {
-    content: '';
-    display: block;
-    clear: both; }
 
 .lp-label-counter {
   border-radius: 20px;
@@ -602,7 +593,7 @@ ul .clearfix {
     background: #F5F5F5; }
   .learn-press-payments tbody td,
   .learn-press-emails tbody td {
-    border-bottom: 1px solid #DDD; }
+    border-bottom: 1px solid #EEE; }
   .learn-press-payments tbody .ui-sortable-helper,
   .learn-press-emails tbody .ui-sortable-helper {
     border: 1px solid #DDD;
@@ -1051,48 +1042,18 @@ ul .clearfix {
     float: left;
     width: 190px;
     font-size: 14px;
-    _text-transform: capitalize; }
-    .learnpress .rwmb-field .rwmb-label label > small {
-      display: block;
-      color: #999;
-      font-style: italic;
-      font-weight: normal; }
+    text-transform: capitalize; }
   .learnpress .rwmb-field .rwmb-input {
     margin-left: 190px;
     float: none;
     width: auto; }
-    .learnpress .rwmb-field .rwmb-input input[type="checkbox"],
-    .learnpress .rwmb-field .rwmb-input input[type="radio"] {
-      margin: 1px 5px 0 0; }
-    .learnpress .rwmb-field .rwmb-input label > input[type="checkbox"],
-    .learnpress .rwmb-field .rwmb-input label > input[type="radio"] {
-      margin-top: -1px; }
   .learnpress .rwmb-field .description {
     margin-top: 8px;
     color: #888; }
-    .learnpress .rwmb-field .description code {
-      padding: 3px 3px 3px 0; }
-    .learnpress .rwmb-field .description.err {
-      color: #FF0000; }
   .learnpress .rwmb-field .rwmb-input-list {
     margin-left: 0; }
-  .learnpress .rwmb-field #course_evaluation_method_quiz_options {
-    margin-left: 25px;
-    position: relative; }
-    .learnpress .rwmb-field #course_evaluation_method_quiz_options:after {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      opacity: 0.5;
-      content: '';
-      background: #FFF;
-      z-index: 10; }
-  .learnpress .rwmb-field input[name="_lp_course_result"]:checked ~ #course_evaluation_method_quiz_options:after {
-    display: none; }
   .learnpress .rwmb-field.rwmb-heading-wrapper h4 {
-    font-size: 16px;
+    font-size: 15px;
     margin: 0 0 5px 0;
     padding: 0 0 0;
     border-bottom: 2px solid #563d7c;
@@ -1140,6 +1101,9 @@ ul .clearfix {
 
 .learnpress #learn-press-toggle-course-results {
   display: block; }
+
+.learnpress #postbox-container-2 .inside .rwmb-meta-box {
+  margin: 20px 0 0; }
 
 .learnpress .lp-item-assigned {
   font-size: 14px; }
@@ -1191,21 +1155,16 @@ ul .clearfix {
       border-top: 1px solid transparent;
       border-bottom: 1px solid transparent;
       text-transform: capitalize; }
-    .learn-press-tabs.vertical .tabs-nav li.icon a {
-      padding-left: 35px; }
     .learn-press-tabs.vertical .tabs-nav li.icon a:before {
       font-family: dashicons;
       font-size: 18px;
       vertical-align: top;
-      margin-right: 8px;
-      position: absolute;
-      left: 10px; }
+      margin-right: 8px; }
     .learn-press-tabs.vertical .tabs-nav li.active a {
       background: #FFF;
       font-weight: bold;
       width: 221px;
-      border-color: #DDD;
-      color: #777; }
+      border-color: #DDD; }
 
 .learn-press-tabs.vertical .tabs-container {
   overflow: hidden;
@@ -1387,28 +1346,34 @@ ul .clearfix {
  * Order
  */
 .post-type-lp_order .wp-list-table .column-order_status {
-  width: 150px; }
+  width: 100px; }
 
 .post-type-lp_order .wp-list-table .order_status span {
-  display: inline-block;
-  font-size: 12px;
-  padding: 3px 6px;
-  color: #FFF;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px; }
-  .post-type-lp_order .wp-list-table .order_status span.pending {
-    background: #BDBDBD; }
-  .post-type-lp_order .wp-list-table .order_status span.processing {
-    background: #FFC107; }
-  .post-type-lp_order .wp-list-table .order_status span.completed {
-    background: #4CAF50; }
-  .post-type-lp_order .wp-list-table .order_status span.cancelled {
-    background: #444444; }
-  .post-type-lp_order .wp-list-table .order_status span.failed {
-    background: #FF0000; }
-  .post-type-lp_order .wp-list-table .order_status span i {
-    display: inline-block; }
+  display: inline-block; }
+  .post-type-lp_order .wp-list-table .order_status span:after {
+    font-family: fontawesome;
+    display: inline-block;
+    font-size: 20px;
+    color: #FFF;
+    text-align: center;
+    line-height: 20px;
+    width: 20px;
+    height: 20px; }
+  .post-type-lp_order .wp-list-table .order_status span.completed:after {
+    content: "\f00c";
+    color: #0085ba; }
+  .post-type-lp_order .wp-list-table .order_status span.processing:after {
+    content: "\f251";
+    color: #563F7A; }
+  .post-type-lp_order .wp-list-table .order_status span.pending:after {
+    content: "\f017";
+    color: #AAA; }
+  .post-type-lp_order .wp-list-table .order_status span.cancelled:after {
+    content: "\f057";
+    color: #FF0000; }
+  .post-type-lp_order .wp-list-table .order_status span.draft:after {
+    content: "\f223";
+    color: #69b391; }
 
 .post-type-lp_order .wp-list-table .column-title,
 .post-type-lp_order .wp-list-table .column-order_total,
@@ -1443,7 +1408,7 @@ ul .clearfix {
     -o-transform: rotate(-180deg);
     transform: rotate(-180deg); }
     .wp-list-table .column-preview input[type="checkbox"]:before, .wp-list-table .column-preview input[type="checkbox"]:checked:before {
-      font: 400 21px/1 "Font Awesome 5 Free";
+      font: 400 21px/1 fontawesome;
       content: "\f205";
       font-size: 24px;
       width: 30px;
@@ -1458,33 +1423,6 @@ ul .clearfix {
       .wp-list-table .column-preview input[type="checkbox"]:checked:before {
         margin-top: -1px; }
 
-.wp-list-table .column-instructor {
-  width: 150px; }
-  .wp-list-table .column-instructor .post-author {
-    display: inline-block; }
-    .wp-list-table .column-instructor .post-author img {
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      vertical-align: middle;
-      margin-right: 5px; }
-    .wp-list-table .column-instructor .post-author a {
-      display: inline-block;
-      vertical-align: middle; }
-
-.wp-list-table .column-students {
-  width: 80px; }
-
-.wp-list-table .column-price {
-  width: 120px; }
-
-.wp-list-table .column-thumbnail {
-  width: 100px;
-  padding-top: 11px; }
-  .wp-list-table .column-thumbnail img {
-    max-width: 100%;
-    height: auto; }
-
 .post-type-page .column-lp-page {
   width: 200px; }
 
@@ -1492,11 +1430,6 @@ ul .clearfix {
   color: #FF0000;
   font-size: 11px;
   margin: 0; }
-
-.post-state .post-author {
-  font-weight: normal;
-  font-size: 14px;
-  font-style: italic; }
 
 #learn-press-box-edit-slug {
   background: #FFF;
@@ -1697,7 +1630,7 @@ ul .clearfix {
         .lp-order-statuses li.counter-number .counter-inner p {
           text-transform: lowercase; }
       .lp-order-statuses li.counter-number.order-completed strong:before {
-        content: '\f058';
+        content: '\f502';
         color: #0085ba; }
       .lp-order-statuses li.counter-number.order-processing strong:before {
         content: "\f321";
@@ -1762,7 +1695,7 @@ ul .clearfix {
   background: #fff;
   padding: 10px;
   display: block;
-  margin: 20px auto;
+  margin: 0 auto;
   box-shadow: 0 0 0 rgba(0, 0, 0, 0.1);
   border-radius: 3px; }
   .lp-place-holder [class*="line-"] {
@@ -1884,24 +1817,9 @@ ul .clearfix {
     .post-type-lp_order #order_details .order-items table .order-item-row:hover .remove-order-item {
       display: inline-block; }
 
-#learn-press-toggle-settings-js-css {
-  display: none; }
-  #learn-press-toggle-settings-js-css + table {
-    display: none; }
-  #learn-press-toggle-settings-js-css:checked + table {
-    display: table; }
-
 .color-schemas {
   margin: 0 20px 20px 0;
   float: left; }
-  .color-schemas ul {
-    list-style: none;
-    margin: 0;
-    padding: 0; }
-    .color-schemas ul > li > label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 10px; }
   .color-schemas .wp-color-picker {
     width: 80px;
     height: 24px;
@@ -1957,11 +1875,6 @@ ul .clearfix {
     display: none; }
   .color-schemas.current .clone-schema {
     display: inline-block; }
-
-.wp-picker-container {
-  position: relative; }
-  .wp-picker-container .wp-picker-holder {
-    z-index: 99999; }
 
 /**
  * General style for admin editor.
@@ -2029,6 +1942,12 @@ ul .clearfix {
   border-left: 0;
   border-right: 0;
   margin-bottom: -1px; }
+#admin-editor-lp_course .lp-course-curriculum .section.close{
+  color: inherit;
+  float: none;
+  font-size: inherit;
+  font-weight: inherit;
+}
   #admin-editor-lp_course .lp-course-curriculum .section:first-child {
     border-top: 0; }
   #admin-editor-lp_course .lp-course-curriculum .section.new-section {
@@ -2086,14 +2005,11 @@ ul .clearfix {
       margin-top: -4px;
       color: #999; }
     #admin-editor-lp_course .lp-course-curriculum .section .section-head .movable {
-      cursor: url("../../images/openhand.cur") 7 5, default;
-      margin-right: -1px; }
+      cursor: url("../../images/openhand.cur") 7 5, default; }
       #admin-editor-lp_course .lp-course-curriculum .section .section-head .movable:before {
         content: "\f333"; }
       #admin-editor-lp_course .lp-course-curriculum .section .section-head .movable:hover {
         color: #0085ba; }
-    #admin-editor-lp_course .lp-course-curriculum .section .section-head .section-item-counts {
-      right: 36px; }
     #admin-editor-lp_course .lp-course-curriculum .section .section-head .actions {
       position: absolute;
       top: 0;
@@ -2110,14 +2026,14 @@ ul .clearfix {
       #admin-editor-lp_course .lp-course-curriculum .section .section-head .actions .collapse:before {
         display: inline-block;
         width: 40px;
-        font-size: 16px;
+        font-size: 30px;
         font-family: Dashicons;
-        line-height: 45px;
+        line-height: 42px;
         color: #999; }
       #admin-editor-lp_course .lp-course-curriculum .section .section-head .actions .collapse.open:before {
-        content: '\f343'; }
+        content: '\f142'; }
       #admin-editor-lp_course .lp-course-curriculum .section .section-head .actions .collapse.close:before {
-        content: '\f347'; }
+        content: '\f140'; }
   #admin-editor-lp_course .lp-course-curriculum .section .name {
     font-size: 24px;
     width: 100%;
@@ -2184,9 +2100,9 @@ ul .clearfix {
     #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .drag {
       height: 20px;
       cursor: url("../../images/openhand.cur") 7 5, default;
-      fill: #999;
+      visibility: hidden;
+      fill: #d5dce0;
       padding-top: 3px;
-      padding-left: 6px;
       flex: 0 0 18px; }
       #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .drag:hover {
         fill: #0085ba; }
@@ -2195,7 +2111,7 @@ ul .clearfix {
       align-items: center;
       justify-content: center; }
     #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .title {
-      margin-left: 2px;
+      margin-left: 5px;
       margin-right: 120px;
       flex-grow: 1;
       flex-basis: 100%; }
@@ -2204,7 +2120,7 @@ ul .clearfix {
     #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .item-actions {
       position: absolute;
       top: 0;
-      right: 2px;
+      right: 0;
       bottom: 0;
       display: flex;
       align-items: center;
@@ -2229,17 +2145,7 @@ ul .clearfix {
     align-items: center;
     transition: all 200ms ease-out; }
     #admin-editor-lp_course .lp-course-curriculum .section-list-items .new-section-item .drag {
-      cursor: default;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Dashicons;
-      font-size: 16px;
-      vertical-align: middle;
-      width: 30px;
-      color: #999; }
-      #admin-editor-lp_course .lp-course-curriculum .section-list-items .new-section-item .drag:before {
-        content: "\f132"; }
+      cursor: default; }
     #admin-editor-lp_course .lp-course-curriculum .section-list-items .new-section-item .title {
       display: inline-block;
       margin: 0;
@@ -2263,10 +2169,8 @@ ul .clearfix {
           font-size: 20px;
           position: relative;
           top: 2px; }
-        #admin-editor-lp_course .lp-course-curriculum .section-list-items .new-section-item .types .type.lp_quiz {
-          padding: 8px 6px 8px 0; }
-          #admin-editor-lp_course .lp-course-curriculum .section-list-items .new-section-item .types .type.lp_quiz:before {
-            content: '\f469'; }
+        #admin-editor-lp_course .lp-course-curriculum .section-list-items .new-section-item .types .type.lp_quiz:before {
+          content: '\f469'; }
         #admin-editor-lp_course .lp-course-curriculum .section-list-items .new-section-item .types .type.lp_lesson:before {
           content: '\f330'; }
         #admin-editor-lp_course .lp-course-curriculum .section-list-items .new-section-item .types .type.empty-item:before {
@@ -2291,7 +2195,7 @@ ul .clearfix {
         #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .item-actions .actions .action > a:hover {
           color: #0073aa; }
       #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .item-actions .actions .action.delete-item > a:hover {
-        color: #e74c3c; }
+        color: #d05d5d; }
       #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .item-actions .actions .action.delete-item ul {
         position: absolute;
         top: 100%;
@@ -2313,7 +2217,7 @@ ul .clearfix {
             padding: 8px;
             display: block; }
             #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .item-actions .actions .action.delete-item ul li a.delete-permanently {
-              color: #e74c3c; }
+              color: #d05d5d; }
           #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .item-actions .actions .action.delete-item ul li:hover {
             background: #dbf5ff; }
       #admin-editor-lp_course .lp-course-curriculum .section-list-items .section-item .item-actions .actions .action.delete-item:hover ul {
@@ -2364,10 +2268,9 @@ ul .clearfix {
   padding: 0 20px 20px 20px; }
   #admin-editor-lp_course .lp-course-curriculum .section-actions .remove {
     float: right;
-    color: #e74c3c;
+    color: #a00;
     cursor: pointer;
-    display: none;
-    padding-right: 8px; }
+    display: none; }
     #admin-editor-lp_course .lp-course-curriculum .section-actions .remove .icon {
       display: inline-block; }
     #admin-editor-lp_course .lp-course-curriculum .section-actions .remove .confirm {
@@ -2407,15 +2310,6 @@ ul .clearfix {
 /**
  * Quiz admin editor.
  */
-#quiz-editor .inside .rwmb-custom_html-wrapper > .rwmb-label {
-  display: none; }
-
-#quiz-editor .inside .rwmb-custom_html-wrapper > .rwmb-input {
-  margin-left: 0; }
-
-#admin-editor-lp_quiz form {
-  margin: 0; }
-
 #admin-editor-lp_quiz .lp-box-data-head {
   padding: 12px 10px; }
   #admin-editor-lp_quiz .lp-box-data-head h3 {
@@ -2457,20 +2351,21 @@ ul .clearfix {
     text-align: center; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .table-row > * {
       width: 100%;
-      padding: 12px 8px; }
+      padding: 12px 10px; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .table-row > .sort {
       flex: 0 0 15px;
       cursor: url("../../images/openhand.cur") 7 5, default;
+      visibility: hidden;
       position: relative;
-      color: #999; }
+      font-size: 18px;
+      color: #d5dce0; }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .table-row > .sort:hover {
         color: #0085ba; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .table-row > .order {
-      flex: 0 0 25px;
-      text-align: left;
-      font-size: 1.2em;
-      padding: 12px 0;
-      color: #32373c; }
+      flex: 0 0 30px;
+      text-align: right;
+      font-size: 15px;
+      padding: 12px 0; }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .table-row > .order:after {
         content: '.'; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .table-row > .type {
@@ -2500,24 +2395,25 @@ ul .clearfix {
     box-shadow: none;
     font-weight: normal;
     color: #777;
-    padding: 0; }
+    padding: 0;
+    min-height: auto;
+    line-height: 1; }
   #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings {
     border: 1px solid #ddd;
     border-left: none;
-    border-right: none;
-    padding: 0 20px; }
+    border-right: none; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings > * {
-      padding: 20px 20px 20px 0; }
+      padding: 20px; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options {
       border: 1px solid #ddd; }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options .sort {
         width: 12px;
-        padding: 8px 6px; }
+        padding: 8px 5px; }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options .answer-text {
-        padding-left: 0;
+        padding-left: 5px;
         width: calc(100% - 100px); }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options .order {
-        width: 10px;
+        width: 30px;
         text-align: right;
         padding: 0; }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options .answer-correct {
@@ -2529,10 +2425,10 @@ ul .clearfix {
         #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options .actions .lp-toolbar-btn {
           height: 42px; }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options tbody tr {
-        background: #f4fcff;
+        background: #fff;
         border: 1px solid #DDD; }
         #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options tbody tr:nth-child(2n) {
-          background: #fff; }
+          background: #f4fcff; }
         #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options tbody tr td {
           padding: 0 10px;
           background: inherit;
@@ -2542,13 +2438,14 @@ ul .clearfix {
             cursor: url("../../images/openhand.cur") 7 5, default;
             width: 12px; }
           #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options tbody tr td.answer-text {
-            padding-left: 0; }
+            padding-left: 5px; }
           #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options tbody tr td.answer-correct {
             text-align: center; }
         #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options tbody tr .svg-icon {
           height: 18px;
           vertical-align: middle;
-          fill: #999; }
+          visibility: hidden;
+          fill: #d5dce0; }
         #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options tbody tr:hover .svg-icon {
           visibility: visible; }
         #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-settings .quiz-question-data table.lp-list-options tbody tr:hover .sort:hover .svg-icon {
@@ -2601,12 +2498,10 @@ ul .clearfix {
         color: #777;
         padding: 0; }
   #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item {
-    background: #f4fcff;
-    border-bottom: 1px solid #f1f1f1;
-    line-height: 18px;
-    /*&:nth-child(2n+1) {
-                        background: #f4fcff;
-                    }*/ }
+    background: #fff;
+    border-bottom: 1px solid #f1f1f1; }
+    #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item:nth-child(2n+1) {
+      background: #f4fcff; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item.ui-sortable-helper {
       border-top: 1px solid #f1f1f1; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item.ui-sortable-placeholder {
@@ -2647,14 +2542,13 @@ ul .clearfix {
       padding: 10px; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-actions .name input {
       width: 100%;
-      font-size: 1.2em;
+      font-size: 14px;
       border: none;
       background: transparent;
       box-shadow: none;
       font-weight: normal;
-      color: #32373c;
-      padding: 0;
-      line-height: 18px; }
+      color: #777;
+      padding: 0; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-actions .actions {
       padding: 0;
       margin: 0; }
@@ -2682,8 +2576,7 @@ ul .clearfix {
         #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-actions .actions .lp-toolbar-buttons .lp-btn-toggle {
           font-family: Dashicons;
           line-height: 42px;
-          font-size: 16px;
-          padding-right: 3px; }
+          font-size: 16px; }
           #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-actions .actions .lp-toolbar-buttons .lp-btn-toggle.open::after {
             content: '\f343'; }
           #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-actions .actions .lp-toolbar-buttons .lp-btn-toggle.close::after {
@@ -2700,8 +2593,7 @@ ul .clearfix {
       background: #fff; }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options {
         text-align: left;
-        padding-left: 0;
-        padding-right: 0; }
+        padding-left: 0; }
         #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options .inside {
           margin: 0;
           padding: 0; }
@@ -2710,24 +2602,21 @@ ul .clearfix {
             margin: 0; }
             #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options .inside .rwmb-meta-box .rwmb-field:nth-child(2n+1) {
               background: #f4fcff; }
-        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options .postbox {
-          border: 1px solid #DDD; }
-          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options .postbox .hndle {
-            cursor: default; }
-          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options .postbox .toggle {
-            float: right;
-            width: 36px;
-            height: 36px;
-            position: absolute;
-            top: 0;
-            right: 0;
-            line-height: 36px;
-            text-align: center;
-            cursor: pointer; }
-            #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options .postbox .toggle:after {
-              font-family: Dashicons;
-              content: "\f460";
-              font-size: 18px; }
+        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options .postbox .hndle {
+          cursor: default; }
+        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options .postbox .toggle {
+          float: right;
+          width: 36px;
+          height: 36px;
+          position: absolute;
+          top: 0;
+          right: 0;
+          line-height: 36px;
+          text-align: center; }
+          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings .quiz-question-options .postbox .toggle:after {
+            font-family: Dashicons;
+            content: "\f460";
+            font-size: 18px; }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings.closed .quiz-question-options {
         width: 38px; }
       #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .main .question-item .question-settings.closed .postbox {
@@ -2741,85 +2630,73 @@ ul .clearfix {
           content: "\f132"; }
   #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer {
     border-top: 1px solid #DDD;
-    margin-top: -1px;
-    background: #f4fcff; }
+    margin-top: -1px; }
+    #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .order {
+      line-height: 28px; }
     #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row {
-      text-align: left;
-      height: auto; }
-      #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .lp-sortable-handle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: Dashicons;
-        font-size: 20px;
-        vertical-align: middle;
-        width: 30px;
-        color: #999;
-        padding: 8px 6px 8px 10px; }
-        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .lp-sortable-handle:before {
-          content: "\f132"; }
-      #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .order {
-        line-height: 28px;
-        padding: 8px 0;
-        text-align: left; }
-      #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question {
-        padding: 8px 10px 8px 5px; }
-        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title {
-          position: relative;
-          display: inline-block;
-          min-width: 500px; }
-          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title form input {
-            background: transparent;
-            font-size: 1.2em;
-            line-height: 18px;
-            border: 0;
-            width: 100%;
-            margin: 0;
-            padding: 6px 0px;
+      text-align: left; }
+      #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title {
+        position: relative;
+        display: inline-block;
+        min-width: 500px; }
+        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title input {
+          border: 0;
+          width: 100%;
+          margin: 0;
+          padding: 6px 0;
+          line-height: 1;
+          min-height: auto;
+          -webkit-box-shadow: none;
+          -moz-box-shadow: none;
+          box-shadow: none;
+          -webkit-border-radius: 3px;
+          -moz-border-radius: 3px;
+          border-radius: 3px; }
+          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title input:focus {
             -webkit-box-shadow: none;
             -moz-box-shadow: none;
             box-shadow: none; }
-            #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title form input:focus {
-              -webkit-box-shadow: none;
-              -moz-box-shadow: none;
+          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title input:focus {
+            border-color: #DDD; }
+          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title input::placeholder {
+            color: #999;
+            font-style: italic;
+            border-bottom: 1px solid #DDD;
+            display: inline-block; }
+      #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new {
+        display: inline-block;
+        position: relative;
+        vertical-align: top; }
+        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new ul.question-types {
+          position: absolute;
+          margin: 0;
+          background-color: #FFF;
+          top: 100%;
+          border: 1px solid #DDD;
+          right: -2px;
+          width: 200px;
+          z-index: 9999999;
+          display: none; }
+          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new ul.question-types li {
+            margin: 0; }
+            #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new ul.question-types li a {
+              display: block;
+              padding: 10px;
+              line-height: 1;
+              text-decoration: none;
+              outline: none;
               box-shadow: none; }
-            #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title form input:focus {
-              color: #32373c; }
-            #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .title form input::placeholder {
-              display: inline-block; }
-        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new {
-          display: inline;
-          position: relative; }
-          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new ul.question-types {
-            position: absolute;
-            margin: 6px;
-            background-color: #FFF;
-            top: 100%;
-            border: 1px solid #DDD;
-            right: -2px;
-            width: 200px;
-            z-index: 9999999;
-            display: none; }
-            #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new ul.question-types li {
-              margin: 0; }
-              #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new ul.question-types li a {
-                display: block;
-                padding: 10px;
-                line-height: 1;
-                text-decoration: none;
-                outline: none;
-                box-shadow: none; }
-          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new button:hover + .question-types {
-            display: block; }
-          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new button + .question-types:hover {
-            display: block; }
-          #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new button[disabled="disabled"]:hover + .question-types {
-            display: none; }
-        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .select-item {
-          display: inline; }
-        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question button {
-          height: 30px;
-          box-shadow: 0 1px 0 #ccc !important; }
+        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new button:hover + .question-types {
+          display: block; }
+        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new button + .question-types:hover {
+          display: block; }
+        #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .add-new button[disabled="disabled"]:hover + .question-types {
+          display: none; }
+      #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question .select-item {
+        display: inline; }
+      #admin-editor-lp_quiz .lp-box-data-content .lp-list-questions .footer .table-row .add-new-question button {
+        height: 30px;
+        box-shadow: 0 1px 0 #ccc !important; }
 
 #admin-editor-lp_quiz .lp-box-data-content .question-button-actions {
   text-align: left; }
@@ -2827,16 +2704,8 @@ ul .clearfix {
 /**.section-item-counts span
  *  Question admin editor.
  */
-#question-editor .inside .rwmb-custom_html-wrapper .rwmb-label {
-  display: none; }
-
-#question-editor .inside .rwmb-custom_html-wrapper .rwmb-input {
-  margin-left: 0; }
-
 #admin-editor-lp_question {
   background: #fff; }
-  #admin-editor-lp_question form {
-    margin: 0; }
   #admin-editor-lp_question .lp-box-data-head {
     padding: 0 10px; }
     #admin-editor-lp_question .lp-box-data-head .heading {
@@ -2893,11 +2762,6 @@ ul .clearfix {
             text-align: right;
             color: #0073aa;
             min-width: 100px; }
-          #admin-editor-lp_question .lp-box-data-head .question-actions .question-types ul li.disabled {
-            background: #F5F5F5; }
-            #admin-editor-lp_question .lp-box-data-head .question-actions .question-types ul li.disabled a {
-              color: #999;
-              pointer-events: none; }
         #admin-editor-lp_question .lp-box-data-head .question-actions .question-types ul:hover {
           display: block; }
       #admin-editor-lp_question .lp-box-data-head .question-actions:hover .question-types ul {
@@ -2915,8 +2779,6 @@ ul .clearfix {
           padding: 15px;
           background: #F5F5F5;
           border-bottom: 1px solid #DDD; }
-          #admin-editor-lp_question .lp-box-data-content table.list-question-answers thead tr th.answer-text {
-            padding-left: 10px; }
       #admin-editor-lp_question .lp-box-data-content table.list-question-answers .sort, #admin-editor-lp_question .lp-box-data-content table.list-question-answers .order, #admin-editor-lp_question .lp-box-data-content table.list-question-answers .actions {
         width: 10px; }
       #admin-editor-lp_question .lp-box-data-content table.list-question-answers .sort {
@@ -2924,12 +2786,12 @@ ul .clearfix {
       #admin-editor-lp_question .lp-box-data-content table.list-question-answers .order {
         text-align: right;
         padding: 0;
-        width: 10px; }
+        width: 30px; }
       #admin-editor-lp_question .lp-box-data-content table.list-question-answers .answer-correct {
         width: 65px;
         text-align: center; }
       #admin-editor-lp_question .lp-box-data-content table.list-question-answers .answer-text {
-        padding-left: 8px; }
+        padding-left: 5px; }
       #admin-editor-lp_question .lp-box-data-content table.list-question-answers .actions {
         padding-right: 0;
         text-align: right; }
@@ -2945,10 +2807,10 @@ ul .clearfix {
           cursor: url("../../images/openhand.cur") 7 5, default;
           padding: 0; }
           #admin-editor-lp_question .lp-box-data-content table.list-question-answers tbody tr td.sort .svg-icon {
-            fill: #999;
+            visibility: hidden;
+            fill: #d5dce0;
             height: 18px;
-            vertical-align: middle;
-            margin-top: -2px; }
+            vertical-align: middle; }
           #admin-editor-lp_question .lp-box-data-content table.list-question-answers tbody tr td.sort:hover .svg-icon {
             fill: #0085ba; }
         #admin-editor-lp_question .lp-box-data-content table.list-question-answers tbody tr td.order {
@@ -2967,6 +2829,8 @@ ul .clearfix {
         #admin-editor-lp_question .lp-box-data-content table.list-question-answers tbody tr:hover td.actions .remove-answer {
           visibility: visible;
           height: 42px; }
+        #admin-editor-lp_question .lp-box-data-content table.list-question-answers tbody tr:hover td.sort .svg-icon {
+          visibility: visible; }
         #admin-editor-lp_question .lp-box-data-content table.list-question-answers tbody tr.ui-sortable-placeholder {
           visibility: visible !important; }
           #admin-editor-lp_question .lp-box-data-content table.list-question-answers tbody tr.ui-sortable-placeholder td {
@@ -2985,7 +2849,7 @@ ul .clearfix {
           font-family: Dashicons;
           position: absolute;
           left: 10px;
-          top: 8px;
+          top: 12px;
           display: inline-block;
           -webkit-animation: rotating4 2s linear infinite;
           -moz-animation: rotating4 2s linear infinite;
@@ -3004,77 +2868,6 @@ ul .clearfix {
     #admin-editor-lp_question .lp-box-data-content .add-answer {
       margin: 15px 0 0 0; }
 
-#fill-in-blanks-editor {
-  display: flex; }
-  #fill-in-blanks-editor .blank-options {
-    flex: 0 0 65%; }
-  #fill-in-blanks-editor .blanks {
-    width: 100%;
-    margin: 0; }
-    #fill-in-blanks-editor .blanks .blank {
-      margin: 0 0 20px 0;
-      border: 1px solid #d9e0f1;
-      padding: 20px;
-      background: #fbfcff; }
-      #fill-in-blanks-editor .blanks .blank label {
-        font-weight: bold; }
-      #fill-in-blanks-editor .blanks .blank .blank-content {
-        width: 100%;
-        min-height: 74px;
-        font-size: 16px; }
-      #fill-in-blanks-editor .blanks .blank .blank-words .word {
-        background: #DDD;
-        line-height: 1;
-        -webkit-border-radius: 4px;
-        -moz-border-radius: 4px;
-        border-radius: 4px; }
-        #fill-in-blanks-editor .blanks .blank .blank-words .word.correct {
-          background: #00a1e6; }
-      #fill-in-blanks-editor .blanks .blank .blank-tip p {
-        font-style: italic; }
-      #fill-in-blanks-editor .blanks .blank .button-remove {
-        color: #FF0000; }
-  #fill-in-blanks-editor .passage-preview {
-    flex: 1;
-    margin-left: 20px;
-    border: 1px solid #DDD;
-    padding: 15px 20px;
-    line-height: 24px;
-    font-size: 16px;
-    text-align: justify; }
-    #fill-in-blanks-editor .passage-preview .blank-input {
-      height: 16px;
-      vertical-align: middle;
-      width: 50px;
-      border: none;
-      background: transparent;
-      box-shadow: none;
-      border-bottom: 1px dashed #DDD;
-      margin: -2px 10px;
-      font-size: 16px;
-      padding: 0;
-      /* line-height: 11px; */
-      display: inline-block;
-      position: relative; }
-  #fill-in-blanks-editor .blanks-list {
-    width: 100%; }
-    #fill-in-blanks-editor .blanks-list textarea {
-      min-height: 300px;
-      width: 100%;
-      font-size: 18px;
-      line-height: 30px;
-      box-shadow: none;
-      outline: none;
-      margin-bottom: 20px;
-      background: #f9f9f9; }
-    #fill-in-blanks-editor .blanks-list code {
-      line-height: 1;
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      border-radius: 4px; }
-      #fill-in-blanks-editor .blanks-list code.correct {
-        background: #00a1e6; }
-
 /**
  * Modal choose items.
  */
@@ -3091,7 +2884,7 @@ ul .clearfix {
   #lp-modal-choose-items.show {
     display: block;
     opacity: 1;
-    z-index: 99999999; }
+    z-index: 99999; }
   #lp-modal-choose-items.loading .lp-choose-items:before {
     position: absolute;
     top: 0;
@@ -3159,15 +2952,14 @@ ul .clearfix {
             border-bottom: 0;
             border-right: 0; }
           #lp-modal-choose-items .lp-choose-items .header .tabs .tab.active a {
-            color: #0073aa; }
+            color: #333; }
           #lp-modal-choose-items .lp-choose-items .header .tabs .tab a {
             padding: 0 20px;
             text-decoration: none;
             display: inline-block;
             font-weight: 600;
             height: 44px;
-            line-height: 44px;
-            color: #333; }
+            line-height: 44px; }
             #lp-modal-choose-items .lp-choose-items .header .tabs .tab a:focus {
               box-shadow: none; }
       #lp-modal-choose-items .lp-choose-items .header .close {
@@ -3290,7 +3082,7 @@ body.lp-item-moving {
   .learn-press-tip.ready {
     display: inline-block; }
   .learn-press-tip:before {
-    font-family: "Font Awesome 5 Free";
+    font-family: Fontawesome;
     content: "\f059"; }
   .learn-press-tip:hover {
     color: #0073aa; }
@@ -3304,7 +3096,7 @@ body.lp-item-moving {
   position: absolute;
   margin-left: -1px;
   font-size: 12px;
-  z-index: 9999999;
+  z-index: 9999;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px; }
@@ -3326,7 +3118,7 @@ body.lp-item-moving {
     border-radius: 50%; }
     .learn-press-tip-floating .close:before {
       content: "\f00d";
-      font-family: "Font Awesome 5 Free"; }
+      font-family: Fontawesome; }
   .learn-press-tip-floating p {
     margin: 0; }
   .learn-press-tip-floating:before {
@@ -3402,145 +3194,6 @@ body.lp-item-moving {
 
 .button.disabled {
   pointer-events: none; }
-
-.learnpress .postbox .rwmb-meta-box {
-  margin-top: 10px; }
-
-.learnpress #field-_lp_requirements .rwmb-text-list-clone,
-.learnpress #field-_lp_requirements .rwmb-text-list-advanced-clone,
-.learnpress #field-_lp_target_audiences .rwmb-text-list-clone,
-.learnpress #field-_lp_target_audiences .rwmb-text-list-advanced-clone,
-.learnpress #field-_lp_key_features .rwmb-text-list-clone,
-.learnpress #field-_lp_key_features .rwmb-text-list-advanced-clone,
-.learnpress #field-_lp_faqs .rwmb-text-list-clone,
-.learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone {
-  clear: none;
-  border: 1px solid #DDD;
-  border-radius: 4px;
-  position: relative; }
-  .learnpress #field-_lp_requirements .rwmb-text-list-clone .rwmb-text-list-label,
-  .learnpress #field-_lp_requirements .rwmb-text-list-advanced-clone .rwmb-text-list-label,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-clone .rwmb-text-list-label,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-advanced-clone .rwmb-text-list-label,
-  .learnpress #field-_lp_key_features .rwmb-text-list-clone .rwmb-text-list-label,
-  .learnpress #field-_lp_key_features .rwmb-text-list-advanced-clone .rwmb-text-list-label,
-  .learnpress #field-_lp_faqs .rwmb-text-list-clone .rwmb-text-list-label,
-  .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .rwmb-text-list-label {
-    display: none; }
-  .learnpress #field-_lp_requirements .rwmb-text-list-clone .rwmb-text-list,
-  .learnpress #field-_lp_requirements .rwmb-text-list-clone .rwmb-text-list-advanced,
-  .learnpress #field-_lp_requirements .rwmb-text-list-advanced-clone .rwmb-text-list,
-  .learnpress #field-_lp_requirements .rwmb-text-list-advanced-clone .rwmb-text-list-advanced,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-clone .rwmb-text-list,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-clone .rwmb-text-list-advanced,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-advanced-clone .rwmb-text-list,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-advanced-clone .rwmb-text-list-advanced,
-  .learnpress #field-_lp_key_features .rwmb-text-list-clone .rwmb-text-list,
-  .learnpress #field-_lp_key_features .rwmb-text-list-clone .rwmb-text-list-advanced,
-  .learnpress #field-_lp_key_features .rwmb-text-list-advanced-clone .rwmb-text-list,
-  .learnpress #field-_lp_key_features .rwmb-text-list-advanced-clone .rwmb-text-list-advanced,
-  .learnpress #field-_lp_faqs .rwmb-text-list-clone .rwmb-text-list,
-  .learnpress #field-_lp_faqs .rwmb-text-list-clone .rwmb-text-list-advanced,
-  .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .rwmb-text-list,
-  .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .rwmb-text-list-advanced {
-    padding: 7px 10px;
-    width: calc(100% - 65px);
-    background: transparent;
-    box-shadow: none;
-    border: none;
-    color: #777;
-    line-height: 1; }
-  .learnpress #field-_lp_requirements .rwmb-text-list-clone .remove-clone,
-  .learnpress #field-_lp_requirements .rwmb-text-list-advanced-clone .remove-clone,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-clone .remove-clone,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-advanced-clone .remove-clone,
-  .learnpress #field-_lp_key_features .rwmb-text-list-clone .remove-clone,
-  .learnpress #field-_lp_key_features .rwmb-text-list-advanced-clone .remove-clone,
-  .learnpress #field-_lp_faqs .rwmb-text-list-clone .remove-clone,
-  .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .remove-clone {
-    top: 50%;
-    right: 41px;
-    margin-top: -10px;
-    background: transparent;
-    border-radius: unset;
-    color: #999;
-    -webkit-transition: right 0.25s;
-    -moz-transition: right 0.25s;
-    -ms-transition: right 0.25s;
-    -o-transition: right 0.25s;
-    transition: right 0.25s; }
-    .learnpress #field-_lp_requirements .rwmb-text-list-clone .remove-clone i,
-    .learnpress #field-_lp_requirements .rwmb-text-list-advanced-clone .remove-clone i,
-    .learnpress #field-_lp_target_audiences .rwmb-text-list-clone .remove-clone i,
-    .learnpress #field-_lp_target_audiences .rwmb-text-list-advanced-clone .remove-clone i,
-    .learnpress #field-_lp_key_features .rwmb-text-list-clone .remove-clone i,
-    .learnpress #field-_lp_key_features .rwmb-text-list-advanced-clone .remove-clone i,
-    .learnpress #field-_lp_faqs .rwmb-text-list-clone .remove-clone i,
-    .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .remove-clone i {
-      font-size: 20px; }
-    .learnpress #field-_lp_requirements .rwmb-text-list-clone .remove-clone:hover,
-    .learnpress #field-_lp_requirements .rwmb-text-list-advanced-clone .remove-clone:hover,
-    .learnpress #field-_lp_target_audiences .rwmb-text-list-clone .remove-clone:hover,
-    .learnpress #field-_lp_target_audiences .rwmb-text-list-advanced-clone .remove-clone:hover,
-    .learnpress #field-_lp_key_features .rwmb-text-list-clone .remove-clone:hover,
-    .learnpress #field-_lp_key_features .rwmb-text-list-advanced-clone .remove-clone:hover,
-    .learnpress #field-_lp_faqs .rwmb-text-list-clone .remove-clone:hover,
-    .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .remove-clone:hover {
-      color: #e74c3c; }
-  .learnpress #field-_lp_requirements .rwmb-text-list-clone:after,
-  .learnpress #field-_lp_requirements .rwmb-text-list-advanced-clone:after,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-clone:after,
-  .learnpress #field-_lp_target_audiences .rwmb-text-list-advanced-clone:after,
-  .learnpress #field-_lp_key_features .rwmb-text-list-clone:after,
-  .learnpress #field-_lp_key_features .rwmb-text-list-advanced-clone:after,
-  .learnpress #field-_lp_faqs .rwmb-text-list-clone:after,
-  .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone:after {
-    content: "\f333";
-    font-family: Dashicons;
-    font-size: 20px;
-    margin: 8px 0 0 0;
-    position: absolute;
-    display: inline-block;
-    color: #999;
-    top: 50%;
-    right: 10px;
-    margin-top: -9px; }
-
-.learnpress #field-_lp_requirements .rwmb-text-list-clone:focus-within,
-.learnpress #field-_lp_target_audiences .rwmb-text-list-clone:focus-within,
-.learnpress #field-_lp_key_features .rwmb-text-list-clone:focus-within,
-.learnpress #field-_lp_faqs .rwmb-text-list-clone:focus-within {
-  border-color: #0085ba; }
-
-.learnpress #field-_lp_requirements .rwmb-text-list-advanced-clone .rwmb-text-list:focus,
-.learnpress #field-_lp_target_audiences .rwmb-text-list-advanced-clone .rwmb-text-list:focus,
-.learnpress #field-_lp_key_features .rwmb-text-list-advanced-clone .rwmb-text-list:focus,
-.learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .rwmb-text-list:focus {
-  border-color: #0085ba; }
-
-.learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone {
-  position: relative;
-  padding: 0 0 16px 0px; }
-  .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .rwmb-text-list-label {
-    display: block;
-    padding: 10px 10px 0 12px; }
-  .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .rwmb-text-list {
-    border: 1px solid #DDD;
-    margin: 0 13px 0 13px;
-    vertical-align: top;
-    width: calc(100% - 25px); }
-  .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone .remove-clone {
-    top: 20px;
-    right: 36px;
-    margin-top: -10px;
-    color: #999;
-    -webkit-transition: right 0.25s;
-    -moz-transition: right 0.25s;
-    -ms-transition: right 0.25s;
-    -o-transition: right 0.25s;
-    transition: right 0.25s; }
-  .learnpress #field-_lp_faqs .rwmb-text-list-advanced-clone:after {
-    top: 20px; }
 
 .lp-notice,
 .learn-press-notice {
@@ -3741,124 +3394,46 @@ body.lp-item-moving {
 #learn-press-updater {
   display: none; }
 
-.select2 .select2-search.select2-search--inline {
-  margin-bottom: 0; }
+/*fix responsive for block Courses Setting
 
-.select2 .select2-selection .select2-selection__choice {
-  margin-bottom: 0;
-  margin-top: 4px; }
+ */
+@media only screen and (max-width: 900px) {
+  .learn-press-tabs.vertical .tabs-nav {
+    width: 10%;
+  }
 
-.select2 .select2-selection.select2-selection--multiple {
-  min-height: 30px; }
+  .learn-press-tabs.vertical .tabs-nav li.active a {
+    width: 100%;
+  }
 
-.edit-post-layout__metaboxes .rwmb-label > label {
-  font-weight: bold;
-  font-size: small;
-  color: #666; }
-
-body.post-type-lp_question #button-new-question {
-  display: inline-block;
-  position: relative; }
-  body.post-type-lp_question #button-new-question div {
-    position: absolute;
-    top: 100%;
-    margin: 0 0 0 -1px;
-    left: 0;
-    min-width: 100px;
-    background: #FFFF;
-    font-weight: normal;
-    border: 1px solid #DDD;
-    display: none;
-    z-index: 9999; }
-    body.post-type-lp_question #button-new-question div a {
-      display: block;
-      white-space: nowrap;
-      color: #00a0d2;
-      padding: 5px 10px;
-      min-width: 100px;
-      margin: 0;
-      text-decoration: none; }
-      body.post-type-lp_question #button-new-question div a:hover {
-        background: #F1F1F1; }
-  body.post-type-lp_question #button-new-question > a {
-    padding-right: 15px;
+  .learn-press-tabs.vertical .tabs-nav li a {
     position: relative;
-    text-decoration: none; }
-    body.post-type-lp_question #button-new-question > a:after {
-      content: '';
-      display: inline-block;
-      width: 0;
-      height: 0;
-      border: 5px solid transparent;
-      border-top-color: #0f7aae;
-      position: absolute;
-      margin: 0px;
-      top: 6px;
-      right: 0; }
-  body.post-type-lp_question #button-new-question:hover div {
-    display: block; }
-  body.post-type-lp_question #button-new-question:hover > a {
-    color: #FFF; }
-    body.post-type-lp_question #button-new-question:hover > a:after {
-      color: #FFF;
-      border-top-color: #FFF; }
+    text-indent: -999px;
+    padding: 10px;
+  }
 
-.lp-label {
-  display: inline-block;
-  font-size: 12px;
-  padding: 3px 6px;
-  color: #FFF;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px; }
-  .lp-label.success {
-    background: #4CAF50; }
-  .lp-label.error {
-    background: #FF0000; }
-  .lp-label.warning {
-    background: #FFC107; }
-  .lp-label .far, .lp-label .fas, .lp-label .fa {
-    display: inline-block;
-    margin-right: 5px; }
-
-.lp-admin-profile-courses .column-results {
-  width: 200px; }
-
-.lp-admin-profile-courses .course-results-progress .lp-progress-row {
-  margin: 0 0 20px 0; }
-
-.lp-admin-profile-courses .course-results-progress .lp-course-progress-heading {
-  margin: 0 0 5px 0;
-  line-height: 1; }
-
-.lp-admin-profile-courses .learn-press-progress {
-  height: 6px;
-  width: 150px;
-  overflow: hidden;
-  position: relative;
-  border-radius: 3px; }
-  .lp-admin-profile-courses .learn-press-progress .learn-press-progress__active {
-    width: 100%;
-    height: 100%;
-    background: #0085ba;
-    z-index: 1;
+  .learn-press-tabs.vertical .tabs-nav li a:before {
     position: absolute;
-    left: -100%;
-    border-radius: 3px;
-    -webkit-transition: 0.5s;
-    -moz-transition: 0.5s;
-    -ms-transition: 0.5s;
-    -o-transition: 0.5s;
-    transition: 0.5s; }
-  .lp-admin-profile-courses .learn-press-progress:before {
-    content: '';
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: #ccc;
     top: 0;
-    z-index: 0; }
+    right: 0;
+    bottom: 0;
+    left: 0;
+    text-indent: 0;
+    text-align: center;
+    line-height: 40px;
+    width: 100%;
+    height: 40px;
+  }
 
-.learn-press-dropdown-pages .list-pages.select2-hidden-accessible {
-  min-width: 300px; }
+  .learn-press-tabs.vertical .tabs-container:before {
+    width: 10%;
+  }
+
+  .learn-press-tabs.vertical .tabs-container .tabs-content-container {
+    margin: 0 0 0 10%;
+  }
+
+  .learn-press-tabs.vertical .tabs-container .tabs-content-container > li {
+    padding: 10px;
+  }
+}

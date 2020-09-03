@@ -14,23 +14,21 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! $course = learn_press_get_course() ) {
-	return;
-}
+$course = LP_Global::course();
 ?>
 
 <div class="course-thumbnail">
-    <a href="<?php the_permalink(); ?>">
 
-        <div class="thumbnail-preview">
-            <div class="thumbnail">
+	<?php
+	/**
+	 * Editor tungnx
+	 * Check case $course->get_image return boolean
+	 */
+	$el_image = $course->get_image( 'course_thumbnail' );
 
-                <div class="centered">
-	                <?php echo $course->get_image( 'course_thumbnail' ); ?>
-                </div>
+	if ( is_string( $el_image ) ) {
+		echo $el_image;
+	}
+	?>
 
-            </div>
-
-        </div>
-    </a>
 </div>

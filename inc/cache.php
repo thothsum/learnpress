@@ -79,16 +79,6 @@ class LP_Object_Cache {
 
 	}
 
-	public static function get_group( $group ) {
-		if ( self::$_use_core ) {
-			if ( false === strpos( $group, 'learn-press/' ) ) {
-				return "learn-press/{$group}";
-			}
-		}
-
-		return $group;
-	}
-
 	/**
 	 * Makes private properties readable for backward compatibility.
 	 *
@@ -157,8 +147,6 @@ class LP_Object_Cache {
 	 * @return bool False if cache key and group already exist, true on success
 	 */
 	public static function add( $key, $data, $group = 'default', $expire = 0 ) {
-
-		$group = self::get_group( $group );
 
 		if ( self::$_use_core ) {
 			return wp_cache_add( $key, $data, $group, $expire );
@@ -257,8 +245,6 @@ class LP_Object_Cache {
 	 */
 	public static function delete( $key, $group = 'default', $deprecated = false ) {
 
-		$group = self::get_group( $group );
-
 		if ( self::$_use_core ) {
 			return wp_cache_delete( $key, $group );
 		}
@@ -290,7 +276,6 @@ class LP_Object_Cache {
 	 * @return true Always returns true.
 	 */
 	public static function flush() {
-
 		if ( self::$_use_core ) {
 			return wp_cache_flush();
 		}
@@ -323,7 +308,6 @@ class LP_Object_Cache {
 	 * @return false|mixed False on failure to retrieve contents or the cache contents on success.
 	 */
 	public static function get( $key, $group = 'default', $force = false, &$found = null ) {
-		$group = self::get_group( $group );
 
 		if ( self::$_use_core ) {
 			return wp_cache_get( $key, $group, $force, $found );
@@ -411,8 +395,6 @@ class LP_Object_Cache {
 	 */
 	public static function replace( $key, $data, $group = 'default', $expire = 0 ) {
 
-		$group = self::get_group( $group );
-
 		if ( self::$_use_core ) {
 			return wp_cache_replace( $key, $data, $group, $expire );
 		}
@@ -479,7 +461,6 @@ class LP_Object_Cache {
 	 * @return true Always returns true.
 	 */
 	public static function set( $key, $data, $group = 'default', $expire = 0 ) {
-		$group = self::get_group( $group );
 
 		if ( self::$_use_core ) {
 			return wp_cache_set( $key, $data, $group, $expire );

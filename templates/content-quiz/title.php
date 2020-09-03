@@ -14,8 +14,7 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$quiz   = LP_Global::course_item_quiz();
-$course = LP_Global::course();
+$quiz = LP_Global::course_item_quiz();
 
 if ( ! $title = $quiz->get_heading_title( 'display' ) ) {
 	return;

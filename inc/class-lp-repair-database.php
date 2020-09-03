@@ -47,10 +47,9 @@ class LP_Repair_Database {
 	 * Stores some information of the post is being deleted.
 	 * Eg post-type will be lost after deleted post.
 	 *
-	 * @param int $post_id
-	 *
 	 * @since 3.1.0
 	 *
+	 * @param int $post_id
 	 */
 	public function before_delete_post( $post_id ) {
 		global $wpdb;
@@ -76,10 +75,9 @@ class LP_Repair_Database {
 	/**
 	 * Do stuff after post deleted.
 	 *
-	 * @param int $post_id
-	 *
 	 * @since 3.1.0
 	 *
+	 * @param int $post_id
 	 */
 	public function deleted_post( $post_id ) {
 		try {
@@ -116,11 +114,11 @@ class LP_Repair_Database {
 	 * learnpress_user_items and learnpress_user_itemmeta
 	 * by order id.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param int $order_id
 	 *
 	 * @return bool|int[]
-	 * @since 3.1.0
-	 *
 	 */
 	public function remove_order_items( $order_id ) {
 		global $wpdb;
@@ -179,11 +177,11 @@ class LP_Repair_Database {
 	 * by order id. Uses this function when we want to remove
 	 * a course-item and all child-items reference to a an order.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param int[] $order_id
 	 *
 	 * @return bool
-	 * @since 3.1.0
-	 *
 	 */
 	public function remove_user_items_by_order_id( $order_id ) {
 
@@ -215,11 +213,10 @@ class LP_Repair_Database {
 	 * Remove user item from table user-items by primary key user_item_id.
 	 * This function also remove row's meta data and/or child rows.
 	 *
-	 * @param int[] $user_item_id
-	 * @param bool  $remove_child - Optional. TRUE will remove it's child
-	 *
 	 * @since 3.1.0
 	 *
+	 * @param int[] $user_item_id
+	 * @param bool  $remove_child - Optional. TRUE will remove it's child
 	 */
 	public function remove_user_items_by_user_item_id( $user_item_id, $remove_child = true ) {
 		global $wpdb;
@@ -251,12 +248,12 @@ class LP_Repair_Database {
 	/**
 	 * Remove user item from table user-items by specific user-id and item-id.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param int $user_id
 	 * @param int $item_id
 	 *
 	 * @return array|bool
-	 * @since 3.1.0
-	 *
 	 */
 	public function remove_user_item( $user_id, $item_id ) {
 		global $wpdb;
@@ -284,11 +281,11 @@ class LP_Repair_Database {
 	 * Uses this function in case we want to remove all item
 	 * from an user (such as when an user will be deleted).
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param int[] $user_id
 	 *
 	 * @return bool
-	 * @since 3.1.0
-	 *
 	 */
 	public function remove_user_item_by_user( $user_id ) {
 		global $wpdb;
@@ -322,11 +319,11 @@ class LP_Repair_Database {
 	 * Uses this function in case want to remove an item
 	 * from all users (such as an item like course/lesson/quiz will be deleted).
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param int $item_id
 	 *
 	 * @return array|bool
-	 * @since 3.1.0
-	 *
 	 */
 	public function remove_user_item_by_item_id( $item_id ) {
 		global $wpdb;
@@ -349,11 +346,11 @@ class LP_Repair_Database {
 	/**
 	 * Retrieve child items from an user-item-id.
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param int[] $parent_ids
 	 *
 	 * @return array
-	 * @since 3.1.0
-	 *
 	 */
 	public function get_user_items_by_parent_id( $parent_ids ) {
 		global $wpdb;
@@ -372,11 +369,10 @@ class LP_Repair_Database {
 	/**
 	 * Remove an order from user-meta.
 	 *
-	 * @param int[] $user_ids
-	 * @param int   $order_id
-	 *
 	 * @since 3.1.0
 	 *
+	 * @param int[] $user_ids
+	 * @param int   $order_id
 	 */
 	public function remove_order_from_user_meta( $user_ids, $order_id ) {
 		if ( ! $user_ids ) {
@@ -568,10 +564,9 @@ class LP_Repair_Database {
 	/**
 	 * Sync course data when saving post.
 	 *
-	 * @param int $course_id
-	 *
 	 * @since 3.1.0
 	 *
+	 * @param int $course_id
 	 */
 	public function sync_course_data( $course_id ) {
 		$user_curd   = new LP_User_CURD();
@@ -657,11 +652,11 @@ class LP_Repair_Database {
 	/**
 	 * Sync orders for each course
 	 *
+	 * @since 3.1.0
+	 *
 	 * @param array|string $courses
 	 *
 	 * @return bool|array
-	 * @since 3.1.0
-	 *
 	 */
 	public function sync_course_orders( $courses = '*' ) {
 		global $wpdb;
@@ -812,7 +807,7 @@ class LP_Repair_Database {
 					$item_course     = $user->get_course_data( $course_id );
 					$course_exceeded = $item_course->is_exceeded();
 
-					if ( $course_exceeded <= 0 && ( learn_press_is_enrolled_slug( $item_course->get_status() ) /* $item_course->get_status() === 'enrolled' */ ) ) {
+					if ( $course_exceeded <= 0 && ( $item_course->get_status() === 'enrolled' ) ) {
 						$item_course->finish();
 
 						$start_time = $item_course->get_start_time()->getTimestamp();

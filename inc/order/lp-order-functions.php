@@ -538,7 +538,6 @@ function learn_press_format_price( $price, $args = array() ) {
 			'thousands_separator' => false
 		)
 	);
-
 	$with_currency       = $args['with_currency'];
 	$thousands_separator = $args['thousands_separator'] === false ? $settings->get( 'thousands_separator', ',' ) : $args['thousands_separator'];
 	$number_of_decimals  = $args['number_of_decimals'] === false ? $settings->get( 'number_of_decimals', 2 ) : $args['number_of_decimals'];
@@ -567,7 +566,13 @@ function learn_press_format_price( $price, $args = array() ) {
 	}
 
 	$price =
-		$before . number_format( $price, $number_of_decimals, $decimals_separator, $thousands_separator ) . $after;
+		$before
+		. number_format(
+			$price,
+			$number_of_decimals,
+			$decimals_separator,
+			$thousands_separator
+		) . $after;
 
 	return $price;
 }
@@ -697,7 +702,7 @@ function learn_press_get_register_order_statuses() {
 	$order_statues = array();
 
 	$order_statues['lp-pending']    = array(
-		'label'                     => _x( 'Pending', 'Order status', 'learnpress' ),
+		'label'                     => _x( 'Pending Payment', 'Order status', 'learnpress' ),
 		'public'                    => false,
 		'exclude_from_search'       => false,
 		'show_in_admin_all_list'    => true,

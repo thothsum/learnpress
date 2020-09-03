@@ -73,7 +73,6 @@ class LP_Setup_Wizard {
 			'profile_page_id'          => _x( 'LP Profile', 'static-page', 'learnpress' ),
 			'checkout_page_id'         => _x( 'LP Checkout', 'static-page', 'learnpress' ),
 			'become_a_teacher_page_id' => _x( 'LP Become Teacher', 'static-page', 'learnpress' ),
-			'term_conditions_page_id'  => _x( 'LP Terms and Conditions', 'static-page', 'learnpress' ),
 		);
 
 		return wp_insert_post(
@@ -206,26 +205,26 @@ class LP_Setup_Wizard {
 					'welcome'  => array(
 						'title'       => __( 'Welcome', 'learnpress' ),
 						'callback'    => array( $this, 'step_welcome' ),
-						'next_button' => __( 'Run Setup Wizard', 'learnpress' )
+						'next_button' => __( 'Run setup wizard', 'learnpress' )
+					),
+					'currency' => array(
+						'title'            => __( 'Currency', 'learnpress' ),
+						'callback'         => array( $this, 'step_currency' ),
+						'back_button'      => false,
+						'skip_prev_button' => false
 					),
 					'pages'    => array(
-						'title'    => __( 'Pages', 'learnpress' ),
+						'title'    => __( 'Static Pages', 'learnpress' ),
 						'callback' => array( $this, 'step_pages' ),
 					),
-//					'currency' => array(
-//						'title'            => __( 'Currency', 'learnpress' ),
-//						'callback'         => array( $this, 'step_currency' ),
-//						'back_button'      => false,
-//						'skip_prev_button' => false
-//					),
 					'payment'  => array(
 						'title'    => __( 'Payment', 'learnpress' ),
 						'callback' => array( $this, 'step_payment' )
 					),
-//					'emails'   => array(
-//						'title'    => __( 'Emails', 'learnpress' ),
-//						'callback' => array( $this, 'step_emails' )
-//					),
+					'emails'   => array(
+						'title'    => __( 'Emails', 'learnpress' ),
+						'callback' => array( $this, 'step_emails' )
+					),
 					'finish'   => array(
 						'title'    => __( 'Finish', 'learnpress' ),
 						'callback' => array( $this, 'step_finish' )
@@ -344,7 +343,8 @@ class LP_Setup_Wizard {
 	public function get_payments() {
 		return array(
 			'paypal' => array(
-				'name'     => __( 'PayPal', 'learnpress' ),
+				'name'     => __( 'Paypal', 'learnpress' ),
+				'desc'     => __( 'Enter your Paypal email address to accept payment via Paypal.', 'learnpress' ),
 				'icon'     => LP()->plugin_url( '/assets/images/paypal-2.png' ),
 				'callback' => array( $this, 'setup_paypal' )
 			)

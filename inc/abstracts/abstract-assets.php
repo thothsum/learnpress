@@ -242,19 +242,11 @@ abstract class LP_Abstract_Assets {
 				$data = wp_parse_args(
 					$data,
 					array(
-						'deps'   => null,
-						'ver'    => LEARNPRESS_VERSION,
-						'in_footer' => false
+						'deps' => null,
+						'ver'  => LEARNPRESS_VERSION
 					)
 				);
-
-				wp_register_script(
-					$handle,
-					$no_cache ? add_query_arg( 'nocache', $no_cache, $data['url'] ) : $data['url'],
-					$data['deps'],
-					$data['ver'],
-					$data['in_footer']
-				 );
+				$wp_scripts->add( $handle, $no_cache ? add_query_arg( 'nocache', $no_cache, $data['url'] ) : $data['url'], $data['deps'], $data['ver'] );
 			}
 
 		}
@@ -280,7 +272,7 @@ abstract class LP_Abstract_Assets {
 	}
 
 	public function get_script_var_name( $handle ) {
-		$handle = str_replace( array( 'learn-press', 'lp', '_', '-' ), ' ', $handle );
+		$handle = str_replace( array( 'learn-press', '_', '-' ), ' ', $handle );
 		$handle = ucwords( $handle );
 
 		return 'lp' . str_replace( ' ', '', $handle ) . 'Settings';
@@ -379,7 +371,7 @@ abstract class LP_Abstract_Assets {
 		return $url;
 	}
 
-	public function get_compressible_assets() {
+	public function get_compressible_assets(){
 		return array();
 	}
 

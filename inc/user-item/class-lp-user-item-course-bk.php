@@ -240,7 +240,7 @@ class LP_User_Item_CourseY extends LP_User_Item implements ArrayAccess {
 		}
 
 		$this->load();
-		$course_result = $course->get_evaluation_results_method();
+		$course_result = $course->get_data( 'course_result' );
 		$results       = false;
 		switch ( $course_result ) {
 			// Completed lessons per total
@@ -850,15 +850,15 @@ class LP_User_Item_CourseY extends LP_User_Item implements ArrayAccess {
 
 		$current_time = new LP_Datetime();
 		$defaults     = array(
-			'start_time' => $current_time->toSql( false ),
-			//'start_time_gtm' => $current_time->toSql( false ),
-			'end_time'   => $current_time->toSql( false ),
-			//'end_time_gmt'   => $current_time->toSql( false ),
-			'item_type'  => learn_press_get_post_type( $item_id ),
-			'status'     => '',
-			'ref_id'     => $this->get_id(),
-			'ref_type'   => learn_press_get_post_type( $this->get_id() ),
-			'parent_id'  => $this->get_user_item_id()
+			'start_time'     => $current_time,
+			'start_time_gtm' => $current_time->toSql( false ),
+			'end_time'       => $current_time,
+			'end_time_gmt'   => $current_time->toSql( false ),
+			'item_type'      => learn_press_get_post_type( $item_id ),
+			'status'         => '',
+			'ref_id'         => $this->get_id(),
+			'ref_type'       => learn_press_get_post_type( $this->get_id() ),
+			'parent_id'      => $this->get_user_item_id()
 		);
 		$item_data    = wp_parse_args(
 			$item_data,

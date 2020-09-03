@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/learnpress/single-course/content.php.
  *
- * @author   ThimPress
+ * @author  ThimPress
  * @package  Learnpress/Templates
  * @version  3.0.0
  */
@@ -14,11 +14,7 @@
  */
 defined( 'ABSPATH' ) || exit();
 ?>
-<div class="course-content course-summary-content">
-	<?php
-	/**
-	 * @since 3.x.x
-	 */
-	do_action( 'learn-press/course-content-summary' );
-	?>
+
+<div class="course-content">
+	<?php do_action( 'learn_press_course_content_summary' ); ?>
 </div>

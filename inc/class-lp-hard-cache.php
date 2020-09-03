@@ -53,7 +53,7 @@ class LP_Hard_Cache {
 	 * Replace existing cache with new data.
 	 *
 	 * @param string $key
-	 * @param mixed $data
+	 * @param mixed  $data
 	 * @param string $group
 	 *
 	 * @return bool
@@ -77,7 +77,7 @@ class LP_Hard_Cache {
 	 * Set cache content, replace if existing.
 	 *
 	 * @param string $key
-	 * @param mixed $data
+	 * @param mixed  $data
 	 * @param string $group
 	 *
 	 * @return bool
@@ -142,9 +142,9 @@ class LP_Hard_Cache {
 	 * Write data into file.
 	 *
 	 * @param string $key
-	 * @param mixed $data
+	 * @param mixed  $data
 	 * @param string $group
-	 * @param bool $overwrite
+	 * @param bool   $overwrite
 	 *
 	 * @return bool
 	 */
@@ -237,15 +237,9 @@ class LP_Hard_Cache {
 	}
 
 	public static function flush( $group = false ) {
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/file.php' );
-		}
-		WP_Filesystem();
-		global $wp_filesystem;
+		$wp_filesystem = LP_Helper::get_wp_filesystem();
 
-		if ( ! $wp_filesystem ) {
-			return false;
-		}
+		//error_log(json_encode(debug_backtrace()));
 
 		if ( $group ) {
 			$return = $wp_filesystem->rmdir( self::get_path( $group ), true );

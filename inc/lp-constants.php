@@ -8,14 +8,12 @@ $plugin_info = get_plugin_data( LP_PLUGIN_FILE );
 
 // version
 define( 'LEARNPRESS_VERSION', $plugin_info['Version'] );
-//define( 'LEARNPRESS_VERSION', '9.9.9' );
 
-define( 'LP_WP_CONTENT', basename( WP_CONTENT_DIR ) );
+//define( 'LP_WP_CONTENT', basename( WP_CONTENT_DIR ) );
 
 // Plugin paths and urls
 define( 'LP_PLUGIN_PATH', trailingslashit( plugin_dir_path( LP_PLUGIN_FILE ) ) );
-define( 'LP_TEMPLATE_PATH', LP_PLUGIN_PATH . 'templates/' );
-define( 'LP_CONTENT_PATH', '/' . LP_WP_CONTENT . '/plugins/learnpress/' );
+//define( 'LP_CONTENT_PATH', '/wp-content/plugins/learnpress/' );
 define( 'LP_PLUGIN_URL', trailingslashit( plugins_url( '/', LP_PLUGIN_FILE ) ) );
 define( 'LP_JS_URL', LP_PLUGIN_URL . 'assets/js/' );
 define( 'LP_CSS_URL', LP_PLUGIN_URL . 'assets/css/' );
@@ -43,7 +41,7 @@ define( 'LP_ORDER_CPT', 'lp_order' );
 define( 'LP_TEACHER_ROLE', 'lp_teacher' );
 
 // Turn debug mode on/off
-//define( 'LP_DEBUG', true );
+//define( 'LP_DEBUG', false);
 define( 'LP_CACHE_RESOURCE', false );
 
 // Options
@@ -59,7 +57,6 @@ define( 'LP_COURSE_ACCESS_LEVEL_30', 30 ); // Admin site
 define( 'LP_COURSE_ACCESS_LEVEL_35', 35 ); // No require enrollment
 define( 'LP_COURSE_ACCESS_LEVEL_40', 40 ); // Ordered but not completed
 define( 'LP_COURSE_ACCESS_LEVEL_50', 50 ); // Order completed but not enrolled
-define( 'LP_COURSE_ACCESS_LEVEL_55', 55 ); // Enrolled but has blocked (access level = 0)
 define( 'LP_COURSE_ACCESS_LEVEL_60', 60 ); // User has already enrolled course
 define( 'LP_COURSE_ACCESS_LEVEL_70', 70 ); // User has already finished course
 
@@ -74,7 +71,6 @@ define( 'LP_QUIZ_HAS_STARTED_OR_COMPLETED', 160 );
 define( 'LP_ERROR_NO_PAYMENT_METHOD_SELECTED', 1000 );
 define( 'LP_COMPLETE_ITEM_FAIL', 170 );
 define( 'LP_COMPRESS_ASSETS', false );
-define( 'LP_COURSES_LAYOUT', 'list' );
 
 /**
  * Thim Market library

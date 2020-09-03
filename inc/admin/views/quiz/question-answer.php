@@ -15,8 +15,9 @@ learn_press_admin_view( 'quiz/question-answer-option' );
                 <thead>
                 <tr>
                     <th class="sort"></th>
-                    <th class="answer-text"><?php esc_html_e( 'Answers', 'learnpress' ); ?></th>
-                    <th class="answer-correct"><?php esc_html_e( 'Correction', 'learnpress' ); ?></th>
+                    <th class="order">#</th>
+                    <th class="answer-text"><?php esc_html_e( 'Answer Text', 'learnpress' ); ?></th>
+                    <th class="answer-correct"><?php esc_html_e( 'Correct?', 'learnpress' ); ?></th>
                     <th class="actions"></th>
                 </tr>
                 </thead>
@@ -99,8 +100,7 @@ learn_press_admin_view( 'quiz/question-answer-option' );
                 // new answer option
                 newAnswer: function () {
                     $store.dispatch('lqs/newQuestionAnswer', {
-                        question_id: this.question.id,
-                        success: function (answer) {
+                        question_id: this.question.id, success: function (answer) {
                             $(this.$el).find('tr[data-answer-id="' + answer.question_answer_id + '"] .answer-text input').focus();
                         }, context: this
                     });

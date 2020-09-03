@@ -195,9 +195,9 @@ function learn_press_get_ip() {
 	}
 	//Get the forwarded IP if it exists
 	if ( array_key_exists( 'X-Forwarded-For', $headers ) &&
-	     (
-		     filter_var( $headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ||
-		     filter_var( $headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) )
+		(
+			filter_var( $headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ||
+			filter_var( $headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) )
 	) {
 		$the_ip = $headers['X-Forwarded-For'];
 	} elseif (
@@ -235,23 +235,6 @@ function learn_press_uniqid( $prefix = '' ) {
 	$hash = str_replace( '.', '', microtime( true ) . uniqid() );
 
 	return apply_filters( 'learn-press/generate-hash', $prefix . $hash, $prefix );
-}
-
-function learn_press_random_value( $len = 8 ) {
-	return substr( md5( uniqid( mt_rand(), true ) ), 0, $len );
-}
-
-function learn_press_map_columns_format( $columns, $format ) {
-	$return = array();
-	foreach ( $columns as $k => $v ) {
-		if ( ! empty( $format[ $k ] ) ) {
-			$return[] = $format[ $k ];
-		} else {
-			$return[] = '%s'; // default is string
-		}
-	}
-
-	return $return;
 }
 
 /**
@@ -622,8 +605,8 @@ function learn_press_print_script() {
 	global $learn_press_queued_js, $learn_press_queued_js_tag;
 	if ( ! empty( $learn_press_queued_js ) ) {
 		?>
-        <!-- LearnPress JavaScript -->
-        <script type="text/javascript">jQuery(function ($) {
+		<!-- LearnPress JavaScript -->
+		<script type="text/javascript">jQuery(function ($) {
 				<?php
 				// Sanitize
 				$learn_press_queued_js = wp_check_invalid_utf8( $learn_press_queued_js );
@@ -632,8 +615,8 @@ function learn_press_print_script() {
 
 				echo $learn_press_queued_js;
 				?>
-            });
-        </script>
+			});
+		</script>
 		<?php
 		unset( $learn_press_queued_js );
 	}
@@ -678,7 +661,7 @@ if ( ! function_exists( 'learn_press_is_ajax' ) ) {
 function learn_press_get_page_id( $name ) {
 	$page_id = LP_Settings::instance()->get( "{$name}_page_id", false );
 	if ( function_exists( 'icl_object_id' ) ) {
-		$page_id = icl_object_id( $page_id, 'page', false, defined( 'ICL_LANGUAGE_CODE' ) ? ICL_LANGUAGE_CODE : '' );
+		$page_id = icl_object_id( $page_id, 'page', false, ICL_LANGUAGE_CODE );
 	}
 
 	return apply_filters( 'learn_press_get_page_id', $page_id, $name );
@@ -773,10 +756,10 @@ if ( ! function_exists( 'learn_press_paging_nav' ) ) :
 		ob_start();
 		if ( $links ) :
 			?>
-            <div class="<?php echo $args['wrapper_class']; ?>">
+			<div class="<?php echo $args['wrapper_class']; ?>">
 				<?php echo $links; ?>
-            </div>
-            <!-- .pagination -->
+			</div>
+			<!-- .pagination -->
 		<?php
 		endif;
 		$output = ob_get_clean();
@@ -1219,8 +1202,6 @@ function learn_press_currencies() {
 		'LYD' => __( 'Libyan dinar', 'learnpress' )
 	);
 
-	asort( $currencies );
-
 	return apply_filters( 'learn-press/currencies', $currencies );
 }
 
@@ -1436,7 +1417,7 @@ function learn_press_get_page_link( $key ) {
 	$page_id = LP()->settings->get( $key . '_page_id' );
 	$link    = '';
 
-	if ( $page_id && get_post_status( $page_id ) == 'publish' ) {
+	if ( get_post_status( $page_id ) == 'publish' ) {
 		$permalink = trailingslashit( get_permalink( $page_id ) );
 		$permalink = apply_filters( 'learn_press_get_page_link', $permalink, $page_id, $key );
 		$link      = apply_filters( 'learn-press/get-page-link', $permalink, $page_id, $key );
@@ -1444,26 +1425,9 @@ function learn_press_get_page_link( $key ) {
 
 	$link = apply_filters( 'learn_press_get_page_' . $key . '_link', $link, $page_id );
 
-	return apply_filters( 'learn-press/get-page-' . $key . '-link', $link ? trailingslashit( $link ) : '', $page_id );
+	return apply_filters( 'learn-press/get-page-' . $key . '-link', trailingslashit( $link ), $page_id );
 }
 
-/**
- * Get static page for LP page by name.
- *
- * @param string $key
- *
- * @return string
- */
-function learn_press_get_page_title( $key ) {
-	$page_id = LP()->settings->get( $key . '_page_id' );
-	$title   = '';
-
-	if ( $page_id && get_post_status( $page_id ) == 'publish' ) {
-		$title = apply_filters( 'learn-press/get-page-title', get_the_title( $page_id ), $page_id, $key );
-	}
-
-	return apply_filters( 'learn-press/get-page-' . $key . '-title', $title, $page_id );
-}
 
 /**
  * get the ID of a course by order ID
@@ -1677,21 +1641,27 @@ function learn_press_process_become_a_teacher_form( $args = null ) {
 		$default_fields = array( 'bat_name', 'bat_email', 'bat_phone', 'bat_message' );
 		foreach ( $fields as $key => $field ) {
 			if ( isset( $_POST[ $key ] ) ) {
-				$fields[ $key ]['value'] = $_POST[ $key ];
+				$fields[ $key ]['value'] = LP_Helper::sanitize_params_submitted( $_POST[ $key ] );
 			}
 		}
 		$notify_message = apply_filters( 'learn_press_filter_become_a_teacher_notify_message', '', $args, $fields, $user );
 		if ( ! $notify_message ) {
+			// translators: 1: link user, 2: name user.
 			$notify_message = sprintf( __( 'The user <a href="%s">%s</a> wants to become a teacher.', 'learnpress' ) . "\r\n", admin_url( 'user-edit.php?user_id=' . $user->get_id() ), $user->user_login ) . "\r\n";
+			// translators: %s: Name.
 			$notify_message .= sprintf( __( 'Name: %s', 'learnpress' ), $args['name'] ) . "\r\n";
+			// translators: %s: Email.
 			$notify_message .= sprintf( __( 'Email: %s', 'learnpress' ), $args['email'] ) . "\r\n";
+			// translators: %s: Phone.
 			$notify_message .= sprintf( __( 'Phone: %s', 'learnpress' ), $args['phone'] ) . "\r\n";
+			// translators: %s: Message.
 			$notify_message .= sprintf( __( 'Message: %s', 'learnpress' ), $args['message'] ) . "\r\n";
 			foreach ( $fields as $key => $field ) {
 				if ( ! in_array( $key, $default_fields ) ) {
 					$notify_message .= $field['title'] . ': ' . ( isset( $field['value'] ) ? $field['value'] : '' ) . "\r\n";
 				}
 			}
+			// translators: %s: Accept.
 			$notify_message .= wp_specialchars_decode( sprintf( __( 'Accept: %s', 'learnpress' ), wp_nonce_url( admin_url( 'user-edit.php?user_id=' . $user->get_id() ) . '&action=accept-to-be-teacher', 'accept-to-be-teacher' ) ) ) . "\r\n";
 		}
 
@@ -1912,6 +1882,8 @@ function learn_press_get_request( $key, $default = null, $hash = null ) {
 		}
 	}
 
+	$return = LP_Helper::sanitize_params_submitted( $return );
+
 	return $return;
 }
 
@@ -1955,8 +1927,8 @@ if ( ! function_exists( 'learn_press_is_course_archive' ) ) {
 		global $wp_query;
 		$queried_object_id = ! empty( $wp_query->queried_object ) ? $wp_query->queried_object : 0;
 		$is_courses        = defined( 'LEARNPRESS_IS_COURSES' ) && LEARNPRESS_IS_COURSES;
-		$is_tag            = defined( 'LEARNPRESS_IS_TAG' ) && LEARNPRESS_IS_TAG || is_tax( 'course_tag' );
-		$is_category       = defined( 'LEARNPRESS_IS_CATEGORY' ) && LEARNPRESS_IS_CATEGORY || is_tax( 'course_category' );
+		$is_tag            = defined( 'LEARNPRESS_IS_TAG' ) && LEARNPRESS_IS_TAG;
+		$is_category       = defined( 'LEARNPRESS_IS_CATEGORY' ) && LEARNPRESS_IS_CATEGORY;
 		$page_id           = learn_press_get_page_id( 'courses' );
 
 		return ( ( $is_courses || $is_category || $is_tag ) || is_post_type_archive( 'lp_course' ) || ( $page_id && ( $queried_object_id && is_page( $page_id ) ) ) ) ? true : false;
@@ -1980,7 +1952,7 @@ if ( ! function_exists( 'learn_press_is_course_taxonomy' ) ) {
 	 * @return bool
 	 */
 	function learn_press_is_course_taxonomy() {
-		return ( defined( 'LEARNPRESS_IS_TAX' ) && LEARNPRESS_IS_TAX ) || learn_press_is_course_tax();
+		return ( defined( 'LEARNPRESS_IS_TAX' ) && LEARNPRESS_IS_TAX ) || is_tax( get_object_taxonomies( 'lp_course' ) );
 	}
 }
 
@@ -2522,9 +2494,8 @@ function learn_press_auto_enroll_user_to_courses( $order_id ) {
 			$return = learn_press_update_user_item_field( array(
 				'user_id'    => $user->get_id(),
 				'item_id'    => $course->get_id(),
-				//'start_time' => current_time( 'mysql' ),
-				'start_time' => learn_press_mysql_time( true ),
-				'status'     => learn_press_user_item_in_progress_slug(),// 'enrolled',
+				'start_time' => current_time( 'mysql' ),
+				'status'     => 'enrolled',
 				'end_time'   => '0000-00-00 00:00:00',
 				'ref_id'     => $order->id, //$course->get_id(),
 				'item_type'  => 'lp_course',
@@ -2546,6 +2517,38 @@ function learn_press_auto_enroll_user_to_courses( $order_id ) {
  */
 function learn_press_is_enable_cart() {
 	return defined( 'LP_ENABLE_CART' ) && LP_ENABLE_CART == true;//
+}
+
+/**
+ * Redirect back to course if the order have one course in that
+ *
+ * @param $results
+ * @param $order_id
+ *
+ * @return mixed
+ */
+function _learn_press_checkout_success_result( $results, $order_id ) {
+	if ( $results['result'] == 'success' ) {
+		if ( $order = learn_press_get_order( $order_id ) ) {
+			$items              = $order->get_items();
+			$enrolled_course_id = learn_press_auto_enroll_user_to_courses( $order_id );
+			$course_id          = 0;
+			if ( sizeof( $items ) == 1 ) {
+				$item                = reset( $items );
+				$course_id           = $item['course_id'];
+				$results['redirect'] = get_the_permalink( $course_id );
+			}
+			if ( ! $course_id ) {
+				$course_id = $enrolled_course_id;
+			}
+
+			if ( $course = learn_press_get_course( $course_id ) ) {
+				learn_press_add_message( sprintf( __( 'Congrats! You\'ve enrolled the course "%s".', 'learnpress' ), $course->get_title() ) );
+			}
+		}
+	}
+
+	return $results;
 }
 
 /**
@@ -2707,7 +2710,6 @@ function learn_press_debug() {
 
 	if ( $args ) {
 		foreach ( $args as $arg ) {
-			echo "\n======LearnPress Debug=======\n";
 			print_r( $arg );
 			echo "\n=============================\n";
 		}
@@ -2718,6 +2720,30 @@ function learn_press_debug() {
 		die( __FUNCTION__ );
 	}
 }
+
+function learn_press_is_content_only() {
+	global $wp;
+
+	return ! empty( $wp->query_vars['content-item-only'] );
+}
+
+if ( ! function_exists( 'learn_press_profile_localize_script' ) ) {
+
+	/**
+	 * Translate javascript text
+	 */
+	function learn_press_profile_localize_script( $assets ) {
+		$translate = array(
+			'confirm_cancel_order' => array(
+				'message' => __( 'Are you sure you want to cancel order?', 'learnpress' ),
+				'title'   => __( 'Cancel Order', 'learnpress' )
+			)
+		);
+		//LP_Assets::add_localize( $translate );
+	}
+
+}
+add_action( 'learn_press_enqueue_scripts', 'learn_press_profile_localize_script' );
 
 /**
  * Get current time to user for calculate remaining time of quiz.
@@ -2962,9 +2988,9 @@ function learn_press_static_pages( $name = false ) {
 	$pages = apply_filters(
 		'learn-press/static-pages',
 		array(
-			'checkout'         => _x( 'Checkout', 'static-page-name', 'learnpress' ),
+			'checkout'         => _x( 'Lp Checkout', 'static-page-name', 'learnpress' ),
 			'courses'          => _x( 'Courses', 'static-page-name', 'learnpress' ),
-			'profile'          => _x( 'Profile', 'static-page-name', 'learnpress' ),
+			'profile'          => _x( 'Lp Profile', 'static-page-name', 'learnpress' ),
 			'become_a_teacher' => _x( 'Become a Teacher', 'static-page-name', 'learnpress' )
 		)
 	);
@@ -3210,10 +3236,6 @@ function learn_press_date_i18n( $timestamp = '', $format = '', $gmt = false ) {
 	return date_i18n( $format, $timestamp, $gmt );
 }
 
-function learn_press_date() {
-
-}
-
 /**
  * Remove user items.
  *
@@ -3377,471 +3399,3 @@ function learn_press_global_script_params() {
 
 	return $js;
 }
-
-/**
- * Get url for setup cron job on server.
- *
- * @return string
- * @since 3.3.0
- *
- */
-function learn_press_get_cron_url() {
-	$nonce = get_option( 'learnpress_cron_url_nonce' );
-
-	if ( ! $nonce ) {
-		$nonce = md5( microtime( true ) );
-		update_option( 'learnpress_cron_url_nonce', $nonce );
-	}
-	$url = add_query_arg( array( 'lp-ajax' => 'cron', 'sid' => $nonce ), get_home_url() );
-
-	return $url;
-}
-
-/**
- * Get courses expired.
- *
- * @return array
- * @since 3.3.0
- *
- */
-function learn_press_get_expired_courses() {
-	global $wpdb;
-
-	$query = $wpdb->prepare( "
-			SELECT X.*
-			FROM(
-			SELECT ui.*
-                FROM {$wpdb->learnpress_user_items} ui
-				LEFT JOIN {$wpdb->learnpress_user_items} uix
-					ON ui.item_id = uix.item_id 
-						AND ui.user_id = uix.user_id
-						AND ui.user_item_id < uix.user_item_id
-			    WHERE uix.user_item_id IS NULL
-			) X
-			INNER JOIN {$wpdb->users} u ON u.ID = X.user_id
-			INNER JOIN {$wpdb->posts} p ON p.ID = X.item_id
-			WHERE X.item_type = %s 
-				AND X.status = %s
-				#AND expiration_time_gmt <= UTC_TIMESTAMP()
-				AND expiration_time <= UTC_TIMESTAMP()
-			LIMIT 0, 10
-		", LP_COURSE_CPT, 'enrolled' );
-
-}
-
-/**
- * Add debug log
- *
- * @param mixed  $message
- * @param string $handle
- * @param bool   $clear
- * @param bool   $force
- *
- * @since 4.0.0
- *
- */
-function learn_press_debug_add( $message, $handle = 'log', $clear = false, $force = false ) {
-	LP_Debug::instance()->add( $message, $handle, $clear, $force );
-}
-
-/**
- * Add new error log. Support message as an array|object.
- * Convert message to string if it is not a string.
- *
- * @param mixed $value
- *
- * @since 4.0.0
- *
- */
-function learn_press_error_log( $value ) {
-	if ( is_array( $value ) || is_object( $value ) ) {
-		ob_start();
-		print_r( $value );
-		$value = ob_get_clean();
-	}
-
-	error_log( $value );
-}
-
-/**
- * Get status of global course for current user.
- *
- * @param int $user_id
- * @param int $course_id
- *
- * @return bool|string
- * @since 3.3.0
- *
- */
-function learn_press_user_course_status( $user_id = 0, $course_id = 0 ) {
-	if ( ! $user = learn_press_get_user( $user_id ? $user_id : get_current_user_id() ) ) {
-		return false;
-	}
-
-	if ( ! $userCourse = $user->get_course_data( $course_id ) ) {
-		return false;
-	}
-
-	return $userCourse->get_status();
-}
-
-/**
- * Return list types of questions that support answer options.
- *
- * @return array
- * @since 3.3.0
- *
- */
-function learn_press_get_question_support_answer_options() {
-	$questions = learn_press_get_question_support_feature( 'answer-options' );
-
-	return apply_filters( 'learn-press/questions-support-answer-options', $questions );
-}
-
-/**
- * Return list types of question that support a feature.
- *
- * @param string $feature
- *
- * @return array
- * @since 3.3.0
- *
- */
-function learn_press_get_question_support_feature( $feature ) {
-	$questions = array();
-
-	if ( $types = LP_Global::get_object_supports( 'question' ) ) {
-		foreach ( $types as $type => $features ) {
-			if ( array_key_exists( $feature, $features ) ) {
-				$questions[] = $type;
-			}
-		}
-	}
-
-	return $questions;
-}
-
-/**
- * Helper function to output html for rendering a 'circle progress bar'
- *
- * @param int    $percent
- * @param int    $width
- * @param int    $border
- * @param string $color
- *
- * @since 3.3.0
- *
- */
-function learn_press_circle_progress_html( $percent = 0, $width = 32, $border = 4, $color = '' ) {
-	$radius        = $width / 2;
-	$r             = ( $width - $border ) / 2;
-	$circumference = $r * 2 * pi();
-	$offset        = $circumference - $percent / 100 * $circumference;
-
-	printf( '<svg class="circle-progress-bar" width="%d" height="%d">
-        <circle class="circle-progress-bar__circle" 
-                stroke="%s" 
-                stroke-width="%d" 
-                style="stroke-dasharray:%s %s; stroke-dashoffset:%s;"
-                fill="transparent" 
-                r="%d" cx="%d" cy="%d"></circle>
-    </svg>', $width, $width, $color, $border, $circumference, $circumference, $offset, $r, $radius, $radius );
-}
-
-function learn_press_is_page( $page_name ) {
-	$page_id = learn_press_get_page_id( $page_name );
-
-	return $page_id && is_page( $page_id );
-}
-
-/**
- * Get end-date from start date with a duration.
- *
- * @param string|int $duration
- * @param string|int $start
- *
- * @return false|string
- * @since 3.x.x
- *
- */
-function learn_press_date_end_from( $duration, $start = '' ) {
-	$format = 'Y-m-d H:i:s';
-
-	if ( ! $start ) {
-		$start = time();
-	} else if ( ! is_numeric( $start ) ) {
-		$start = strtotime( $start );
-	}
-
-	// is LP duration format, e.g: 10 weeks
-	if ( preg_match( '/^[0-9]+ [a-z]+$/', $duration ) ) {
-		$duration = ( new LP_Duration( $duration ) )->get();
-	} else if ( ! is_numeric( $duration ) ) {
-		// 10 days 5 hours ...
-		$duration = strtotime( $duration, 0 );
-	}
-
-	return date( $format, $start + $duration );
-}
-
-function learn_press_date_diff( $from, $to ) {
-
-}
-
-function learn_press_cookie_get( $name, $namespace = 'LP' ) {
-	if ( $namespace ) {
-		$cookie = ! empty( $_COOKIE[ $namespace ] ) ? (array) json_decode( stripslashes( $_COOKIE[ $namespace ] ) ) : array();
-	} else {
-		$cookie = $_COOKIE;
-	}
-
-	return isset( $cookie[ $name ] ) ? $cookie[ $name ] : null;
-}
-
-/**
- * Get list of levels support in course.
- *
- * @return array
- * @since 3.x.x
- *
- */
-function learn_press_default_course_levels() {
-	$levels = array(
-		'beginner'     => __( 'Beginner', 'learnpress' ),
-		'intermediate' => __( 'Intermediate', 'learnpress' ),
-		'expert'       => __( 'Expert', 'learnpress' ),
-		''             => __( 'All Levels', 'learnpress' ),
-	);
-
-	return apply_filters( 'learn-press/default-course-levels', $levels );
-}
-
-/**
- * Get default methods to evaluate course results.
- *
- * @param string $return - Optional. 'keys' will return keys instead of all.
- *
- * @return array
- * @since 3.x.x
- *
- */
-function learn_press_course_evaluation_methods( $return = '' ) {
-	$methods = array(
-		'evaluate_lesson' => __( 'Self-regulated learning by lessons', 'learnpress' ),
-		'evaluate_quiz'   => __( 'Quizzes result', 'learnpress' )
-	);
-
-	return apply_filters( 'learn-press/course-evaluation-methods', $return === 'keys' ? array_keys( $methods ) : $methods, $return );
-}
-
-/**
- * Get default methods to evaluate course results.
- *
- * @return array
- * @since 3.x.x
- *
- */
-function learn_press_course_evaluation_method_quiz_options() {
-	$methods = array(
-		'evaluate_lesson' => __( 'With lessons', 'learnpress' ),
-		'evaluate_quiz'   => __( 'With quizzes', 'learnpress' )
-	);
-
-	return $methods;
-}
-
-/**
- * Wrap WP Core function current_time with mysql format.
- *
- * @param bool $gmt
- *
- * @return int|string
- * @since 4.0.0
- *
- */
-function learn_press_mysql_time( $gmt = true ) {
-	return current_time( 'mysql', $gmt );
-}
-
-/**
- * Wrap WP Core function current_time with timestamp format.
- *
- * @param bool $gmt
- *
- * @return int|string
- * @since 4.0.0
- *
- */
-function learn_press_timestamp( $gmt = true ) {
-	return current_time( 'timestamp', $gmt );
-}
-
-/**
- * Convert time from GMT to local.
- *
- * @param string|int|LP_Datetime $gmt_time
- * @param string                 $format
- *
- * @return false|int|string
- * @since 4.0.0
- *
- */
-function learn_press_time_from_gmt( $gmt_time, $format = 'Y-m-d H:i:s' ) {
-	if ( is_string( $gmt_time ) ) {
-		$gmt_time = strtotime( $gmt_time );
-	} elseif ( $gmt_time instanceof LP_Datetime ) {
-		$gmt_time = strtotime( $gmt_time . '' );
-	}
-
-	$current_time = $gmt_time + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
-
-	if ( $format ) {
-		return date( $format, $current_time );
-	}
-
-	return $current_time;
-}
-
-/**
- * Count all users has enrolled to courses of an instructor.
- *
- * @param int $instructor_id
- *
- * @return float|int
- * @since 4.0.0
- *
- */
-function learn_press_count_instructor_users( $instructor_id ) {
-	global $wpdb;
-	$curd        = new LP_User_CURD();
-	$own_courses = $curd->query_own_courses( $instructor_id );
-	$course_ids  = $own_courses->get_items();
-
-	$query = $wpdb->prepare( "
-        SELECT COUNT(user_id)
-		FROM ( 
-			SELECT item_id, user_id
-			FROM {$wpdb->learnpress_user_items}
-			WHERE item_type = %s
-			GROUP BY item_id, user_id
-			HAVING item_id IN(" . join( ',', $course_ids ) . ")
-		) X
-		GROUP BY item_id
-    ", LP_COURSE_CPT );
-
-	if ( $rows = $wpdb->get_col( $query ) ) {
-		return array_sum( $rows );
-	}
-
-	return 0;
-}
-
-/**
- * Get max retrying quiz allowed.
- *
- * @param int $quiz_id
- * @param int $course_id
- *
- * @return int
- * @since 4.0.0
- *
- */
-function learn_press_get_quiz_max_retrying( $quiz_id = 0, $course_id = 0 ) {
-	return apply_filters( 'learn-press/max-retry-quiz-allowed', 1, $quiz_id, $course_id );
-}
-
-/**
- * Get max retrying course allowed.
- *
- * @param int $course_id
- *
- * @return int
- * @since 4.0.0
- *
- */
-function learn_press_get_course_max_retrying( $course_id ) {
-	return apply_filters( 'learn-press/max-retry-course-allowed', 1, $course_id );
-}
-
-/**
- * Get slug for status of course/lesson/quiz if user
- * completed/finished and graduation is failed.
- *
- * @param string $type
- *
- * @return string
- * @since 4.0.0
- */
-function learn_press_user_item_failed_slug( $type = '' ) {
-	return apply_filters( 'learn-press/user-item-failed-slug', 'failed', $type );
-}
-
-/**
- * Get slug for status of course/lesson/quiz if user
- * completed/finished and graduation is passed.
- *
- * @param string $type
- *
- * @return string
- * @since 4.0.0
- */
-function learn_press_user_item_passed_slug( $type = '' ) {
-	return apply_filters( 'learn-press/user-item-passed-slug', 'passed', $type );
-}
-
-/**
- * Get slug for status of course/lesson/quiz if user
- * completed/finished and graduation is passed.
- *
- * @param string $type
- *
- * @return string
- * @since 4.0.0
- */
-function learn_press_user_item_in_progress_slug( $type = '' ) {
-	return apply_filters( 'learn-press/user-item-in-progress-slug', 'in-progress', $type );
-}
-
-/**
- * Get slug for status of course/lesson/quiz if user
- * completed/finished and result is under-evaluation
- *
- * @param string $item - Optional. Type of item
- *
- * @return string
- * @since 4.0.0
- *
- */
-function learn_press_user_item_under_evaluation_slug( $item = '' ) {
-	return apply_filters( 'learn-press/user-item-under-evaluation-slug', 'in-progress', $item );
-}
-
-function learn_press_is_enrolled_slug( $slug ) {
-	return in_array(
-		$slug,
-		array(
-			'in-progress',
-			'enrolled'// deprecated
-		)
-	);
-}
-
-/**
- * @return array
- * @since 4.0.0
- *
- */
-function learn_press_course_enrolled_slugs() {
-	return apply_filters(
-		'learn-press/course-enrolled-slugs',
-		array(
-			learn_press_user_item_passed_slug(),
-			learn_press_user_item_failed_slug(),
-			'in-progress',
-			'enrolled', // deprecated
-			'finished'// deprecated
-		)
-	);
-}
-
-include_once dirname( __FILE__ ) . '/lp-custom-hooks.php';

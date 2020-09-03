@@ -19,60 +19,48 @@ $course_item   = LP_Global::course_item();
 $course        = LP_Global::course();
 $can_view_item = $user->can_view_item( $course_item->get_id(), $course->get_id() );
 ?>
+
 <div id="learn-press-content-item">
 
 	<?php do_action( 'learn-press/course-item-content-header' ); ?>
 
-    <div class="content-item-scrollable">
+	<div class="content-item-scrollable">
 
-        <div class="content-item-wrap">
+		<div class="content-item-wrap">
 
 			<?php
+			/**
+			 * @since 3.0.0
+			 */
+			do_action( 'learn-press/before-course-item-content' );
 
-			if ( false === ( $item_content = apply_filters( 'learn-press/course-item-content-html', false, $course_item->get_id(), $course->get_id() ) ) ) {
-				/**
-				 * @deprecated
-				 */
-				do_action( 'learn_press_before_content_item' );
+			/**
+			 * @editor  tungnx
+			 *
+			 * Check more case $can_view_item = 'not-enrolled'
+			 */
 
-				/**
-				 * @since 3.0.0
-				 *
-				 */
-				do_action( 'learn-press/before-course-item-content' );
+			//var_dump( $can_view_item );
 
-				if ( $can_view_item ) {
-					/**
-					 * @deprecated
-					 */
-					do_action( 'learn_press_course_item_content' );
-
-					/**
-					 * @since 3.0.0
-					 */
-					do_action( 'learn-press/course-item-content' );
-
-				} else {
-					learn_press_get_template( 'single-course/content-protected.php', array( 'can_view_item' => $can_view_item ) );
-				}
-
+			if ( ( is_bool( $can_view_item ) && $can_view_item ) || ( $can_view_item && $can_view_item != 'is_blocked' ) ) {
 				/**
 				 * @since 3.0.0
 				 */
-				do_action( 'learn-press/after-course-item-content' );
+				do_action( 'learn-press/course-item-content' );
 
-				/**
-				 * @deprecated
-				 */
-				do_action( 'learn_press_after_content_item' );
 			} else {
-				echo $item_content;
+				learn_press_get_template( 'single-course/content-protected.php', array( 'can_view_item' => $can_view_item ) );
 			}
+
+			/**
+			 * @since 3.0.0
+			 */
+			do_action( 'learn-press/after-course-item-content' );
 			?>
 
-        </div>
+		</div>
 
-    </div>
+	</div>
 
 	<?php do_action( 'learn-press/course-item-content-footer' ); ?>
 

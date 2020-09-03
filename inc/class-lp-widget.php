@@ -129,7 +129,6 @@ if ( ! class_exists( 'LP_Widget' ) ) {
 					}
 				}
 			}
-
 			parent::__construct( $id_base, $this->_name_prefix . $name, $widget_options, $control_options );
 		}
 
@@ -196,7 +195,6 @@ if ( ! class_exists( 'LP_Widget' ) ) {
 
 		public function before_widget() {
 			echo $this->args['before_widget'];
-
 			if ( ! empty( $this->instance['title'] ) ) {
 				echo $this->args['before_title'];
 				echo $this->instance['title'];
@@ -226,7 +224,6 @@ if ( ! class_exists( 'LP_Widget' ) ) {
 			$this->instance = $this->sanitize_instance( $instance );
 
 			if ( ! $this->options ) {
-				?><p><?php esc_html_e( 'There is no options for this widget.', 'learnpress' ); ?></p><?php
 				return false;
 			}
 
@@ -439,7 +436,5 @@ LP_Widget::register( array(
 	'popular-courses',
 	'recent-courses',
 	'course-progress',
-	'course-info',
-	'course-sidebar-preview',
-    'course-extra'
+	'course-info'
 ) );

@@ -94,7 +94,6 @@ class LP_Helper {
 	 * @param array|int $ids
 	 */
 	public static function cache_posts( $ids ) {
-
 		global $wpdb;
 
 		settype( $ids, 'array' );
@@ -300,138 +299,69 @@ class LP_Helper {
 		return $page_id;
 	}
 
-	/**
-	 * Wrap function ksort of PHP itself and support recursive.
-	 *
-	 * @param array $array
-	 * @param int   $sort_flags
-	 *
-	 * @return bool
-	 * @since 3.3.0
-	 *
-	 */
-	public static function ksort( &$array, $sort_flags = SORT_REGULAR ) {
-		if ( ! is_array( $array ) ) {
-			return false;
-		}
+	public static function uniq() {
 
-		ksort( $array, $sort_flags );
-
-		foreach ( $array as &$arr ) {
-			self::ksort( $arr, $sort_flags );
-		}
-
-		return true;
 	}
 
 	/**
-	 * Return new array/object with the keys exists in list of props.
-	 *
-	 * @param array|string $props
-	 * @param array|object $obj
-	 *
-	 * @return array|object
-	 */
-	public function pick( $props, $obj ) {
-		$is_array  = is_array( $obj );
-		$new_array = array();
-		settype( $props, 'array' );
-
-		foreach ( $props as $prop ) {
-			if ( $is_array && array_key_exists( $prop, $obj ) ) {
-				$new_array[ $prop ] = $obj[ $prop ];
-			} else if ( ! $is_array && property_exists( $obj, $prop ) ) {
-				$new_array[ $prop ] = $obj->{$prop};
-			}
-		}
-
-		return $is_array ? $new_array : (object) $new_array;
-	}
-
-	public static function list_pluck( $list, $field, $index_key = null ) {
-		$newlist = array();
-
-		if ( ! $index_key ) {
-			/*
-			 * This is simple. Could at some point wrap array_column()
-			 * if we knew we had an array of arrays.
-			 */
-			foreach ( $list as $key => $value ) {
-				if ( is_callable( array( $value, $field ) ) ) {
-					$newlist[ $key ] = call_user_func( array( $value, $field ) );
-				} elseif ( is_object( $value ) ) {
-					$newlist[ $key ] = $value->$field;
-				} else {
-					$newlist[ $key ] = $value[ $field ];
-				}
-			}
-
-			return $newlist;
-		}
-
-		/*
-		 * When index_key is not set for a particular item, push the value
-		 * to the end of the stack. This is how array_column() behaves.
-		 */
-		foreach ( $list as $value ) {
-			if ( is_callable( array( $value, $field ) ) ) {
-				if ( isset( $value->$index_key ) ) {
-					$newlist[ $value->$index_key ] = call_user_func( array( $value, $field ) );
-				} else {
-					$newlist[] = call_user_func( array( $value, $field ) );
-				}
-			} elseif ( is_object( $value ) ) {
-				if ( isset( $value->$index_key ) ) {
-					$newlist[ $value->$index_key ] = $value->$field;
-				} else {
-					$newlist[] = $value->$field;
-				}
-			} else {
-				if ( isset( $value[ $index_key ] ) ) {
-					$newlist[ $value[ $index_key ] ] = $value[ $field ];
-				} else {
-					$newlist[] = $value[ $field ];
-				}
-			}
-		}
-
-		return $newlist;
-	}
-
-	/**
-	 * Wrap function $wpdb->prepare(...) to support arguments as
-	 * array.
-	 *
-	 * @param string      $query
-	 * @param array|mixed $args
+	 * Get the current url
 	 *
 	 * @return string
-	 * @example
-	 *
-	 * $this->prepare($sql, $one, $two, array($three, $four, $file))
-	 * => $wpdb->prepare($sql, $one, $two, $three, $four, $file)
-	 *
+	 * @since  3.2.6.8
+	 * @author tungnx
 	 */
-	public static function prepare( $query, $args ) {
-		global $wpdb;
-		$args = func_get_args();
-		array_shift( $args );
-		$new_args = array();
+	public static function getUrlCurrent() {
+		$schema = is_ssl() ? 'https://' : 'http://';
 
-		foreach ( $args as $arg ) {
-			if ( is_array( $arg ) ) {
-				$new_args = array_merge( $new_args, $arg );
-			} else {
-				$new_args[] = $arg;
+		return $schema . $_SERVER['HTTP_HOST'] . untrailingslashit( $_SERVER['REQUEST_URI'] );
+	}
+
+	/**
+	 * Sanitize string and array
+	 *
+	 * @param array|string $value
+	 * @param string       $type_content
+	 *
+	 * @return array|string
+	 * @since  3.2.7.1
+	 * @author tungnx
+	 */
+	public static function sanitize_params_submitted( $value, $type_content = 'text' ) {
+		$value = wp_unslash( $value );
+
+		if ( is_string( $value ) ) {
+			switch ( $type_content ) {
+				case 'html':
+					$value = wp_kses_post( $value );
+					break;
+				case 'textarea' :
+					$value = sanitize_textarea_field( $value );
+					break;
+				default:
+					$value = sanitize_text_field( wp_unslash( $value ) );
+			}
+		} elseif ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = self::sanitize_params_submitted( $v, $type_content );
 			}
 		}
 
-		return $wpdb->prepare( $query, $new_args );
+		return $value;
 	}
 
-	public static function db_format_array( $arr, $format = '%d' ) {
-		$arr_formatted = array_fill( 0, sizeof( $arr ), $format );
+	/**
+	 * Get wp file system
+	 *
+	 * @return mixed
+	 */
+	public static function get_wp_filesystem () {
+		global $wp_filesystem;
 
-		return join( ',', $arr_formatted );
+		if ( empty( $wp_filesystem ) ) {
+			require_once( ABSPATH . '/wp-admin/includes/file.php' );
+			WP_Filesystem();
+		}
+
+		return $wp_filesystem;
 	}
 }

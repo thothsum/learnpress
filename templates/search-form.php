@@ -13,7 +13,6 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-return;
 ?>
 
 <?php if ( ! ( learn_press_is_courses() || learn_press_is_search() ) ) {

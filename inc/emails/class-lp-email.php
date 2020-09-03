@@ -856,23 +856,26 @@ if ( ! class_exists( 'LP_Email' ) ) {
 			if ( ! $separated ) {
 
 				$return = wp_mail( $to, $subject, $message, $headers, $attachments );
-				ob_start();
-				var_dump( $return );
-				print_r( $to );
-				$log = ob_get_clean();
 
-				error_log( 'Sent mail to ' . $log );
+				if ( LP_DEBUG_STATUS ) {
+					ob_start();
+					var_dump( $return );
+					print_r( $to );
+					$log = ob_get_clean();
+					error_log( 'Sent mail to ' . $log );
+				}
 			} else {
 				if ( is_array( $to ) ) {
 					foreach ( $to as $t ) {
 						$return = wp_mail( $t, $subject, $message, $headers, $attachments );
 
-						ob_start();
-						var_dump( $return );
-						print_r( $to );
-						$log = ob_get_clean();
-
-						error_log( 'Sent mail to ' . $log );
+						if ( LP_DEBUG_STATUS ) {
+							ob_start();
+							var_dump( $return );
+							print_r( $to );
+							$log = ob_get_clean();
+							error_log( 'Sent mail to ' . $log );
+						}
 					}
 				}
 			}
@@ -986,100 +989,101 @@ if ( ! class_exists( 'LP_Email' ) ) {
 		 * @return array
 		 */
 		protected function _default_settings() {
-			/**
-			 * In case the email is not for sending to specific admin (like user who has bought course or author of course, etc..)
-			 * So, we do not need this field.
-			 */
-
-			$enable_recipients = apply_filters( 'learn-press/enable-email-recipients', ! empty( $this->recipients ), $this );
-
-			$default = array_merge(
+			$default = array(
 				array(
-					array(
-						'title'   => __( 'Enable', 'learnpress' ),
-						'type'    => 'yes-no',
-						'default' => 'no',
-						'id'      => $this->get_field_name( 'enable' ),
-						'desc'    => $this->description
+					'type'  => 'heading',
+					'title' => $this->title,
+					'desc'  => $this->description
+				),
+				array(
+					'title'   => __( 'Enable', 'learnpress' ),
+					'type'    => 'yes-no',
+					'default' => 'no',
+					'id'      => $this->get_field_name( 'enable' )
+				),
+				array(
+					'title'      => __( 'Recipient(s)', 'learnpress' ),
+					'type'       => 'text',
+					'default'    => get_option( 'admin_email' ),
+					'id'         => $this->get_field_name( 'recipients' ),
+					'desc'       => sprintf( __( 'Email recipient(s) (separated by comma), default: <code>%s</code>.', 'learnpress' ), get_option( 'admin_email' ) ),
+					'visibility' => array(
+						'state'       => 'show',
+						'conditional' => array(
+							array(
+								'field'   => $this->get_field_name( 'enable' ),
+								'compare' => '=',
+								'value'   => 'yes'
+							)
+						)
 					)
 				),
-				$enable_recipients ? array(
-					array(
-						'title'      => __( 'Recipient(s)', 'learnpress' ),
-						'type'       => 'text',
-						'default'    => get_option( 'admin_email' ),
-						'id'         => $this->get_field_name( 'recipients' ),
-						'desc'       => __( 'Separate other recipients by comma.', 'learnpress' ),
-						'visibility' => array(
-							'state'       => 'show',
-							'conditional' => array(
-								array(
-									'field'   => $this->get_field_name( 'enable' ),
-									'compare' => '=',
-									'value'   => 'yes'
-								)
+				array(
+					'title'      => __( 'Subject', 'learnpress' ),
+					'type'       => 'text',
+					'default'    => $this->default_subject,
+					'id'         => $this->get_field_name( 'subject' ),
+					'desc'       => sprintf( __( 'Email subject, default: <code>%s</code>.', 'learnpress' ), $this->default_subject ),
+					'visibility' => array(
+						'state'       => 'show',
+						'conditional' => array(
+							array(
+								'field'   => $this->get_field_name( 'enable' ),
+								'compare' => '=',
+								'value'   => 'yes'
 							)
 						)
 					)
-				) : array(),
+				),
 				array(
-					array(
-						'title'      => __( 'Subject', 'learnpress' ),
-						'type'       => 'text',
-						'default'    => $this->default_subject,
-						'id'         => $this->get_field_name( 'subject' ),
-						'visibility' => array(
-							'state'       => 'show',
-							'conditional' => array(
-								array(
-									'field'   => $this->get_field_name( 'enable' ),
-									'compare' => '=',
-									'value'   => 'yes'
-								)
+					'title'      => __( 'Heading', 'learnpress' ),
+					'type'       => 'text',
+					'default'    => $this->default_heading,
+					'id'         => $this->get_field_name( 'heading' ),
+					'desc'       => sprintf( __( 'Email heading, default: <code>%s</code>.', 'learnpress' ), $this->default_heading ),
+					'visibility' => array(
+						'state'       => 'show',
+						'conditional' => array(
+							array(
+								'field'   => $this->get_field_name( 'enable' ),
+								'compare' => '=',
+								'value'   => 'yes'
 							)
 						)
-					),
-					array(
-						'title'      => __( 'Heading', 'learnpress' ),
-						'type'       => 'text',
-						'default'    => $this->default_heading,
-						'id'         => $this->get_field_name( 'heading' ),
-						'visibility' => array(
-							'state'       => 'show',
-							'conditional' => array(
-								array(
-									'field'   => $this->get_field_name( 'enable' ),
-									'compare' => '=',
-									'value'   => 'yes'
-								)
-							)
-						)
-					),
-					array(
-						'title'                => __( 'Content Type', 'learnpress' ),
-						'type'                 => 'email-content',
-						'default'              => '',
-						'id'                   => $this->get_field_name( 'email_content' ),
-						'template_base'        => $this->template_base,
-						'template_path'        => $this->template_path,//default learnpress
-						'template_html'        => $this->template_html,
-						'template_plain'       => $this->template_plain,
-						'template_html_local'  => $this->get_theme_template_file( 'html', $this->template_path ),
-						'template_plain_local' => $this->get_theme_template_file( 'plain', $this->template_path ),
-						'support_variables'    => $this->get_variables_support(),
-						'visibility'           => array(
-							'state'       => 'show',
-							'conditional' => array(
-								array(
-									'field'   => $this->get_field_name( 'enable' ),
-									'compare' => '=',
-									'value'   => 'yes'
-								)
+					)
+				),
+				array(
+					'title'                => __( 'Email content', 'learnpress' ),
+					'type'                 => 'email-content',
+					'default'              => '',
+					'id'                   => $this->get_field_name( 'email_content' ),
+					'template_base'        => $this->template_base,
+					'template_path'        => $this->template_path,//default learnpress
+					'template_html'        => $this->template_html,
+					'template_plain'       => $this->template_plain,
+					'template_html_local'  => $this->get_theme_template_file( 'html', $this->template_path ),
+					'template_plain_local' => $this->get_theme_template_file( 'plain', $this->template_path ),
+					'support_variables'    => $this->get_variables_support(),
+					'visibility'           => array(
+						'state'       => 'show',
+						'conditional' => array(
+							array(
+								'field'   => $this->get_field_name( 'enable' ),
+								'compare' => '=',
+								'value'   => 'yes'
 							)
 						)
 					)
 				)
 			);
+
+			/**
+			 * In case the email is not for sending to specific admin (like user who has bought course or author of course, etc..)
+			 * So, we do not need this field.
+			 */
+			if ( empty( $this->recipients ) ) {
+				unset( $default[2] );
+			}
 
 			return $default;
 		}
@@ -1087,9 +1091,9 @@ if ( ! class_exists( 'LP_Email' ) ) {
 		/**
 		 * Get settings in admin.
 		 *
+		 * @return bool|mixed
 		 * @since 3.0.0
 		 *
-		 * @return bool|mixed
 		 */
 		public function get_settings() {
 			return apply_filters(
@@ -1101,11 +1105,11 @@ if ( ! class_exists( 'LP_Email' ) ) {
 		/**
 		 * Get instructors to send mail.
 		 *
-		 * @since 3.0.0
-		 *
 		 * @param null $order_id
 		 *
 		 * @return array
+		 * @since 3.0.0
+		 *
 		 */
 		public function get_order_instructors( $order_id ) {
 			if ( ! $order_id ) {

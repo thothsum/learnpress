@@ -58,31 +58,26 @@ class LP_Request {
 		add_action( 'learn-press/enroll-course-handler/enroll', array( __CLASS__, 'do_enroll' ), 10, 4 );
 
 		add_filter( 'learn-press/add-to-cart-redirect', array( __CLASS__, 'check_checkout_page' ) );
-		add_filter( 'learn-press/checkout-no-payment-result', array( __CLASS__, 'maybe_redirect_checkout' ), 10, 3 );
+		add_filter( 'learn-press/checkout-no-payment-result', array( __CLASS__, 'maybe_redirect_checkout' ), 10, 2 );
 		add_filter( 'learn-press/purchase-course-id', array( __CLASS__, 'maybe_enroll_course' ), 10, 2 );
 		add_action( 'learn-press/add-to-cart-order-total-empty', array( __CLASS__, 'maybe_redirect_enroll' ), 10, 3 );
 
 		add_action( 'init', array( 'LP_Forms_Handler', 'init' ), 10 );
 	}
 
-	public static function maybe_redirect_checkout( $result, $order_id, $is_guest_checkout ) {
-		if ( $is_guest_checkout ) {
-			return $result;
-		}
+	public static function maybe_redirect_checkout( $result, $order_id ) {
 		$course_id = get_transient( 'checkout_enroll_course_id' );
-
 		if ( ! $course_id ) {
 			if ( isset( $_REQUEST['enroll-course'] ) && $_REQUEST['enroll-course'] ) {
-				$course_id = $_REQUEST['enroll-course'];
+				$course_id = absint( $_REQUEST['enroll-course'] );
 			}
 		}
 		if ( $course_id ) {
-			delete_transient( 'checkout_enroll_course_id' );
-
 			$course       = learn_press_get_course( $course_id );
 			$course_items = $course->get_items();
 			$first_item   = ( $course_items[0] ) ? $course_items[0] : 0;
 			self::do_enroll( $course_id, $order_id, 'enroll-course', $first_item );
+			delete_transient( 'checkout_enroll_course_id' );
 			unset( $result['redirect'] );
 		}
 
@@ -119,9 +114,6 @@ class LP_Request {
 	 */
 	public static function purchase_course( $course_id, $action ) {
 
-		/**
-		 * @see LP_Request_Handler::maybe_enroll_course()
-		 */
 		$course_id = apply_filters( 'learn-press/purchase-course-id', $course_id, $action );
 		$course    = learn_press_get_course( $course_id );//echo'<pre>dsad';print_r($course->get_items());die;
 
@@ -183,7 +175,7 @@ class LP_Request {
 							/**
 							 * Order is completed and course is finished/enrolled
 							 */
-							if ( $user->has_course_status( $course->get_id(), learn_press_course_enrolled_slugs() ) ) { // array( 'passed', 'failed', 'finished', 'enrolled' ) ) ) {
+							if ( $user->has_course_status( $course->get_id(), array( 'finished', 'enrolled' ) ) ) {
 								throw new Exception( __( 'You have finished course.', 'learnpress' ) );
 							} else {
 								// TODO: enroll
@@ -261,7 +253,6 @@ class LP_Request {
 	 * @param string $action
 	 *
 	 * @return mixed
-	 * @throws Exception
 	 */
 	public static function do_checkout( $course_id, $cart_id, $action ) {
 
@@ -291,29 +282,29 @@ class LP_Request {
 		/**
 		 * Redirect to checkout page if cart total is greater than 0
 		 */
-		//if ( 0 < $cart->total ) {
-		if ( $redirect = apply_filters( 'learn-press/add-to-cart-redirect', learn_press_get_page_link( 'checkout' ), $course_id, $cart_id, $action ) ) {
-			wp_redirect( $redirect );
-			exit();
-		}
+		if ( 0 < $cart->total ) {
+			if ( $redirect = apply_filters( 'learn-press/add-to-cart-redirect', learn_press_get_page_link( 'checkout' ), $course_id, $cart_id, $action ) ) {
+				wp_redirect( $redirect );
+				exit();
+			}
 
-		learn_press_add_message( __( 'Checkout page hasn\'t been setup' ) );
-//		} else {
-//			/// Need?
-//			if ( 'enroll-course' == $action ) {
-//				if ( ! $user->can_enroll_course( $course_id ) ) {
-//					learn_press_add_message(
-//						sprintf( __( 'You can not enroll course &quot;%s&quot', 'learnpress' ), get_the_title( $course_id ) ),
-//						'error'
-//					);
-//
-//					return false;
-//				}
-//			}
-//			do_action( 'learn-press/add-to-cart-order-total-empty', $course_id, $cart_id, $action );
-//			$checkout = LP()->checkout();
-//			$checkout->process_checkout();
-//		}
+			learn_press_add_message( __( 'Checkout page hasn\'t been setup' ) );
+		} else {
+			/// Need?
+			if ( 'enroll-course' == $action ) {
+				if ( ! $user->can_enroll_course( $course_id ) ) {
+					learn_press_add_message(
+						sprintf( __( 'You can not enroll course &quot;%s&quot', 'learnpress' ), get_the_title( $course_id ) ),
+						'error'
+					);
+
+					return false;
+				}
+			}
+			do_action( 'learn-press/add-to-cart-order-total-empty', $course_id, $cart_id, $action );
+			$checkout = LP()->checkout();
+			$checkout->process_checkout();
+		}
 
 		return true;
 	}
@@ -325,9 +316,9 @@ class LP_Request {
 	 */
 	public static function do_enroll( $course_id, $order_id, $action, $item_id = 0 ) {
 
-//		if ( ! LP_Nonce_Helper::verify_course( LP_Request::get_string( 'enroll-course-nonce' ), 'enroll' ) ) {
-//			wp_die( __( 'Invalid request!', 'learnpress' ) );
-//		}
+		//		if ( ! LP_Nonce_Helper::verify_course( LP_Request::get_string( 'enroll-course-nonce' ), 'enroll' ) ) {
+		//			wp_die( __( 'Invalid request!', 'learnpress' ) );
+		//		}
 
 		if ( ! $course = learn_press_get_course( $course_id ) ) {
 			wp_die( __( 'Invalid request!', 'learnpress' ) );
@@ -342,8 +333,7 @@ class LP_Request {
 				'error'
 			);
 		} else {
-
-			$thing = $user->enroll( $course_id, $order_id, null, true );
+			$thing = $user->enroll( $course_id, $order_id );
 
 			if ( is_wp_error( $thing ) ) {
 				learn_press_add_message(
@@ -356,17 +346,12 @@ class LP_Request {
 				}
 			} elseif ( $thing ) {
 				learn_press_add_message(
-					sprintf( __( 'Congrats! You have enrolled &quot;%s&quot', 'learnpress' ), get_the_title( $course_id ) ),
+					sprintf( '%s &quot;%s&quot', __( 'Congrats! You have enrolled ', 'learnpress' ), get_the_title( $course_id ) ),
 					'success'
 				);
 				if ( $item_id ) {
 					$redirect = learn_press_get_course_item_permalink( $course_id, $item_id );
 				}
-			} else {
-				learn_press_add_message(
-					sprintf( __( 'Something went wrong when enrolling course &quot;%s&quot', 'learnpress' ), get_the_title( $course_id ) ),
-					'error'
-				);
 			}
 
 		}
@@ -580,12 +565,6 @@ class LP_Request {
 			case 'get':
 				$env = $_GET;
 				break;
-			case 'put':
-			case 'delete':
-				$data = file_get_contents( 'php://input' );
-				$env  = array();
-				parse_str( $data, $env );
-				break;
 			case 'wp':
 				global $wp;
 				$env = $wp->query_vars;
@@ -621,9 +600,11 @@ class LP_Request {
 				$return = (string) $return;
 				break;
 			case 'array':
-				$return = $return ? (array) $return : array();
+				$return = (array) $return;
 				break;
 		}
+
+		LP_Helper::sanitize_params_submitted( $return );
 
 		return $return;
 	}
@@ -840,32 +821,11 @@ class LP_Request {
 
 		return $redirect;
 	}
-
-	public static function get_cookie( $name, $def = false, $global = false ) {
-		if ( $global ) {
-			return isset( $_COOKIE[ $name ] ) ? $_COOKIE[ $name ] : $def;
-		}
-
-		$cookie = isset( $_COOKIE['LP'] ) ? (array) json_decode( stripslashes( $_COOKIE['LP'] ) ) : array();
-
-		return isset( $cookie[ $name ] ) ? $cookie[ $name ] : $def;
-	}
-
-	public static function set_cookie( $name, $value, $expires = '', $domain = '', $path = '', $secure = false ) {
-		if ( func_num_args() > 2 ) {
-			learn_press_setcookie( $name, $value, $expires, $secure );
-		} else {
-			$cookie = isset( $_COOKIE['LP'] ) ? maybe_unserialize( $_COOKIE['LP'] ) : array();
-
-			$cookie[ $name ] = $value;
-			learn_press_setcookie( 'LP', $value );
-		}
-	}
 }
 
 LP_Request::init();
 
-// Backward compatibility for 2.x.x
+// Backward compatibility for 3.2.6.5
 class LP_Request_Handler extends LP_Request {
 
 }

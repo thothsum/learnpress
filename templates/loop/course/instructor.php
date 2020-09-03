@@ -4,9 +4,9 @@
  *
  * This template can be overridden by copying it to yourtheme/learnpress/loop/course/instructor.php.
  *
- * @author   ThimPress
+ * @author  ThimPress
  * @package  Learnpress/Templates
- * @version  3.3.0
+ * @version  3.0.0
  */
 
 /**
@@ -14,9 +14,7 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! $course = learn_press_get_course() ) {
-	return;
-}
+$course = LP_Global::course();
 ?>
 
 <span class="course-instructor">

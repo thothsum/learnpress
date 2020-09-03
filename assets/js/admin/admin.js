@@ -95,15 +95,17 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _partial_update__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./partial/update */ "./assets/src/js/admin/partial/update.js");
-/* harmony import */ var _partial_update__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_partial_update__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _pages_update__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pages/update */ "./assets/src/js/admin/pages/update.js");
+/* harmony import */ var _pages_update__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_pages_update__WEBPACK_IMPORTED_MODULE_0__);
 /**
  * JS code may run in all pages in admin.
  *
  * @version 3.2.6
  */
+//import Utils from './utils';
+//import Test from './test';
 
-var LP = LP || {};
+;
 
 (function () {
   var $ = jQuery;
@@ -200,133 +202,19 @@ var LP = LP || {};
     return false;
   };
 
-  var ajaxCreateQuestionType = function ajaxCreateQuestionType(e) {
-    var type = $(e.target).data('type') || $(this).find('li:first').data('type');
-    var ajaxUrl = window['lpAdminSettings'].ajax;
-    $.ajax({
-      url: ajaxUrl,
-      data: {
-        'lp-ajax': 'create-question-type',
-        type: type
-      }
-    });
-  };
-
-  LP.createButtonAddNewQuestion = function () {
-    if (!$(document.body).hasClass('post-type-lp_question')) {
-      return;
-    }
-
-    var $addNew = $(document).find('.page-title-action');
-
-    if (!$addNew.length) {
-      return;
-    }
-
-    var types = window['lpAdminSettings'].questionTypes;
-    var $newButton = $('<div id="button-new-question" class="page-title-action"><div></div></div>');
-    var url = $addNew.attr('href');
-
-    for (var type in types) {
-      $newButton.find('div').append("<a href=\"".concat(url.addQueryVar('question-type', type), "\">").concat(types[type], "</a>"));
-    }
-
-    $newButton.find('span').html($addNew.text()); //$addNew.append($newButton);
-
-    $newButton.insertBefore($addNew);
-    $newButton.prepend($addNew.removeClass('page-title-action'));
-  };
-  /**
-   * Auto focus into the last item in Text list after user press 'Add more'
-   * button.
-   *
-   * If there is an empty item then focus it and remove the new item added.
-   *
-   * @param event
-   */
-
-
-  var focusToInputWhenCloningTextList = function focusToInputWhenCloningTextList(event) {
-    setTimeout(function () {
-      var $container = $(event.target).closest('.rwmb-text-list-wrapper');
-      var $siblings = $container.find('.rwmb-text-list-clone');
-      var $lastRow = $siblings.last();
-      $siblings.each(function () {
-        var $row = $(this);
-
-        if (!$row.find('.rwmb-text-list').val().length) {
-          $row.find('.rwmb-text-list').focus();
-
-          if (!$row.is($lastRow)) {
-            $lastRow.remove();
-          }
-
-          return false;
-        }
-      });
-    }, 20);
-  };
-  /**
-   * Add new option to Metabox Text list when user press Enter in
-   * an existing item.
-   *
-   * @param event
-   */
-
-
-  var addOptionToTextList = function addOptionToTextList(event) {
-    if (event.keyCode !== 13) {
-      return;
-    }
-
-    event.preventDefault();
-    var $item = $(event.target).closest('.rwmb-text-list-clone');
-    var $container = $(event.target).closest('.rwmb-text-list-wrapper');
-    var $siblings = $container.find('.rwmb-text-list-clone');
-
-    if ($siblings.last().is($item)) {
-      $container.find('.add-clone').trigger('click');
-    } else {
-      $(event.target).closest('.rwmb-text-list-clone').next().find('.rwmb-text-list').focus();
-    }
-  };
-
-  var autoCheckHideContentOption = function autoCheckHideContentOption(event) {
-    var isChecked = $(event.target).is(':checked');
-
-    if (!isChecked) {
-      return;
-    }
-
-    $('#_lp_block_content').prop('checked', true);
-  };
-
   var onReady = function onReady() {
     $('.learn-press-dropdown-pages').LP('DropdownPages');
     $('.learn-press-advertisement-slider').LP('Advertisement', 'a', 's').appendTo($('#wpbody-content'));
     $('.learn-press-toggle-item-preview').on('change', updateItemPreview);
     $('.learn-press-tip').LP('QuickTip'); //$('.learn-press-tabs').LP('AdminTab');
 
-    LP.createButtonAddNewQuestion();
     $(document).on('click', '#learn-press-create-pages', createPages).on('click', '.lp-upgrade-notice .close-notice', hideUpgradeMessage).on('click', '.plugin-action-buttons a', pluginActions).on('click', '[data-remove-confirm]', preventDefault).on('mousedown', '.lp-sortable-handle', function (e) {
       $('html, body').addClass('lp-item-moving');
       $(e.target).closest('.lp-sortable-handle').css('cursor', 'inherit');
     }).on('mouseup', function (e) {
       $('html, body').removeClass('lp-item-moving');
       $('.lp-sortable-handle').css('cursor', '');
-    }).on('click', '.rwmb-text-list-wrapper .add-clone', focusToInputWhenCloningTextList).on('keypress', '.rwmb-text-list-wrapper .rwmb-text-list', addOptionToTextList).on('change', '#_lp_retake_count', autoCheckHideContentOption);
-    setTimeout(function () {
-      $('.rwmb-text-list-wrapper .rwmb-input').removeClass('ui-sortable').sortable({
-        axis: 'y',
-        handle: 'label'
-      });
-    }, 100);
-    $(document).on('LP.adminTabs.selectTab', function (event, $tab, url) {
-      if ($(document).find('input[name="post_type"]').val() === 'lp_course') {
-        $('input[name="_wp_http_referer"], input[name="referredby"], input[name="_wp_original_http_referer"]').val(url);
-      }
     });
-    $('input[name^="learn_press_enable_gutenberg"][value="-1"]').prop('checked', 'checked').closest('li').hide();
   };
 
   $(document).ready(onReady);
@@ -334,10 +222,10 @@ var LP = LP || {};
 
 /***/ }),
 
-/***/ "./assets/src/js/admin/partial/update.js":
-/*!***********************************************!*\
-  !*** ./assets/src/js/admin/partial/update.js ***!
-  \***********************************************/
+/***/ "./assets/src/js/admin/pages/update.js":
+/*!*********************************************!*\
+  !*** ./assets/src/js/admin/pages/update.js ***!
+  \*********************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -514,56 +402,6 @@ var LP = LP || {};
     if ($('#learn-press-updater').length) {
       var Updater = new Vue(UpdaterSettings);
     }
-
-    var i18n = window.lpUpdateSettings || {};
-    $(document).on('click', '#button-update', function (e) {
-      e.preventDefault();
-      var $form = $('#learn-press-update-form'),
-          loadUrl = $(this).attr('href'),
-          $main = $('#main').addClass('loading');
-      $('.learn-press-message').remove();
-      $.post({
-        url: loadUrl,
-        data: $form.serializeJSON(),
-        success: function success(res) {
-          $(res).insertBefore($form);
-          $main.removeClass('loading');
-        }
-      });
-    }).on('click', '.lp-button-upgrade', function (e) {
-      e.preventDefault();
-
-      if (!confirm(i18n.i18n_confirm)) {
-        return false;
-      }
-
-      var $btn = $(this),
-          url = $btn.addClass('disabled').attr('href'),
-          context = $btn.data('context');
-      $.post({
-        url: url,
-        data: {
-          context: context
-        },
-        success: function success(res) {
-          var $msg = $(res);
-
-          if (context == 'message') {
-            $btn.closest('.notice').replaceWith($msg);
-          } else {
-            $msg.insertBefore($btn);
-          }
-        }
-      });
-    }).on('click', '#skip-notice-install', function () {
-      $.post({
-        url: '',
-        data: {
-          'lp-ajax': 'skip-notice-install'
-        }
-      });
-      $('#notice-install').fadeOut();
-    });
   }
 
   $(document).ready(init);

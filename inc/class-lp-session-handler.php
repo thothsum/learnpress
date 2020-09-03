@@ -99,34 +99,15 @@ class LP_Session_Handler implements ArrayAccess {
 		}
 	}
 
-	protected $schedule_id = 'learn-press/clear-expired-session';
-
 	/**
 	 * LP_Session_Handler constructor.
 	 *
 	 * @version 3.2.2
 	 */
 	public function __construct() {
-		$this->init();
-		$this->init_hooks();
-	}
-
-	protected function init_hooks() {
-		add_action( 'learn_press_set_cart_cookies', array( $this, 'set_customer_session_cookie' ), 10 );
-		add_action( 'learn_press_cleanup_sessions', array( $this, 'cleanup_sessions' ), 10 );
-		add_action( 'shutdown', array( $this, 'save_data' ), 20 );
-		add_action( 'wp_logout', array( $this, 'destroy_session' ) );
-		add_action( 'wp', array( $this, 'schedule_event' ) );
-		add_action( $this->schedule_id, array( $this, 'cleanup_sessions' ), 10 );
-
-		if ( ! is_user_logged_in() ) {
-			//add_filter( 'nonce_user_logged_out', array( $this, 'nonce_user_logged_out' ) );
-		}
-	}
-
-	protected function init() {
 		global $wpdb;
-		$this->_cookie = '_learn_press_session_' . COOKIEHASH;
+
+		$this->_cookie = 'wp_learn_press_session_' . COOKIEHASH;
 		$this->_table  = $wpdb->prefix . 'learnpress_sessions';
 
 		// Check cookie ...
@@ -154,11 +135,14 @@ class LP_Session_Handler implements ArrayAccess {
 
 		}
 		$this->_data = $this->get_session_data();
-	}
 
-	public function schedule_event() {
-		if ( ! wp_next_scheduled( $this->schedule_id ) ) {
-			wp_schedule_event( time(), 'hourly', $this->schedule_id );
+		add_action( 'learn_press_set_cart_cookies', array( $this, 'set_customer_session_cookie' ), 10 );
+		add_action( 'learn_press_cleanup_sessions', array( $this, 'cleanup_sessions' ), 10 );
+		add_action( 'shutdown', array( $this, 'save_data' ), 20 );
+		add_action( 'wp_logout', array( $this, 'destroy_session' ) );
+
+		if ( ! is_user_logged_in() ) {
+			//add_filter( 'nonce_user_logged_out', array( $this, 'nonce_user_logged_out' ) );
 		}
 	}
 
@@ -243,7 +227,7 @@ class LP_Session_Handler implements ArrayAccess {
 	/**
 	 * Increment group cache prefix (invalidates cache).
 	 *
-	 * @param string $group
+	 * @param  string $group
 	 */
 	public function incr_cache_prefix( $group ) {
 		wp_cache_incr( 'learn_press_' . $group . '_cache_prefix', 1, $group );
@@ -251,9 +235,10 @@ class LP_Session_Handler implements ArrayAccess {
 
 
 	public function save_data() {
-//var_dump($this->_changed , $this->has_session() , $this->has_cookie() );
+
 		if ( $this->_changed && $this->has_session() && $this->has_cookie() ) {
 			global $wpdb;
+
 			$wpdb->replace(
 				$this->_table,
 				array(

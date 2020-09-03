@@ -37,48 +37,17 @@ class LP_Settings_General extends LP_Abstract_Settings_Page {
 			'learn-press/general-settings-fields',
 			array(
 				array(
-					'title' => __( 'Important Pages', 'learnpress' ),
+					'title' => __( 'General', 'learnpress' ),
 					'type'  => 'heading',
+					'desc'  => __( 'General settings.', 'learnpress' )
 				),
 				array(
-					'title'   => __( 'All Courses', 'learnpress' ),
-					'id'      => 'courses_page_id',
+					'title'   => __( 'Logout redirect', 'learnpress' ),
+					'id'      => 'logout_redirect_page_id',
 					'default' => '',
-					'type'    => 'pages-dropdown'
+					'type'    => 'pages-dropdown',
+					'desc'    => __( 'The page where user will be redirected to after logging out.', 'learnpress' )
 				),
-				array(
-					'title'   => __( 'Profile', 'learnpress' ),
-					'id'      => 'profile_page_id',
-					'default' => '',
-					'type'    => 'pages-dropdown'
-				),
-				array(
-					'title'   => __( 'Checkout', 'learnpress' ),
-					'id'      => 'checkout_page_id',
-					'default' => '',
-					'type'    => 'pages-dropdown'
-				),
-				array(
-					'title'   => __( 'Become Instructors', 'learnpress' ),
-					'id'      => 'become_a_teacher_page_id',
-					'default' => '',
-					'type'    => 'pages-dropdown'
-				),
-
-				array(
-					'title'   => __( 'Terms & Conditions', 'learnpress' ),
-					'id'      => 'term_conditions_page_id',
-					'default' => '',
-					'type'    => 'pages-dropdown'
-				),
-// 3.x.x
-//				array(
-//					'title'   => __( 'Logout redirect', 'learnpress' ),
-//					'id'      => 'logout_redirect_page_id',
-//					'default' => '',
-//					'type'    => 'pages-dropdown',
-//					'desc'    => __( 'The page where user will be redirected to after logging out.', 'learnpress' )
-//				),
 				array(
 					'title' => __( 'Currency', 'learnpress' ),
 					'type'  => 'heading',
@@ -93,7 +62,7 @@ class LP_Settings_General extends LP_Abstract_Settings_Page {
 					'options' => $currencies
 				),
 				array(
-					'title'   => __( 'Currency Position', 'learnpress' ),
+					'title'   => __( 'Currency position', 'learnpress' ),
 					'id'      => 'currency_pos',
 					'default' => 'left',
 					'type'    => 'select',
@@ -112,30 +81,11 @@ class LP_Settings_General extends LP_Abstract_Settings_Page {
 					'type'    => 'text'
 				),
 				array(
-					'title'   => __( 'Number Of Decimals', 'learnpress' ),
+					'title'   => __( 'Number of Decimals', 'learnpress' ),
 					'id'      => 'number_of_decimals',
 					'default' => '2',
 					'type'    => 'number'
-				),
-				array(
-					'title' => __( 'Other', 'learnpress' ),
-					'type'  => 'heading',
-				),
-				array(
-					'title'   => __( 'Publish Profile', 'learnpress' ),
-					'id'      => 'publish_profile',
-					'default' => 'no',
-					'type'    => 'yes-no',
-					'desc'    => __( 'User course data will be public.', 'learnpress' )
-				),
-				array(
-					'title'   => __( 'Instructor Registration', 'learnpress' ),
-					'desc'    => __( 'Enable the option in all registration forms.', 'learnpress' ),
-					'id' => 'instructor_registration',
-					'default' => 'no',
-					'type'    => 'yes-no'
-				)
-					/*,
+				)/*,
 				array(
 					'title' => __( 'Logout', 'learnpress' ),
 					'type'  => 'title'

@@ -160,10 +160,8 @@ __webpack_require__.r(__webpack_exports__);
         var $html = $(res);
         replaceMainContent($html.contents().filter('#main'));
         LP.setUrl(loadUrl);
-        $setupForm = $('#learn-press-setup-form');
         $('.learn-press-dropdown-pages').LP('DropdownPages');
         $('.learn-press-tip').LP('QuickTip');
-        $('.learn-press-select2').select2();
         $main.removeClass('loading');
       }
     });
@@ -246,7 +244,6 @@ __webpack_require__.r(__webpack_exports__);
   function onReady() {
     $main = $('#main');
     $setupForm = $('#learn-press-setup-form');
-    $('.learn-press-select2').select2();
     $(document).on('click', '.buttons .button', navPages).on('change', '#currency', updateCurrency).on('change', 'input, select', updatePrice).on('click', '#create-pages', createPages).on('click', '#install-sample-course', installSampleCourse);
   }
 

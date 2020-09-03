@@ -95,6 +95,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+var $ = window.jQuery;
 var CourseCurriculum = {
   toggleAllSections: function toggleAllSections(context) {
     var hidden = context.getters['isHiddenAllSections'];

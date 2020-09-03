@@ -58,20 +58,20 @@ if ( ! class_exists( 'LP_Shortcode_Login_Form' ) ) {
 		public static function get_login_fields() {
 			$fields = array(
 				'username' => array(
-					'title'       => __( 'Email or username', 'learnpress' ),
+					'title'       => __( 'Username or email', 'learnpress' ),
 					'type'        => 'text',
-					'placeholder' => __( 'Email or username', 'learnpress' ),
+					'placeholder' => __( 'Username or email', 'learnpress' ),
 					'saved'       => LP_Request::get_string( 'username' ),
-					'id'          => 'user_login',
-					//'required'    => true
+					'id'          => 'username',
+					'required'    => true
 				),
 				'password' => array(
 					'title'       => __( 'Password', 'learnpress' ),
 					'type'        => 'password',
 					'placeholder' => __( 'Password', 'learnpress' ),
 					'saved'       => LP_Request::get_string( 'password' ),
-					'id'          => 'user_password',
-					//'required'    => true
+					'id'          => 'password',
+					'required'    => true
 				)
 			);
 			$fields = apply_filters( 'learn-press/login-fields', $fields );

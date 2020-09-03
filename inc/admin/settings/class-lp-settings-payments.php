@@ -70,8 +70,6 @@ class LP_Settings_Payments extends LP_Abstract_Settings_Page {
 	 * @return mixed
 	 */
 	public function get_settings_general() {
-		$checkout_url = learn_press_get_checkout_url();
-
 		return apply_filters(
 			'learn-press/payment-settings',
 			array_merge(
@@ -79,13 +77,46 @@ class LP_Settings_Payments extends LP_Abstract_Settings_Page {
 				apply_filters(
 					'learn-press/payment-settings/general',
 					array(
-
 						array(
-							'title'   => __( 'Guest Checkout', 'learnpress' ),
+							'title'   => __( 'Checkout page', 'learnpress' ),
+							'id'      => 'checkout_page_id',
+							'default' => '',
+							'type'    => 'pages-dropdown'
+						),
+						array(
+							'title'   => __( 'Auto enroll', 'learnpress' ),
+							'id'      => 'auto_enroll',
+							'default' => 'yes',
+							'type'    => 'yes-no',
+							'desc'    => __( 'Auto enroll a user after they buy a course.', 'learnpress' )
+						),
+						array(
+							'title'   => __( 'Enable guest checkout', 'learnpress' ),
 							'id'      => 'guest_checkout',
 							'default' => 'no',
 							'type'    => 'yes-no',
+							'desc'    => __( 'Enable user buy course as a Guest.', 'learnpress' )
 						),
+						array(
+							'title'   => __( 'Enable login in checkout', 'learnpress' ),
+							'id'      => 'enable_login_checkout',
+							'default' => 'yes',
+							'type'    => 'yes-no',
+							'desc'    => __( 'Enable login form in checkout page.', 'learnpress' )
+						),
+						array(
+							'title'   => __( 'Enable registration in checkout', 'learnpress' ),
+							'id'      => 'enable_registration_checkout',
+							'default' => 'yes',
+							'type'    => 'yes-no',
+							'desc'    => __( 'Enable registration form in checkout page.', 'learnpress' )
+						),
+						array(
+						'title'   => __( 'Terms & conditions page', 'learnpress' ),
+						'id'      => 'term_conditions_page_id',
+						'default' => '',
+						'type'    => 'pages-dropdown'
+						)
 					)
 				),
 				// Endpoint
@@ -93,19 +124,28 @@ class LP_Settings_Payments extends LP_Abstract_Settings_Page {
 					'learn-press/payment-settings/checkout-endpoints',
 					array(
 						array(
-							'title'       => __( 'Custom Order Slug', 'learnpress' ),
+							'title' => __( 'Endpoints', 'learnpress' ),
+							'type'  => 'heading',
+						),
+						array(
+							'title'       => __( 'Order received', 'learnpress' ),
 							'id'          => 'checkout_endpoints[lp_order_received]',
 							'default'     => 'lp-order-received',
 							'placeholder' => __( 'lp-order-received', 'learnpress' ),
 							'type'        => 'text',
-							'desc'        => sprintf( 'e.g. %s', "{$checkout_url}<code>" . LP()->settings()->get( 'checkout_endpoints.lp_order_received', 'lp-order-received' ) . "</code>" )
+							'desc'        => sprintf( __( 'Unique slug in checkout page to displays order details. Example: http://example.com/lp-checkout/%s/', 'learnpress' ), LP()->settings()->get( 'checkout_endpoints.lp_order_received', 'lp-order-received' ) )
 						)
 					)
 				),
 				// Payment order
 				array(
 					array(
-						'title'   => __( 'Payments', 'learnpress' ),
+						'title' => __( 'Payments', 'learnpress' ),
+						'type'  => 'heading',
+						'desc'  => __( 'All available payments are listed here. Drag and drop the payments to re-order.', 'learnpress' )
+					),
+					array(
+						'title'   => __( 'Payment order', 'learnpress' ),
 						'id'      => 'payment_order',
 						'default' => '',
 						'type'    => 'payment-order'

@@ -15,8 +15,6 @@ $payments = $wizard->get_payments();
 ?>
 <h2><?php _e( 'Payment', 'learnpress' ); ?></h2>
 
-<p class="large-text"><?php _e( 'LearnPress can accept both online and offline payments. <a href="#">Additional payment addons</a> can be installed later.', 'learnpress' ); ?></p>
-
 <ul class="browse-payments">
 	<?php foreach ( $payments as $slug => $payment ) { ?>
         <li class="payment payment-<?php echo $slug; ?>">
