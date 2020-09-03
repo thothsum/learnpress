@@ -221,7 +221,7 @@ if ( ! class_exists( 'LP_AJAX' ) ) {
 
 			if ( $finished ) {
 				learn_press_update_user_item_meta( $finished, 'finishing_type', 'click' );
-				learn_press_add_message( sprintf( __( 'You have finished this course "%s"', 'learnpress' ), $course->get_title() ) );
+				learn_press_add_message( sprintf( '%s "%s"', __( 'You have finished this course', 'learnpress' ), $course->get_title() ) );
 				$response['result'] = 'success';
 			} else {
 				learn_press_add_message( __( 'Error! You cannot finish this course. Please contact your administrator for more information.', 'learnpress' ) );
@@ -267,7 +267,7 @@ if ( ! class_exists( 'LP_AJAX' ) ) {
 						$response['redirect'] = $course->get_item_link( $next );
 					}
 
-					learn_press_add_message( sprintf( __( 'Congrats! You have completed "%s".', 'learnpress' ), $item->get_title() ) );
+					learn_press_add_message( sprintf( '%s "%s".', __( 'Congrats! You have completed', 'learnpress' ), $item->get_title() ) );
 				} else {
 					learn_press_add_message( $result->get_error_message(), 'error' );
 				}
@@ -295,11 +295,11 @@ if ( ! class_exists( 'LP_AJAX' ) ) {
 		 * Retake course action
 		 */
 		public static function retake_course() {
-			$security        = LP_Request::get_string( 'retake-course-nonce' );
-			$course_id       = LP_Request::get_int( 'retake-course' );
-			$user            = learn_press_get_current_user();
-			$course          = learn_press_get_course( $course_id );
-			$response        = array(
+			$security  = LP_Request::get_string( 'retake-course-nonce' );
+			$course_id = LP_Request::get_int( 'retake-course' );
+			$user      = learn_press_get_current_user();
+			$course    = learn_press_get_course( $course_id );
+			$response  = array(
 				'result' => 'error'
 			);
 
@@ -312,7 +312,7 @@ if ( ! class_exists( 'LP_AJAX' ) ) {
 					if ( ! $result = $user->retake_course( $course_id ) ) {
 						learn_press_add_message( __( 'Error!', 'learnpress' ), 'error' );
 					} else {
-						learn_press_add_message( sprintf( __( 'You have retaken the course "%s"', 'learnpress' ), $course->get_title() ) );
+						learn_press_add_message( sprintf( '%s "%s"', __( 'You have retaken the course', 'learnpress' ), $course->get_title() ) );
 						$response['result'] = 'success';
 					}
 				} else {

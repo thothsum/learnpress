@@ -139,12 +139,13 @@ class LP_Page_Controller {
 
 			$user = learn_press_get_current_user();
 
-			if ( false === $user->can_view_item( $lp_course_item->get_id() ) && ! $user->get_item_url( $lp_course_item->get_id() ) ) {
+			// comment by tungnx
+			/*if ( false === $user->can_view_item( $lp_course_item->get_id() ) && ! $user->get_item_url( $lp_course_item->get_id() ) ) {
 				if ( false !== ( $redirect = apply_filters( 'learn-press/redirect-forbidden-access-item-url', $lp_course->get_permalink() ) ) ) {
 					wp_redirect( $redirect );
 					exit();
 				}
-			}
+			}*/
 
 			$lp_course->set_viewing_item( $lp_course_item );
 
@@ -306,7 +307,7 @@ class LP_Page_Controller {
 			if ( ! ( $lp_template = $this->_find_template( $template ) ) ) {
 				// Get template of wp page.
 				$template = get_page_template();
-				if(get_option( 'template' ) == 'twentytwenty' ){
+				if ( get_option( 'template' ) == 'twentytwenty' ) {
 					$template = get_singular_template();
 				}
 
@@ -462,7 +463,7 @@ class LP_Page_Controller {
 
 		try {
 			if ( ! $viewing_user ) {
-				throw new Exception( sprintf( __( 'The user %s is not available!', 'learnpress' ), $wp->query_vars['user'] ) );
+				throw new Exception( sprintf( '%s %s %s', __( 'The user', 'learnpress' ), $wp->query_vars['user'], __( 'is not available!', 'learnpress' ) ) );
 			}
 		}
 		catch ( Exception $ex ) {
@@ -534,7 +535,7 @@ class LP_Page_Controller {
 			LP()->wp_query = clone $wp_query;
 
 			$template = get_page_template();
-			if(get_option( 'template' ) == 'twentytwenty' ){
+			if ( get_option( 'template' ) == 'twentytwenty' ) {
 				$template = get_singular_template();
 			}
 			/**
@@ -580,7 +581,7 @@ class LP_Page_Controller {
 				remove_filter( 'the_content', 'wpautop' );
 			}
 
-// 			$content = do_shortcode( $content );
+			// 			$content = do_shortcode( $content );
 
 			if ( $has_filter ) {
 				//add_filter( 'the_content', 'wpautop' );
@@ -651,6 +652,7 @@ class LP_Page_Controller {
 				$wp_query->is_post_type_archive = false;
 			}
 		}
+
 		return $template;
 	}
 
@@ -668,9 +670,9 @@ class LP_Page_Controller {
 		}
 
 		#@NOTE: make sure current page is not lesson or quiz before return cache content of single course page
-// 		if ( function_exists( 'learn_press_content_single_course' ) && false !== ( $_content = LP_Object_Cache::get( 'course-' . get_the_ID(), 'course-content' ) ) ) {
-// 			return $_content;
-// 		}
+		// 		if ( function_exists( 'learn_press_content_single_course' ) && false !== ( $_content = LP_Object_Cache::get( 'course-' . get_the_ID(), 'course-content' ) ) ) {
+		// 			return $_content;
+		// 		}
 
 		remove_filter( 'the_content', array( $this, 'single_content' ), $this->_filter_content_priority );
 		add_filter( 'the_content', 'wpautop' );
@@ -715,28 +717,7 @@ class LP_Page_Controller {
 
 		// Handle 404 if user are viewing course item directly.
 		// Example: http://example.com/lesson/sample-lesson
-		$course_support_items = learn_press_get_course_item_types();
-
-		if ( isset( $q->query_vars['post_type'] ) && in_array( $q->query_vars['post_type'], $course_support_items ) ) {
-            // Check Elementor Installed & Actived
-            if (did_action('elementor/loaded')) {
-                // Check is elementor action
-                if (!strpos($_SERVER['REQUEST_URI'], 'elementor')) {
-                    // check user has edit &  is preview mode
-                    if (current_user_can('edit_posts') == false):
-                        learn_press_404_page();
-                        $q->set('post_type', '__unknown');
-                        return $q;
-                    endif;
-                }
-            } else {
-                learn_press_404_page();
-                $q->set('post_type', '__unknown');
-                return $q;
-            }
-		}
-
-		remove_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );
+		$this->set_link_item_course_default_wp_to_page_404( $q );
 
 		$this->_queried_object = ! empty( $q->queried_object_id ) ? $q->queried_object : false;
 
@@ -811,9 +792,57 @@ class LP_Page_Controller {
 			}
 		}
 
-		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 10 );
-
 		return $q;
+	}
+
+	/**
+	 * Handle 404 if user are viewing course item directly.
+	 * Example: http://example.com/lesson/sample-lesson
+	 *
+	 * @param WP_Query $q
+	 *
+	 * @return mixed
+	 * @editor tungnx
+	 * @since  3.2.7.5
+	 */
+	public function set_link_item_course_default_wp_to_page_404( $q ) {
+		if ( ! $q->is_main_query() || is_admin() ) {
+			return $q;
+		}
+
+		$post_type_apply_404 = array( LP_LESSON_CPT, LP_QUIZ_CPT, LP_QUESTION_CPT, 'lp_assignment' );
+
+		if ( isset( $q->query_vars['post_type'] ) && in_array( $q->query_vars['post_type'], $post_type_apply_404 ) ) {
+			if ( did_action( 'elementor/loaded' ) ) {
+				if ( ! strpos( $_SERVER['REQUEST_URI'], 'elementor' ) ) {
+					$flag_load_404 = true;
+					$user          = wp_get_current_user();
+
+					if ( isset( $_GET['preview_id'] ) && $user ) {
+						$post_id = $_GET['preview_id'];
+						$post    = get_post( $post_id );
+
+						if ( $user->has_cap( 'administrator' ) ) {
+							$flag_load_404 = false;
+						} elseif ( $user->has_cap( LP_TEACHER_ROLE ) ) {
+							if ( $post->post_author == $user->ID ) {
+								$flag_load_404 = false;
+							}
+						}
+					}
+
+					if ( $flag_load_404 ) {
+						learn_press_404_page();
+						$q->set( 'post_type', '' );
+					}
+				}
+			} else {
+				learn_press_404_page();
+				$q->set( 'post_type', '' );
+
+				return $q;
+			}
+		}
 	}
 
 	public function the_content_callback( $content ) {

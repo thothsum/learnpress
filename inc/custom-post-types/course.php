@@ -633,10 +633,10 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 						'std'  => 'no',
 					),
 					array(
-						'name' => __( 'Block Lessons', 'learnpress' ),
+						'name' => __( 'Block content items course', 'learnpress' ),
 						'id'   => '_lp_block_lesson_content',
 						'type' => 'yes_no',
-						'desc' => __( 'Block lessons content when completed course.', 'learnpress' ),
+						'desc' => __( 'Block content item(lesson, quiz, v.v...) of course when completed course.', 'learnpress' ),
 						'std'  => 'no',
 					),
 					array(
@@ -1376,6 +1376,7 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 					$curd            = new LP_Course_CURD();
 					$number_sections = $curd->count_sections( $post_id );
 					if ( $number_sections ) {
+						// translators: %s: name section.
 						$output     = sprintf( _n( '<strong>%d</strong> section', '<strong>%d</strong> sections', $number_sections, 'learnpress' ), $number_sections );
 						$html_items = array();
 						$post_types = get_post_types( null, 'objects' );
