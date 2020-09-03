@@ -121,18 +121,13 @@ class LP_User_Factory {
 		if ( ! $items ) {
 			return;
 		}
-		$order_id = $order->get_id();
 		foreach ( $order->get_users() as $user_id ) {
 			foreach ( $items as $item ) {
-				if ( ! isset( $item['course_id'] ) ) {
-					continue;
-				}
-
 				$item = $curd->get_user_item(
 					$user_id,
 					$item['course_id']
 				);
-				if ( $item && intval( $item['ref_id'] ) == intval( $order_id ) ) {
+				if ( $item ) {
 					if ( is_array( $item ) ) {
 						$item_id = $item['user_item_id'];
 					} else {
@@ -165,8 +160,11 @@ class LP_User_Factory {
 
 		foreach ( $order->get_users() as $user_id ) {
 
+			$user = learn_press_get_user( $user_id );
+
 			foreach ( $items as $item ) {
-				if ( ! isset( $item['course_id'] ) ) {
+
+				if ( get_post_type( $item['course_id'] ) !== LP_COURSE_CPT ) {
 					continue;
 				}
 
@@ -181,16 +179,19 @@ class LP_User_Factory {
 						)
 					);
 				} else {
-					$wpdb->insert(
-						$wpdb->learnpress_user_items,
-						array(
-							'item_id'   => $item['course_id'],
-							'ref_id'    => $order->get_id(),
-							'ref_type'  => LP_ORDER_CPT,
-							'user_id'   => $user_id,
-							'item_type' => LP_COURSE_CPT
-						)
-					);
+//					$wpdb->insert(
+//						$wpdb->learnpress_user_items,
+//						array(
+//							'item_id'   => $item['course_id'],
+//							'ref_id'    => $order->get_id(),
+//							'ref_type'  => LP_ORDER_CPT,
+//							'user_id'   => $user_id,
+//							'item_type' => LP_COURSE_CPT
+//						)
+//					);
+
+					$user->enroll_course( $item['course_id'], $order->get_id(), false, false );
+
 					$user_item_id = $wpdb->insert_id;
 				}
 
@@ -198,7 +199,6 @@ class LP_User_Factory {
 					$item        = $curd->get_user_item_by_id( $user_item_id );
 					$last_status = $curd->get_user_item_meta( $user_item_id, '_last_status' );
 					$args        = array( 'status' => $last_status );
-					$user        = learn_press_get_user( $user_id );
 					$course_id   = $item['item_id'];
 					$can_enroll  = $user->can_enroll_course( $course_id );
 					$auto_enroll = LP()->settings->get( 'auto_enroll' ) == 'yes';
@@ -209,8 +209,8 @@ class LP_User_Factory {
 						$args['status'] = $auto_enroll && $can_enroll ? 'enrolled' : 'purchased';
 						if ( 'enrolled' == $args['status'] ) {
 							$time                   = new LP_Datetime();
-							$args['start_time']     = $time->toSql();
-							$args['start_time_gmt'] = $time->toSql( false );
+							$args['start_time']     = $time->toSql(false);
+							//$args['start_time_gmt'] = $time->toSql( false );
 						}
 					}
 
@@ -256,7 +256,7 @@ class LP_User_Factory {
 			global $wpdb;
 			$query = $wpdb->prepare( "
 				SELECT ID
-				FROM {$wpdb->users} u
+				FROM {$wpdb->users} u 
 				INNER JOIN {$wpdb->usermeta} um ON um.user_id = u.ID AND um.meta_key = %s
 				WHERE um.meta_value = %s
 			", '_requested_become_teacher', 'yes' );
@@ -277,7 +277,7 @@ class LP_User_Factory {
 		global $wpdb;
 		$query = $wpdb->prepare( "
 			SELECT ID
-			FROM {$wpdb->users} u
+			FROM {$wpdb->users} u 
 			INNER JOIN {$wpdb->usermeta} um ON u.ID = um.user_id AND um.meta_key = %s AND um.meta_value = %s
 			LEFT JOIN {$wpdb->usermeta} um2 ON u.ID = um2.user_id AND um2.meta_key = %s
 		", '_lp_temp_user', 'yes', '_lp_expiration' );
@@ -310,7 +310,7 @@ class LP_User_Factory {
 			// Find temp user is not used
 			$query = $wpdb->prepare( "
 				SELECT ID
-				FROM {$wpdb->users} u
+				FROM {$wpdb->users} u 
 				INNER JOIN {$wpdb->usermeta} um ON u.ID = um.user_id AND um.meta_key = %s AND um.meta_value = %s
 				LEFT JOIN {$wpdb->usermeta} um2 ON u.ID = um2.user_id AND um2.meta_key = %s
 				WHERE um2.meta_value IS NULL

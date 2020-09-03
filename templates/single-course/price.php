@@ -17,20 +17,21 @@ defined( 'ABSPATH' ) || exit();
 $user   = LP_Global::user();
 $course = LP_Global::course();
 
-if ( ! $price = $course->get_price_html() ) {
+if ( !$price = $course->get_price_html() ) {
 	return;
 }
+
 ?>
+
 
 <div class="course-price">
 
 	<?php if ( $course->has_sale_price() ) { ?>
 
-        <span class="origin-price"> <?php echo $course->get_origin_price_html(); ?></span>
+		<span class="origin-price"> <?php echo $course->get_origin_price_html(); ?></span>
 
 	<?php } ?>
 
-    <span class="price"><?php echo $price; ?></span>
-
+	<span class="price"><?php echo $price; ?></span>
 </div>
 

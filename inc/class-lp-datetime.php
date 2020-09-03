@@ -33,8 +33,10 @@ class LP_Datetime extends DateTime {
 	/**
 	 * Constructor.
 	 *
-	 * @param   string $date
-	 * @param   mixed  $tz
+	 * @param string $date
+	 * @param mixed  $tz
+	 *
+	 * @throws
 	 */
 	public function __construct( $date = '', $tz = null ) {
 		if ( empty( self::$gmt ) || empty( self::$stz ) ) {
@@ -45,13 +47,12 @@ class LP_Datetime extends DateTime {
 		if ( $date instanceof LP_Datetime ) {
 			$this->raw_date = $date->get_raw_date();
 		} else {
-			$this->raw_date = $date;
+			$this->raw_date = is_numeric( $date ) ? date( 'Y-m-d H:i:s', $date ) : $date;
 		}
 
 		if ( empty( $date ) ) {
 			$date = current_time( 'mysql' );
 		}
-
 
 		if ( ! ( $tz instanceof DateTimeZone ) ) {
 			$tz = self::get_default_timezone( $tz );
@@ -61,32 +62,17 @@ class LP_Datetime extends DateTime {
 			$tz = null;
 		}
 
-		if ( $this->raw_date === '0000-00-00 00:00:00' ) {
-			//$date = '1969-01-01 00:00:00';
-		}
+		date_default_timezone_set( 'UTC' );
 
-		/**
-		 * addBy tungnx
-		 * reason: fix for end_time error (certificate)
-		 */
-		if ( $date === '0000-00-00 00:00:00' ) {
-			$date = date( 'Y-m-d H:i:s' );
-		}
+		parent::__construct( $this->raw_date, $tz );
 
-		//date_default_timezone_set( 'UTC' );
-		$date = is_numeric( $date ) ? date( 'Y-m-d H:i:s', $date ) : $date;
-
-		parent::__construct( $date, $tz );
-
-		//date_default_timezone_set( self::$stz->getName() );
+		date_default_timezone_set( self::$stz->getName() );
 
 		$this->tz = $tz;
 	}
 
 	/**
 	 * Get default timezone from param and wp settings
-	 *
-	 * @since 3.1.0
 	 *
 	 * @param mixed $tz
 	 *
@@ -118,7 +104,12 @@ class LP_Datetime extends DateTime {
 			return $timezone;
 		}
 
-		if ( 0 === ( $utc_offset = intval( get_option( 'gmt_offset', 0 ) ) ) ) {
+		return self::timezone_string_from_offset( intval( get_option( 'gmt_offset', 0 ) ) );
+
+	}
+
+	public static function timezone_string_from_offset( $utc_offset ) {
+		if ( 0 === $utc_offset ) {
 			return 'UTC';
 		}
 
@@ -141,7 +132,7 @@ class LP_Datetime extends DateTime {
 	}
 
 	public function is_null() {
-		return $this->raw_date === '0000-00-00 00:00:00';
+		return ! $this->raw_date || $this->raw_date === '0000-00-00 00:00:00';
 	}
 
 	public function get_raw_date() {
@@ -149,7 +140,7 @@ class LP_Datetime extends DateTime {
 	}
 
 	/**
-	 * @param   string $name The name of the property.
+	 * @param string $name The name of the property.
 	 *
 	 * @return  mixed
 	 */
@@ -221,24 +212,51 @@ class LP_Datetime extends DateTime {
 	/**
 	 * Gets the date as a formatted string.
 	 *
-	 * @param   string  $format The date format specification string (see {@link PHP_MANUAL#date})
-	 * @param   boolean $local  True to return the date string in the local time zone, false to return it in GMT.
+	 * @param string  $format The date format specification string (see {@link PHP_MANUAL#date})
+	 * @param boolean $local  True to return the date string in the local time zone, false to return it in GMT.
 	 *
-	 * @return  string   The date string in the specified format format.
+	 * @return string The date string in the specified format format.
 	 */
 	public function format( $format, $local = true ) {
 		if ( '0000-00-00 00:00:00' === $this->raw_date ) {
 			return '';
 		}
 
-		if ( $local == false && ! empty( self::$gmt ) ) {
-			parent::setTimezone( self::$gmt );
+		if ( empty( $format ) ) {
+			$format = 'mysql';
 		}
 
-		$return = parent::format( $format );
+		$return = false;
 
-		if ( $local == false && ! empty( $this->tz ) ) {
-			parent::setTimezone( $this->tz );
+		switch ( $format ) {
+			case 'i18n':
+				$return = learn_press_date_i18n( $this->getTimestamp( $local ) );
+				break;
+			case 'timestamp':
+				$return = $this->getTimestamp( $local );
+				break;
+			case 'human':
+				$time      = $this->getTimestamp( true );/// mysql2date( 'G', $date->format('Y-m-d H:i:s') );
+				$time1      = $this->getTimestamp( false );/// mysql2date( 'G', $date->format('Y-m-d H:i:s') );
+				$time_diff = (time() ) - $time1;
+				if ( $time_diff > 0 ) {
+					$return = sprintf( __( '%s ago', 'learnpress' ), human_time_diff($time1, time() ) );
+				}
+				break;
+			case 'mysql':
+				$return = $this->format( 'Y-m-d H:i:s', $local );
+				break;
+			default:
+
+				if ( $local == false && ! empty( self::$gmt ) ) {
+					parent::setTimezone( self::$gmt );
+				}
+
+				$return = parent::format( $format );
+
+				if ( $local == false && ! empty( $this->tz ) ) {
+					parent::setTimezone( $this->tz );
+				}
 		}
 
 		return $return;
@@ -265,7 +283,7 @@ class LP_Datetime extends DateTime {
 	}
 
 	/**
-	 * @param   boolean $local True to return the date string in the local time zone, false to return it in GMT.
+	 * @param boolean $local True to return the date string in the local time zone, false to return it in GMT.
 	 *
 	 * @return  string
 	 */
@@ -276,7 +294,7 @@ class LP_Datetime extends DateTime {
 	/**
 	 * Gets the date as an SQL datetime string.
 	 *
-	 * @param   boolean $local True to return the date string in the local time zone, false to return it in GMT.
+	 * @param boolean $local True to return the date string in the local time zone, false to return it in GMT.
 	 *
 	 * @return  string
 	 */
@@ -285,10 +303,30 @@ class LP_Datetime extends DateTime {
 	}
 
 	/**
+	 * Consider the date is in GMT and convert to local time with
+	 * gmt_offset option of WP Core.
+	 *
+	 * @param string $format
+	 *
+	 * @return int|string
+	 * @since 4.0.0
+	 *
+	 */
+	public function toLocal( $format = 'Y-m-d H:i:s' ) {
+		$time = $this->getTimestamp() + get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+
+		if ( $format ) {
+			return date( $format, $time );
+		}
+
+		return $time;
+	}
+
+	/**
 	 * Gets the date as an RFC 822 string.  IETF RFC 2822 supercedes RFC 822 and its definition
 	 * can be found at the IETF Web site.
 	 *
-	 * @param   boolean $local True to return the date string in the local time zone, false to return it in GMT.
+	 * @param boolean $local True to return the date string in the local time zone, false to return it in GMT.
 	 *
 	 * @return  string
 	 */
@@ -331,5 +369,30 @@ class LP_Datetime extends DateTime {
 
 	public static function getSqlNullDate() {
 		return '0000-00-00 00:00:00';
+	}
+
+	/**
+	 * Add X seconds into datetime of this object.
+	 *
+	 * @param int $seconds
+	 *
+	 * @throws
+	 *
+	 * @since 3.3.0
+	 *
+	 */
+	public function addDuration( $seconds ) {
+		$timestamp = $this->getTimestamp();
+		parent::__construct( date( 'Y-m-d H:i:s', $timestamp + $seconds ), $this->tz );
+	}
+
+	public function getPeriod( $seconds, $local = true ) {
+		$timestamp = $this->getTimestamp( $local );
+
+		if ( ! is_numeric( $seconds ) ) {
+			$seconds = strtotime( $seconds ) - time();
+		}
+
+		return date( 'Y-m-d H:i:s', $timestamp + $seconds );
 	}
 }

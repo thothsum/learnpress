@@ -5,6 +5,10 @@ defined( 'ABSPATH' ) || exit();
  * Class LP_Submenu_Settings
  */
 class LP_Submenu_Settings extends LP_Abstract_Submenu {
+	/**
+	 * @var LP_Abstract_Settings_Page[]
+	 */
+	protected $tabs = array();
 
 	/**
 	 * LP_Submenu_Settings constructor.
@@ -90,16 +94,10 @@ class LP_Submenu_Settings extends LP_Abstract_Submenu {
 		$active_tab = $this->get_active_tab();
 		$this->tabs[ $active_tab ]->admin_page( $this->get_active_section(), $this->get_sections() );
 		?>
-		<input type="hidden" name="lp-settings-nonce" value="<?php echo wp_create_nonce( 'lp-settings' ); ?>">
-		<p class="lp-admin-settings-buttons">
-			<button class="button button-primary"><?php esc_html_e( 'Save settings', 'learnpress' ); ?></button>
-			<a class="button"
-			   href="<?php echo wp_nonce_url( 'admin.php?page=learn-press-settings&reset=yes' ); ?>"
-			   id="learn-press-reset-settings"
-			   data-text="<?php esc_attr_e( 'Do you want to restore all settings to default?', 'learnpress' ); ?>">
-				<?php esc_html_e( 'Reset', 'learnpress' ); ?>
-			</a>
-		</p>
+        <input type="hidden" name="lp-settings-nonce" value="<?php echo wp_create_nonce( 'lp-settings' ); ?>">
+        <p class="lp-admin-settings-buttons">
+            <button class="button button-primary"><?php esc_html_e( 'Save settings', 'learnpress' ); ?></button>
+        </p>
 		<?php
 	}
 
@@ -108,17 +106,12 @@ class LP_Submenu_Settings extends LP_Abstract_Submenu {
 
 	/**
 	 * Save settings values upon admin init.
-	 *
-	 * @hook   admin_init
-	 *
-	 * @editor tungnx
-	 *
 	 */
 	public function maybe_save_settings() {
 		// Verify nonce
 		$nonce = learn_press_get_request( 'lp-settings-nonce' );
 
-		if ( ! wp_verify_nonce( sanitize_key( $nonce ), 'lp-settings' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'lp-settings' ) ) {
 			return;
 		}
 
@@ -128,24 +121,10 @@ class LP_Submenu_Settings extends LP_Abstract_Submenu {
 			settype( $exclude_options, 'array' );
 			$postdata = array_diff_key( $_POST, array_flip( $exclude_options ) );
 
-			# Add params key value type html
-			$paramsContentTypeHtml = array();
-
 			foreach ( $postdata as $key => $value ) {
 				if ( false !== strpos( $key, 'learn_press_' ) ) {
-
-					$key = apply_filters( 'learn-press/update-settings/' . sanitize_text_field( wp_unslash( $key ) ), $key );
-
-					# check param key is email setting
-					$isEmailParamSetting = preg_match('/^learn_press_emails_.*/', $key);
-
-					if ( in_array( $key, $paramsContentTypeHtml ) || $isEmailParamSetting) {
-						$value = LP_Helper::sanitize_params_submitted( $value, 'html' );
-					} else {
-						$value = LP_Helper::sanitize_params_submitted( $value );
-					}
-
-					if ( ! empty( $key ) ) {
+					//
+					if ( apply_filters( 'learn-press/update-settings/' . $key, true ) ) {
 						$value = apply_filters( 'learn-press/update-settings/settings-value', $value, $key, $postdata );
 						update_option( $key, $value );
 					}
@@ -158,6 +137,7 @@ class LP_Submenu_Settings extends LP_Abstract_Submenu {
 
 		// Filter redirect
 		$redirect = apply_filters( 'learn-press/update-settings/redirect', add_query_arg( 'settings-updated', 'yes' ), $this );
+
 		if ( $redirect ) {
 			wp_redirect( $redirect );
 			exit();

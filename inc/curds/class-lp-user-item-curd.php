@@ -35,15 +35,15 @@ class LP_User_Item_CURD implements LP_Interface_CURD {
 		}
 		$quiz->set_data_via_methods(
 			array(
-				'retake_count'       => get_post_meta( $quiz->get_id(), '_lp_retake_count', true ),
+				'retry'              => get_post_meta( $quiz->get_id(), '_lp_retry', true ),
 				'show_result'        => get_post_meta( $quiz->get_id(), '_lp_show_result', true ),
 				'passing_grade_type' => get_post_meta( $quiz->get_id(), '_lp_passing_grade_type', true ),
 				'passing_grade'      => get_post_meta( $quiz->get_id(), '_lp_passing_grade', true ),
-				'show_check_answer'  => get_post_meta( $quiz->get_id(), '_lp_show_check_answer', true ),
-				'count_check_answer' => get_post_meta( $quiz->get_id(), '_lp_check_answer_count', true ),
-				'show_hint'          => get_post_meta( $quiz->get_id(), '_lp_show_hint', true ),
-				'archive_history'    => get_post_meta( $quiz->get_id(), '_lp_archive_history', true ),
-				'count_hint'         => get_post_meta( $quiz->get_id(), '_lp_hint_count', true ),
+				'instant_check'      => get_post_meta( $quiz->get_id(), '_lp_instant_check', true ),
+				//'count_check_answer' => get_post_meta( $quiz->get_id(), '_lp_check_answer_count', true ),
+				//'show_hint'          => get_post_meta( $quiz->get_id(), '_lp_show_hint', true ),
+				//'archive_history'    => get_post_meta( $quiz->get_id(), '_lp_archive_history', true ),
+				//'count_hint'         => get_post_meta( $quiz->get_id(), '_lp_hint_count', true ),
 				'review_questions'   => get_post_meta( $quiz->get_id(), '_lp_review_questions', true ),
 			)
 		);
@@ -132,7 +132,7 @@ class LP_User_Item_CURD implements LP_Interface_CURD {
 			SELECT *
 			FROM {$wpdb->prefix}learnpress_question_answers
 			WHERE question_id IN(" . join( ',', $format ) . ")
-			ORDER BY question_id, answer_order ASC
+			ORDER BY question_id, `order` ASC
 		", $questions );
 		if ( $results = $wpdb->get_results( $query, OBJECT_K ) ) {
 			$answer_options = array();
@@ -143,12 +143,13 @@ class LP_User_Item_CURD implements LP_Interface_CURD {
 					$answer_options[ $v->question_id ] = array();
 				}
 				$v = (array) $v;
-				if ( $answer_data = LP_Helper::maybe_unserialize( $v['answer_data'] ) ) {
-					foreach ( $answer_data as $kk => $vv ) {
-						$v[ $kk ] = $vv;
-					}
-				}
-				unset( $v['answer_data'] );
+				// 4.0
+//				if ( $answer_data = LP_Helper::maybe_unserialize( $v['answer_data'] ) ) {
+//					foreach ( $answer_data as $kk => $vv ) {
+//						$v[ $kk ] = $vv;
+//					}
+//				}
+//				unset( $v['answer_data'] );
 
 
 				$answer_options[ $v['question_id'] ][] = $v;
@@ -292,7 +293,6 @@ class LP_User_Item_CURD implements LP_Interface_CURD {
 
 		return false;
 	}
-
 
 	/**
 	 * Get all questions in a quiz
@@ -445,6 +445,7 @@ class LP_User_Item_CURD implements LP_Interface_CURD {
 	public function get_items_by( $field, $value = '' ) {
 		global $wpdb;
 		$where = "";
+		$order = "ORDER BY user_item_id DESC";
 
 		if ( is_array( $field ) ) {
 			foreach ( $field as $k => $v ) {
@@ -462,7 +463,7 @@ class LP_User_Item_CURD implements LP_Interface_CURD {
 			}
 		}
 
-		$query = "SELECT * FROM {$wpdb->learnpress_user_items} WHERE 1 {$where}";
+		$query = "SELECT * FROM {$wpdb->learnpress_user_items} WHERE 1 {$where} {$order}";
 
 		return $wpdb->get_results( $query );
 	}
@@ -523,6 +524,7 @@ class LP_User_Item_CURD implements LP_Interface_CURD {
 
 				$items[ $item_id ] = $is_preview;
 			}
+
 		}
 
 		return $items;
@@ -551,88 +553,81 @@ class LP_User_Item_CURD implements LP_Interface_CURD {
 		}
 
 		//$user            = learn_press_get_user( $user_id, false ); tested on client site and this function not work. Use the below line instead of!
-		$user            = learn_press_get_current_user();
-		$current_item    = LP_Global::course_item();
-		$get_item_ids    = $course->get_item_ids();
-		$enrolled        = $user ? $user->has_enrolled_course( $course_id ) : false;
-		$is_free         = $course->is_free();
-		$required_enroll = $course->is_required_enroll();
 
-		if ( $get_item_ids ) {
-			foreach ( $get_item_ids as $item_id ) {
-				$item = $course->get_item( $item_id );
+		$get_item_ids = $course->get_item_ids();
+		//$is_free         = $course->is_free();
+		//$required_enroll = $course->is_required_enroll();
 
-				if ( ! $item ) {
-					continue;
-				}
+		if ( ! $get_item_ids ) {
+			return $items;
+		}
 
-				$defaults = array_merge(
-					array(
-						'course-item',
-						'course-item-' . $item->get_item_type(),
-						'course-item-' . $item_id
-					), (array) $more
-				);
+		$user         = learn_press_get_current_user();
+		$current_item = LP_Global::course_item();
+		$enrolled     = $user ? $user->has_enrolled_course( $course_id ) : false;
 
-				if ( ( 'standard' !== ( $post_format = $item->get_format() ) ) && $post_format ) {
-					$defaults[] = 'course-item-type-' . $post_format;
-				}
+		foreach ( $get_item_ids as $item_id ) {
+			$item = $course->get_item( $item_id );
 
-				if ( $current_item && $current_item->get_id() == $item->get_id() ) {
-					$defaults[] = 'current';
-				}
-
-				if ( $item->is_preview() ) {
-					$defaults[] = 'item-preview';
-					$defaults[] = 'has-status';
-				} elseif ( $item->is_blocked() ) {
-					$defaults[] = 'item-locked';
-				} else {
-					if ( $course ) {
-						if ( $is_free && ! $required_enroll ) {
-							$defaults[] = 'item-free';
-						} else {
-							if ( $user ) {
-								if ( $enrolled ) {
-									$item_status = $user->get_item_status( $item_id, $course_id );
-									$item_grade  = $user->get_item_grade( $item_id, $course_id );
-
-									if ( $item_status ) {
-										$defaults[] = 'has-status';
-										$defaults[] = 'status-' . $item_status;
-									}
-									switch ( $item_status ) {
-										case 'started':
-											break;
-										case 'completed':
-											$defaults[] = $item_grade;
-											break;
-										default:
-											if ( $item_class = apply_filters( 'learn-press/course-item-status-class', $item_status, $item_grade, $item->get_item_type(), $item_id, $course_id ) ) {
-												$defaults[] = $item_class;
-											}
-									}
-								}
-							}
-
-							if ( ! $enrolled ) {
-								$defaults[] = 'item-locked';
-							}
-						}
-					} else {
-						$defaults[] = 'item-locked';
-					}
-				}
-				$classes = apply_filters( 'learn-press/course-item-class', $defaults, $item->get_item_type(), $item_id, $course_id );
-
-				// Filter unwanted values
-				$classes = is_array( $classes ) ? $classes : explode( ' ', $classes );
-				$classes = array_filter( $classes );
-				$classes = array_unique( $classes );
-
-				LP_Object_Cache::set( 'item-' . $user_id . '-' . $item_id, $classes, 'learn-press/post-classes' );
-				$items[ $item_id ] = $classes;
+			if ( ! $item ) {
+				continue;
 			}
+
+			$defaults = array_merge(
+				array(
+					'course-item',
+					'course-item-' . $item->get_item_type(),
+					'course-item-' . $item_id
+				), (array) $more
+			);
+
+			if ( ( 'standard' !== ( $post_format = $item->get_format() ) ) && $post_format ) {
+				$defaults[] = 'course-item-type-' . $post_format;
+			}
+
+			if ( $current_item && $current_item->get_id() == $item->get_id() ) {
+				$defaults[] = 'current';
+			}
+
+			if ( $item->is_preview() ) {
+				$defaults[] = 'item-preview';
+				$defaults[] = 'has-status';
+			} elseif ( $item->is_blocked() ) {
+				$defaults[] = 'item-locked';
+			} else {
+				if ( $enrolled ) {
+					$item_status = $user->get_item_status( $item_id, $course_id );
+					$item_grade  = $user->get_item_grade( $item_id, $course_id );
+
+					if ( $item_status ) {
+						$defaults[] = 'has-status';
+						$defaults[] = 'status-' . $item_status;
+					}
+
+					switch ( $item_status ) {
+						case 'started':
+							break;
+						case 'completed':
+							$defaults[] = $item_grade;
+							break;
+						default:
+							if ( $item_class = apply_filters( 'learn-press/course-item-status-class', $item_status, $item_grade, $item->get_item_type(), $item_id, $course_id ) ) {
+								$defaults[] = $item_class;
+							}
+					}
+				} else {
+					$defaults[] = 'item-locked';
+				}
+			}
+			$classes = apply_filters( 'learn-press/course-item-class', $defaults, $item->get_item_type(), $item_id, $course_id );
+
+			// Filter unwanted values
+			$classes = is_array( $classes ) ? $classes : explode( ' ', $classes );
+			$classes = array_filter( $classes );
+			$classes = array_unique( $classes );
+
+			LP_Object_Cache::set( 'item-' . $user_id . '-' . $item_id, $classes, 'learn-press/post-classes' );
+			$items[ $item_id ] = $classes;
 		}
 
 		return $items;

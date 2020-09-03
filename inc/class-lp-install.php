@@ -38,31 +38,70 @@ if ( ! function_exists( 'LP_Install' ) ) {
 		 *
 		 * @var array
 		 */
-		private static $_pages = array( 'checkout', 'profile', 'courses', 'become_a_teacher' );
+		private static $_pages = array( 'checkout', 'profile', 'courses', 'become_a_teacher', 'term_conditions' );
 
 		/**
 		 * Init action.
 		 */
 		public static function init() {
 			self::get_update_files();
-			add_action( 'learn-press/activate', array( __CLASS__, 'install' ) );
+			add_action( 'learn-press/activate', array( __CLASS__, 'on_activate' ) );
+			add_action( 'admin_init', array( __CLASS__, 'do_install' ) );
 			add_action( 'admin_init', array( __CLASS__, 'do_update' ) );
 			add_action( 'admin_init', array( __CLASS__, 'check_update' ) );
 			add_action( 'admin_init', array( __CLASS__, 'subscription_button' ) );
 
 			//add_action( 'learn_press_activate', array( __CLASS__, 'install' ) );
+//			return;
+//			add_action( 'admin_init', array( __CLASS__, 'include_update' ), - 10 );
+//			add_action( 'admin_init', array( __CLASS__, 'update_from_09' ), 5 );
+//			add_action( 'admin_init', array( __CLASS__, 'check_version' ), 5 );
+//			add_action( 'admin_init', array( __CLASS__, 'db_update_notices' ), 5 );
+//			add_action( 'admin_init', array( __CLASS__, 'update_actions' ), 5 );
+//			add_action( 'wp_ajax_lp_repair_database', array( __CLASS__, 'repair_database' ) );
+//			add_action( 'wp_ajax_lp_rollback_database', array( __CLASS__, 'rollback_database' ) );
+//			add_action( 'wp_ajax_learn_press_hide_upgrade_notice', array( __CLASS__, 'hide_upgrade_notice' ) );
+//			add_action( 'admin_init', array( __CLASS__, 'upgrade_wizard' ) );
+//			add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
+		}
 
-			return;
-			add_action( 'admin_init', array( __CLASS__, 'include_update' ), - 10 );
-			add_action( 'admin_init', array( __CLASS__, 'update_from_09' ), 5 );
-			add_action( 'admin_init', array( __CLASS__, 'check_version' ), 5 );
-			add_action( 'admin_init', array( __CLASS__, 'db_update_notices' ), 5 );
-			add_action( 'admin_init', array( __CLASS__, 'update_actions' ), 5 );
-			add_action( 'wp_ajax_lp_repair_database', array( __CLASS__, 'repair_database' ) );
-			add_action( 'wp_ajax_lp_rollback_database', array( __CLASS__, 'rollback_database' ) );
-			add_action( 'wp_ajax_learn_press_hide_upgrade_notice', array( __CLASS__, 'hide_upgrade_notice' ) );
-			add_action( 'admin_init', array( __CLASS__, 'upgrade_wizard' ) );
-			add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
+		/**
+		 * Do something after LP is activated.
+		 *
+		 * @since 4.0.0
+		 */
+		public static function on_activate() {
+			update_option( 'learn_press_status', 'activated' );
+
+			// Force option permalink to 'postname'
+			if ( ! get_option( 'permalink_structure' ) ) {
+				update_option( 'permalink_structure', '/%postname%/' );
+			}
+
+			// Force option users_can_register to ON
+			if ( ! get_option( 'users_can_register' ) ) {
+				update_option( 'users_can_register', 1 );
+			}
+		}
+
+		/**
+		 * Check to run installer in the first-time LP installed.
+		 *
+		 * @since 3.x.x
+		 */
+		public static function do_install() {
+
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+
+			$status = get_option( 'learn_press_status' );
+
+			switch ( $status ) {
+				case 'activated':
+					self::install();
+					update_option( 'learn_press_status', 'installed' );
+			}
 		}
 
 		/**
@@ -84,7 +123,7 @@ if ( ! function_exists( 'LP_Install' ) ) {
 				return;
 			}
 
-			LP_Admin_Notice::instance()->add('tools/subscription-button.php', '', true, 'newsletter-button');
+			LP_Admin_Notice::instance()->add( 'tools/subscription-button.php', '', true, 'newsletter-button' );
 
 //			return;
 //
@@ -157,11 +196,12 @@ if ( ! function_exists( 'LP_Install' ) ) {
 		public static function install() {
 			self::create_options();
 			self::create_tables();
+			self::_create_pages();
 			self::_create_cron_jobs();
 			self::_delete_transients();
 			self::_create_log_path();
 			self::_clear_backgrounds();
-			///self::_create_pages();
+
 			delete_transient( 'lp_upgraded_30' );
 			$current_version    = get_option( 'learnpress_version', null );
 			$current_db_version = get_option( 'learnpress_db_version', null );
@@ -206,11 +246,8 @@ if ( ! function_exists( 'LP_Install' ) ) {
 			$settings_classes = array(
 				'LP_Settings_General'  => include_once LP_PLUGIN_PATH . '/inc/admin/settings/class-lp-settings-general.php',
 				'LP_Settings_Courses'  => include_once LP_PLUGIN_PATH . '/inc/admin/settings/class-lp-settings-courses.php',
-				'LP_Settings_Pages'    => include_once LP_PLUGIN_PATH . '/inc/admin/settings/class-lp-settings-pages.php',
-				///'LP_Settings_Checkout' => include_once LP_PLUGIN_PATH . '/inc/admin/settings/class-lp-settings-checkout.php',
 				'LP_Settings_Profile'  => include_once LP_PLUGIN_PATH . '/inc/admin/settings/class-lp-settings-profile.php',
 				'LP_Settings_Payments' => include_once LP_PLUGIN_PATH . '/inc/admin/settings/class-lp-settings-payments.php',
-				'LP_Settings_Emails'   => include_once LP_PLUGIN_PATH . '/inc/admin/settings/class-lp-settings-emails.php'
 			);
 			ob_start();
 			$str = array();
@@ -222,16 +259,8 @@ if ( ! function_exists( 'LP_Install' ) ) {
 
 				$options = array();
 
-				switch ( $c ) {
-					case 'LP_Settings_Emails':
-						$options = $class->get_settings_general();
-						break;
-					default:
-						if ( ! is_callable( array( $class, 'get_settings' ) ) ) {
-							continue 2;
-						}
-
-						$options = $class->get_settings( '', '' );
+				if ( is_callable( array( $class, 'get_settings' ) ) ) {
+					$options = $class->get_settings( '', '' );
 				}
 
 				if ( ! $options ) {
@@ -239,28 +268,48 @@ if ( ! function_exists( 'LP_Install' ) ) {
 				}
 
 				foreach ( $options as $option ) {
-					if ( ( isset( $option['default'] ) || isset( $option['std'] ) ) && isset( $option['id'] ) ) {
 
-						if ( ! preg_match( '~^learn_press_~', $option['id'] ) ) {
-							$option_name = 'learn_press_' . $option['id'];
-						} else {
-							$option_name = $option['id'];
-						}
-
-						if ( false !== get_option( $option_name ) ) {
-							continue;
-						}
-
-						$value = array_key_exists( 'default', $option ) ? $option['default'] : $option['std'];
-						$value = get_option( $option_name, $value );
-
-						$value = maybe_serialize( $value );
-
-						$str[] = "{$option_name}=$value";
+					if ( ! isset( $option['id'] ) ) {
+						continue;
 					}
+
+					$defaultValue = '';
+
+					if ( array_key_exists( 'default', $option ) ) {
+						$defaultValue = $option['default'];
+					} else if ( array_key_exists( 'std', $option ) ) {
+						$defaultValue = $option['std'];
+					}
+
+					if ( $defaultValue === '' || $defaultValue === null ) {
+						continue;
+					}
+
+
+					if ( ! preg_match( '~^learn_press_~', $option['id'] ) ) {
+						$option_name = 'learn_press_' . $option['id'];
+					} else {
+						$option_name = $option['id'];
+					}
+
+					// Don't update existing option
+					if ( false !== get_option( $option_name ) ) {
+						continue;
+					}
+
+					// If option name doesn't like an array then update directly.
+					if ( ! preg_match( '/\[|\]/', $option_name ) ) {
+						update_option( $option_name, $defaultValue, 'yes' );
+						continue;
+					}
+
+					// Concat option as query string to parse it later
+					$value = maybe_serialize( $defaultValue );
+					$str[] = "{$option_name}=$value";
 				}
 			}
 
+			// Parse query string to get options
 			if ( $str ) {
 				$str     = join( '&', $str );
 				$options = array();
@@ -278,7 +327,8 @@ if ( ! function_exists( 'LP_Install' ) ) {
 		/**
 		 * Create tables.
 		 */
-		public static function create_tables() {
+		public
+		static function create_tables() {
 			global $wpdb;
 
 			// Do not show errors
@@ -297,7 +347,8 @@ if ( ! function_exists( 'LP_Install' ) ) {
 		/**
 		 * Delete transients
 		 */
-		private static function _delete_transients() {
+		private
+		static function _delete_transients() {
 			global $wpdb;
 			$sql = "
 				DELETE a, b FROM $wpdb->options a, $wpdb->options b
@@ -312,7 +363,8 @@ if ( ! function_exists( 'LP_Install' ) ) {
 		/**
 		 * Create log directory and add some files for security.
 		 */
-		public static function _create_log_path() {
+		public
+		static function _create_log_path() {
 			$files = array(
 				array(
 					'base'    => LP_LOG_PATH,
@@ -341,7 +393,8 @@ if ( ! function_exists( 'LP_Install' ) ) {
 		 *
 		 * @return mixed
 		 */
-		public static function _remove_pages() {
+		public
+		static function _remove_pages() {
 			global $wpdb;
 
 			// Get all pages
@@ -380,13 +433,11 @@ if ( ! function_exists( 'LP_Install' ) ) {
 		 */
 		public static function _create_pages() {
 			global $wpdb;
+
+			// Just delete duplicated pages
 			$created_page = self::_remove_pages();
+			$pages        = self::$_pages;
 
-			if ( ! empty( $created_page ) ) {
-				return;
-			}
-
-			$pages = self::$_pages;
 			foreach ( $pages as $page ) {
 
 				// If page already existed
@@ -423,12 +474,22 @@ if ( ! function_exists( 'LP_Install' ) ) {
 					}
 
 					if ( ! $page_id ) {
+
+						if ( $page === 'courses' ) {
+							$page_title = 'All Courses';
+						} else {
+							$page_title = ucwords( str_replace( '_', ' ', $page ) );
+						}
+						$page_slug = 'lp-' . str_replace( '_', '-', $page );
+
 						$inserted = wp_insert_post(
 							array(
-								'post_title'     => 'LP ' . ucwords( str_replace( '_', ' ', $page ) ),
+								'post_title'     => $page_title,
+								'post_name'      => $page_slug,
 								'post_status'    => 'publish',
 								'post_type'      => 'page',
-								'comment_status' => 'closed'
+								'comment_status' => 'closed',
+								'post_author'    => get_current_user_id()
 							)
 						);
 						if ( $inserted ) {
@@ -555,6 +616,10 @@ if ( ! function_exists( 'LP_Install' ) ) {
 			if ( ! self::$_update_files ) {
 				require_once ABSPATH . 'wp-admin/includes/file.php';
 				if ( WP_Filesystem() ) {
+
+					/**
+					 * @var WP_Filesystem_Base $wp_filesystem
+					 */
 					global $wp_filesystem;
 
 					if ( $files = $wp_filesystem->dirlist( LP_PLUGIN_PATH . '/inc/updates' ) ) {
@@ -572,7 +637,12 @@ if ( ! function_exists( 'LP_Install' ) ) {
 				if ( self::$_update_files ) {
 					ksort( self::$_update_files );
 				}
+
+				if ( file_exists( LP_PLUGIN_PATH . '/inc/updates/learnpress-update-x.x.x.php' ) ) {
+					self::$_update_files['9.9.9'] = 'learnpress-update-x.x.x.php';
+				}
 			}
+
 		}
 
 		/**
@@ -755,9 +825,11 @@ if ( ! function_exists( 'LP_Install' ) ) {
 				CREATE TABLE {$wpdb->learnpress_order_itemmeta} (
 					meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 					learnpress_order_item_id bigint(20) unsigned NOT NULL DEFAULT '0',
-					meta_key varchar(45) NOT NULL DEFAULT '',
-					meta_value longtext NOT NULL,
-					PRIMARY KEY  (meta_id)
+					meta_key varchar(255) NOT NULL DEFAULT '',
+					meta_value longtext NULL,
+					PRIMARY KEY (meta_id),
+  					KEY learnpress_order_item_id (learnpress_order_item_id),
+  					KEY meta_key (meta_key(191))
 				) $collate;";
 			}
 
@@ -766,8 +838,10 @@ if ( ! function_exists( 'LP_Install' ) ) {
 				CREATE TABLE {$wpdb->learnpress_order_items} (
 					order_item_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 					order_item_name longtext NOT NULL,
+					order_item_type varchar(200) NOT NULL DEFAULT '',
 					order_id bigint(20) unsigned NOT NULL DEFAULT '0',
-					PRIMARY KEY  (order_item_id)
+					PRIMARY KEY (order_item_id),
+  					KEY order_id (order_id)
 				) $collate;";
 			}
 
@@ -776,9 +850,12 @@ if ( ! function_exists( 'LP_Install' ) ) {
 				CREATE TABLE {$wpdb->learnpress_question_answers} (
 					question_answer_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 					question_id bigint(20) unsigned NOT NULL DEFAULT '0',
-					answer_data text NOT NULL,
-					answer_order bigint(20) unsigned NOT NULL DEFAULT '0',
-					PRIMARY KEY  (question_answer_id)
+					title text NOT NULL,
+					`value` varchar(32) NOT NULL,
+					`order` bigint(20) unsigned NOT NULL DEFAULT '1',
+					is_true varchar(3),
+					PRIMARY KEY (question_answer_id),
+					KEY question_id (question_id)
 				) $collate;";
 			}
 
@@ -789,8 +866,9 @@ if ( ! function_exists( 'LP_Install' ) ) {
 					quiz_id bigint(20) unsigned NOT NULL DEFAULT '0',
 					question_id bigint(20) unsigned NOT NULL DEFAULT '0',
 					question_order bigint(20) unsigned NOT NULL DEFAULT '1',
-					params longtext NULL,
-					PRIMARY KEY  (quiz_question_id)
+					PRIMARY KEY (quiz_question_id),
+					KEY quiz_id (quiz_id),
+					KEY question_id (question_id)
 				) $collate;";
 			}
 
@@ -804,7 +882,7 @@ if ( ! function_exists( 'LP_Install' ) ) {
 					date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 					status varchar(45) NOT NULL DEFAULT '',
 					user_type varchar(45) NOT NULL DEFAULT '',
-					PRIMARY KEY  (review_log_id)
+					PRIMARY KEY (review_log_id)
 				) $collate;";
 			}
 
@@ -816,7 +894,9 @@ if ( ! function_exists( 'LP_Install' ) ) {
 					item_id bigint(20) unsigned NOT NULL DEFAULT '0',
 					item_order bigint(20) unsigned NOT NULL DEFAULT '0',
 					item_type varchar(45),
-					PRIMARY KEY  (section_item_id)
+					PRIMARY KEY (section_item_id),
+					KEY section_id (section_id),
+					KEY item_id (item_id)
 				) $collate;";
 			}
 
@@ -826,9 +906,11 @@ if ( ! function_exists( 'LP_Install' ) ) {
 					section_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 					section_name varchar(255) NOT NULL DEFAULT '',
 					section_course_id bigint(20) unsigned NOT NULL DEFAULT '0',
-					section_order bigint(5) unsigned NOT NULL DEFAULT '0',
+					section_order bigint(10) unsigned NOT NULL DEFAULT '1',
 					section_description longtext NOT NULL,
-					PRIMARY KEY  (section_id)
+					PRIMARY KEY (section_id),
+					KEY section_course_id (section_course_id),
+					KEY section_name (section_name)
 				) $collate;";
 			}
 
@@ -840,7 +922,7 @@ if ( ! function_exists( 'LP_Install' ) ) {
 					session_value longtext NOT NULL,
 					session_expiry bigint(20) NOT NULL,
 					UNIQUE KEY session_id (session_id),
-					PRIMARY KEY  (session_key)
+					PRIMARY KEY (session_key)
 				) $collate;";
 			}
 
@@ -850,16 +932,21 @@ if ( ! function_exists( 'LP_Install' ) ) {
 					user_item_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 					user_id bigint(20) unsigned NOT NULL DEFAULT '0',
 					item_id bigint(20) unsigned NOT NULL DEFAULT '0',
-					start_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-					start_time_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-					end_time datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-					end_time_gmt datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+					start_time datetime NULL DEFAULT NULL,
+					end_time datetime NULL DEFAULT NULL,
+					expiration_time datetime DEFAULT NULL,
 					item_type varchar(45) NOT NULL DEFAULT '',
 					status varchar(45) NOT NULL DEFAULT '',
+					graduation varchar(20) NULL DEFAULT NULL,
+					access_level int(3) NOT NULL DEFAULT 50,
 					ref_id bigint(20) unsigned NOT NULL DEFAULT '0',
 					ref_type varchar(45) DEFAULT '',
 					parent_id bigint(20) unsigned NOT NULL DEFAULT '0',
-					PRIMARY KEY  (user_item_id)
+					PRIMARY KEY (user_item_id),
+					KEY parent_id (parent_id),
+					KEY user_id (user_id),
+					KEY item_id (item_id),
+					KEY ref_id (ref_id)
 				) $collate;";
 			}
 
@@ -868,9 +955,11 @@ if ( ! function_exists( 'LP_Install' ) ) {
 				CREATE TABLE {$wpdb->prefix}learnpress_user_itemmeta (
 					meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 					learnpress_user_item_id bigint(20) unsigned NOT NULL,
-					meta_key varchar(45) NOT NULL DEFAULT '',
-					meta_value text NOT NULL,
-					PRIMARY KEY  (meta_id)
+					meta_key varchar(255) NOT NULL DEFAULT '',
+					meta_value longtext NULL,
+					PRIMARY KEY (meta_id),
+					KEY learnpress_user_item_id (learnpress_user_item_id),
+  					KEY meta_key (meta_key(191))
 				) $collate;
 				";
 			}
@@ -880,9 +969,11 @@ if ( ! function_exists( 'LP_Install' ) ) {
 				CREATE TABLE {$wpdb->learnpress_question_answermeta} (
 					meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 					learnpress_question_answer_id bigint(20) unsigned NOT NULL,
-					meta_key varchar(45) NOT NULL DEFAULT '',
-					meta_value text NOT NULL,
-					PRIMARY KEY  (meta_id)
+					meta_key varchar(255) NOT NULL DEFAULT '',
+					meta_value longtext NULL,
+					PRIMARY KEY (meta_id),
+					KEY learnpress_question_answer_id (learnpress_question_answer_id),
+					KEY meta_key (meta_key(191))
 				) $collate;
 				";
 			}

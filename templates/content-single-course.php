@@ -1,6 +1,6 @@
 <?php
 /**
- * Template for displaying course content within the loop.
+ * Template for displaying content of course without header and footer
  *
  * This template can be overridden by copying it to yourtheme/learnpress/content-single-course.php
  *
@@ -14,6 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
+/**
+ * If course has set password
+ */
 if ( post_password_required() ) {
 	echo get_the_password_form();
 
@@ -21,17 +24,8 @@ if ( post_password_required() ) {
 }
 
 /**
- * @deprecated
+ * LP Hook
  */
-do_action( 'learn_press_before_main_content' );
-do_action( 'learn_press_before_single_course' );
-do_action( 'learn_press_before_single_course_summary' );
-
-/**
- * @since 3.0.0
- */
-do_action( 'learn-press/before-main-content' );
-
 do_action( 'learn-press/before-single-course' );
 
 ?>
@@ -40,7 +34,8 @@ do_action( 'learn-press/before-single-course' );
 	/**
 	 * @since 3.0.0
 	 *
-	 * @see learn_press_single_course_summary()
+	 * @called single-course/content.php
+     * @called single-course/sidebar.php
 	 */
 	do_action( 'learn-press/single-course-summary' );
 	?>
@@ -48,15 +43,6 @@ do_action( 'learn-press/before-single-course' );
 <?php
 
 /**
- * @since 3.0.0
+ * LP Hook
  */
-do_action( 'learn-press/after-main-content' );
-
 do_action( 'learn-press/after-single-course' );
-
-/**
- * @deprecated
- */
-do_action( 'learn_press_after_single_course_summary' );
-do_action( 'learn_press_after_single_course' );
-do_action( 'learn_press_after_main_content' );

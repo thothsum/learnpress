@@ -28,7 +28,7 @@ if ( ! has_post_thumbnail() || $video_embed ) {
 	return;
 }
 ?>
-
+sadasdasd
 <div class="course-thumbnail">
 	<?php
 	$image_title   = get_the_title( get_post_thumbnail_id() ) ? esc_attr( get_the_title( get_post_thumbnail_id() ) ) : '';
@@ -41,7 +41,7 @@ if ( ! has_post_thumbnail() || $video_embed ) {
 
 	echo apply_filters(
 		'learn_press_single_course_image_html',
-		sprintf( '<a href="%s" itemprop="image" class="learn-press-single-thumbnail" title="%s">%s</a>', $image_link, $image_caption, $image ),
+		sprintf( '<a href="%s" class="learn-press-single-thumbnail" title="%s">%s</a>', $image_link, $image_caption, $image ),
 		$post->ID
 	);
 	?>

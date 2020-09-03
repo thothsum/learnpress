@@ -4,6 +4,8 @@
  * 1/ Run "npm install gulp -g" if you did not run it any time in the past.
  * 2/ Run "npm install gulp --save-dev" to install gulp in your project directory.
  * 3/ Run "npm install package-name[ package-name...] --save-dev
+ *
+ * => npm install --save-dev gulp-zip gulp gulp-copy gulp-clean gulp sass gulp-livereload gulp-sourcemaps read-file gulp-replace mkdir gulp-concat yargs gulp-clean-css gulp-uglify
  */
 'use strict';
 const zip = require('gulp-zip');
@@ -20,7 +22,9 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     args = require('yargs').argv,
     cleanCSS = require('gulp-clean-css');
-
+gulp.task('testx', function () {
+    console.log('xs')
+})
 gulp.task('scss', function () {
     return gulp.src(['assets/scss/**/*.scss'])
         .pipe(sourceMaps.init())
@@ -32,7 +36,7 @@ gulp.task('scss', function () {
 
 gulp.task('watch', function () {
     liveReload.listen();
-    gulp.watch(['assets/scss/**/*.scss'], ['scss']);
+    gulp.watch(['assets/scss/**/*.scss'], gulp.series('scss'));
     //gulp.watch(['assets/js/admin/utils/*.js'], ['compress-js']);
 });
 
@@ -75,6 +79,9 @@ var rootPath = '/Users/tu/Documents/foobla',
         '!assets/**/*.js.map',
         '!assets/**/*.dev.js',
         '!assets/**/*bak*',
+        '!assets/**/*bk*',
+        '!assets/**/*.asset.php',
+        '!assets/**/*.deps.json',
         'dummy-data/**/*',
         'inc/**/*',
         'languages/**/*',
@@ -201,14 +208,22 @@ gulp.task('replace', gulp.series('copy-zip', () => {
 
 gulp.task('mk-zip', gulp.series('replace', function () {
     process.chdir(releasePath);
-    var zipPath = releasePath.replace(/learnpress/, '');
+    var zipPath = releasePath.replace(/learnpress$/, '');console.log(releasePath);
 
     return gulp.src(zipPath + '/**/learnpress/**/*')
         .pipe(zip('learnpress.' + getCurrentVer(true) + '.zip'))
         .pipe(gulp.dest(zipPath));
 }));
 
-gulp.task('zip', gulp.series('mk-zip'));
+gulp.task('zip', gulp.series('mk-zip', function (done) {
+        if(args.r){
+            return gulp.src(releasePath + '/', {read: false, allowEmpty: true}).pipe(clean({force: true}));
+        }
+        done();
+    }
+), function () {
+    console.log('Y', arguments)
+});
 
 gulp.task('scss-popup', function () {
     return gulp.src(['assets/scss/frontend/_item-popup.scss'])

@@ -175,7 +175,6 @@ var ModalQuizItems = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var $ = window.jQuery;
 var QuestionList = {
   toggleAll: function toggleAll(context) {
     var hidden = context.getters['isHiddenListQuestions'];
@@ -566,6 +565,9 @@ var QuestionList = {
   externalComponent: function externalComponent(state) {
     return state.externalComponent || [];
   },
+  supportAnswerOptions: function supportAnswerOptions(state) {
+    return state.supportAnswerOptions || [];
+  },
   hiddenQuestionsSettings: function hiddenQuestionsSettings(state) {
     return state.hidden_questions_settings || [];
   },
@@ -925,7 +927,6 @@ var QuestionList = {
     $Vue.set(state.statusUpdateQuestionAnswer, question_id, 'failed');
   },
   'DELETE_ANSWER': function DELETE_ANSWER(state, data) {
-    console.log('A');
     state.questions.map(function (question, index) {
       if (question.id == data.question_id) {
         for (var i = 0, n = question.answers.length; i < n; i++) {

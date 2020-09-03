@@ -52,6 +52,8 @@ if ( ! class_exists( 'LP_Course_Item' ) ) {
 		 */
 		protected $_preview = '';
 
+
+
 		/**
 		 * LP_Course_Item constructor.
 		 *
@@ -174,7 +176,7 @@ if ( ! class_exists( 'LP_Course_Item' ) ) {
 				$GLOBALS['get_class'] = 0;
 			}
 
-			$user_id = $user_id || get_current_user_id();
+			$user_id = $user_id ? $user_id : get_current_user_id();
 
 			$t = microtime( true );
 
@@ -193,6 +195,32 @@ if ( ! class_exists( 'LP_Course_Item' ) ) {
 
 
 			return apply_filters( 'learn-press/course-item-class-cached', $classes, $this->get_item_type(), $this->get_id(), $course_id );
+		}
+
+		public function get_status_title() {
+			$course_id      = get_the_ID();
+			$status_message = '';
+
+			if ( $this->is_blocked() ) {
+				$status_message = _x( 'Locked', 'course item status title', 'learnpress' );
+			} else {
+				$user = learn_press_get_current_user();
+				if ( $user->get_item_status( $this->get_id(), $course_id ) === 'completed' ) {
+					$item_grade = $user->get_item_grade( $this->get_id(), $course_id );
+
+					if ( $item_grade === 'failed' ) {
+						$status_message = _x( 'Failed', 'course item status title', 'learnpress' );
+					} elseif ( $item_grade === 'passed' ) {
+						$status_message = _x( 'Passed', 'course item status title', 'learnpress' );
+					} else {
+						$status_message = _x( 'Completed', 'course item status title', 'learnpress' );
+					}
+				} else {
+					$status_message = _x( 'Unread', 'course item status title', 'learnpress' );
+				}
+			}
+
+			return apply_filters( 'learn-press/course-item-status-title', $status_message, $this->get_id(), $course_id );
 		}
 
 		/**
@@ -491,7 +519,7 @@ if ( ! class_exists( 'LP_Course_Item' ) ) {
 			if ( $course_author ) {
 				$author_id = $course_author->get_id();
 				if ( $author_id == $user_id ) {
-					return false;
+					//return false;
 				}
 			}
 
@@ -568,6 +596,13 @@ if ( ! class_exists( 'LP_Course_Item' ) ) {
 						$blocked_items[ $course_item ] = 'no';
 					}
 				}
+
+				if ( $item_data = $course_item_data->get_item( $course_item ) ) {
+					$access_level = $item_data->get_access_level();
+					if ( $access_level > 0 && $access_level < 50 ) {
+						$blocked_items[ $course_item ] = 'yes';
+					}
+				}
 			}
 
 			$blocked_items = apply_filters( 'learn-press/course-item/parse-block-statuses', $blocked_items, $course_id, $user_id );
@@ -588,7 +623,7 @@ if ( ! class_exists( 'LP_Course_Item' ) ) {
 
 			if ( $is_admin = in_array( 'administrator', $user->get_roles() ) ) {
 				$blocked = 'no';
-			} else if ( $user->has_course_status( $course->get_id(), array( 'enrolled', 'finished' ) ) ) {
+			} else if ( $user->has_course_status( $course->get_id(), learn_press_course_enrolled_slugs() /* array( 'enrolled', 'finished' )*/ ) ) {
 				$blocked = 'no';
 
 				// fixed option block lessons not working

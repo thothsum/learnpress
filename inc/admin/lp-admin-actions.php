@@ -16,10 +16,6 @@ add_action( 'admin_footer', 'learn_press_footer_advertisement', - 10 );
 function _learn_press_set_user_items( $query ) {
 	global $post_type, $pagenow, $wpdb;
 
-	if ( ! function_exists( 'wp_get_current_user' ) ) {
-		include( ABSPATH . "wp-includes/pluggable.php" );
-	}
-
 	if ( ! did_action( 'plugin_loaded' ) || current_user_can( 'manage_options' ) || ! current_user_can( LP_TEACHER_ROLE ) || ! is_admin() || ( $pagenow != 'edit.php' ) ) {
 		return $query;
 	}
@@ -28,7 +24,8 @@ function _learn_press_set_user_items( $query ) {
 		LP_LESSON_CPT,
 		LP_QUIZ_CPT,
 		LP_QUESTION_CPT
-	) ) ) ) {
+	) ) )
+	) {
 		return;
 	}
 	$items = $wpdb->get_col(
@@ -168,26 +165,26 @@ function learn_press_active_course_menu() {
 	}
 
 	?>
-	<script type="text/javascript">
-		jQuery(function ($) {
-			var $lpMainMenu = $('#toplevel_page_learn_press'),
-				href = 'edit.php?post_type=<?php echo esc_js( $_GET['post_type'] ); ?>',
-				$current = $('a[href="' + href + '"]', $lpMainMenu);
+    <script type="text/javascript">
+        jQuery(function ($) {
+            var $lpMainMenu = $('#toplevel_page_learn_press'),
+                href = 'edit.php?post_type=<?php echo esc_js( $_GET['post_type'] ); ?>',
+                $current = $('a[href="' + href + '"]', $lpMainMenu);
 
-			if ($current.length) {
-				$current.addClass('current');
-				$current.parent('li').addClass('current');
-			}
+            if ($current.length) {
+                $current.addClass('current');
+                $current.parent('li').addClass('current');
+            }
 
 			<?php if ( $post_type === LP_COURSE_CPT && LP_Request::get( 'taxonomy' ) === 'course_category' ) {?>
-			$("body").removeClass('sticky-menu');
-			$lpMainMenu.addClass('wp-has-current-submenu wp-menu-open').removeClass('wp-not-current-submenu');
-			$lpMainMenu.children('a').addClass('wp-has-current-submenu wp-menu-open').removeClass('wp-not-current-submenu');
+            $("body").removeClass('sticky-menu');
+            $lpMainMenu.addClass('wp-has-current-submenu wp-menu-open').removeClass('wp-not-current-submenu');
+            $lpMainMenu.children('a').addClass('wp-has-current-submenu wp-menu-open').removeClass('wp-not-current-submenu');
 			<?php
 			}
 			?>
-		});
-	</script>
+        });
+    </script>
 	<?php
 }
 
@@ -281,3 +278,88 @@ if ( ! function_exists( 'lp_remove_admin_warning' ) ) {
 	}
 }
 add_action( 'wp_ajax_lp_remove_admin_warning', 'lp_remove_admin_warning' );
+
+// 3.3.0
+function learn_press_fill_in_blanks_admin_editor( $question ) {
+	learn_press_admin_view( 'question/fill-in-blanks', array( 'question' => $question ) );
+}
+
+add_action( 'learn-press/question-admin-editor', 'learn_press_fill_in_blanks_admin_editor' );
+
+/**
+ * @param RW_Meta_Box $object
+ */
+function learn_press_fill_in_blanks_settings( $object ) {
+	static $metabox;
+
+	global $post;
+
+	if ( LP_QUESTION_CPT !== get_post_type() ) {
+		return;
+	}
+
+	$question = LP_Question::get_question( $post->ID );
+
+	if ( ! $question || $question->get_type() !== 'fill_in_blanks' ) {
+		return;
+	}
+
+	if ( ! $object instanceof RW_Meta_Box ) {
+		$object = LP_Question_Post_Type::$metaboxes['general_settings'];
+	}
+
+	if ( $object->id !== 'question_settings' ) {
+		return;
+	}
+
+	if ( $metabox ) {
+		$object->meta_box = $metabox;
+
+		return;
+	}
+
+	$metabox           = $object->meta_box;
+	$metabox['fields'] = array_merge(
+		$metabox['fields'],
+		array(
+			array(
+				'name' => __( 'Case sensitive', 'learnpress' ),
+				'id'   => '_lp_case_sensitive',
+				'type' => 'yes_no',
+				'desc' => __( 'Makes sure the user input has to be exactly the same as the answer.', 'learnpress' ),
+				'std'  => 'no'
+			),
+			array(
+				'name'    => __( 'Blank fills style', 'learnpress' ),
+				'id'      => '_lp_blank_fills_style',
+				'type'    => 'select',
+				'desc'    => __( 'Makes sure the user input has to be exactly the same as the answer.', 'learnpress' ),
+				'std'     => '',
+				'options' => array(
+					''            => __( 'Hide', 'learnpress' ),
+					'select'      => __( 'Displays as select', 'learnpress' ),
+					'enumeration' => __( 'Displays as enumeration', 'learnpress' ),
+				)
+			),
+			array(
+				'name'    => __( 'Blanks style', 'learnpress' ),
+				'id'      => '_lp_blanks_style',
+				'type'    => 'select',
+				'desc'    => __( 'Makes sure the user input has to be exactly the same as the answer.', 'learnpress' ),
+				'std'     => '',
+				'options' => array(
+					''           => __( 'Displays as a paragraph', 'learnpress' ),
+					'paragraphs' => __( 'Displays as multiple paragraphs', 'learnpress' ),
+					'ordered'    => __( 'Displays as ordered list', 'learnpress' )
+				)
+			)
+		)
+	);
+
+	$metabox           = $object::normalize( $metabox );
+	$metabox['fields'] = $object::normalize_fields( $metabox['fields'], $object->get_storage() );
+	$object->meta_box  = $metabox;
+}
+
+add_action( 'rwmb_before', 'learn_press_fill_in_blanks_settings' );
+add_action( 'rwmb_before_save_post', 'learn_press_fill_in_blanks_settings' );

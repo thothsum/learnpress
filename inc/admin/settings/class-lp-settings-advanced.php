@@ -8,7 +8,7 @@
  * @version 1.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
+if ( !defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
@@ -30,10 +30,9 @@ class LP_Settings_Advanced extends LP_Abstract_Settings_Page {
 		$pages = array( 'frontend', 'admin' );
 		foreach ( $pages as $page ) {
 			$key               = "{$page}_libraries";
-			$key_request = ! empty( $_REQUEST[ $key ] ) ? LP_Helper::sanitize_params_submitted( $_REQUEST[ $key ] ) : array();
-			$exclude_libraries = array_keys( $key_request );
+			$exclude_libraries = !empty( $_REQUEST[$key] ) ? array_keys( $_REQUEST[$key] ) : '';
 
-			if ( ! $exclude_libraries || ! sizeof( $exclude_libraries ) ) {
+			if ( !$exclude_libraries || !sizeof( $exclude_libraries ) ) {
 				delete_option( 'learn_press_exclude_' . $key );
 			} else {
 				update_option( 'learn_press_exclude_' . $key, $exclude_libraries );
@@ -41,13 +40,101 @@ class LP_Settings_Advanced extends LP_Abstract_Settings_Page {
 
 			call_user_func( array( $this, "build_{$page}_assets" ), $exclude_libraries );
 		}
+		$this->save_custom_css();
+
+		return true;
+	}
+
+	protected function save_custom_css() {
+		$colors = !empty( $_POST['color_schema'] ) ? $_POST['color_schema'] : false;
+
+		if ( !$colors ) {
+			return;
+		}
+
+		$colors = $colors[0];
+
+		if ( $old_colors = get_option( 'learn_press_color_schemas' ) ) {
+			$old_colors = $old_colors[0];
+		} else {
+			$old_colors = array();
+		}
+
+		// Delete custom css file and option to generate new if needed.
+		if ( $custom_css = get_option( '_lp_custom_css' ) ) {
+			$upload     = wp_upload_dir();
+			$custom_css = $upload['basedir'] . '/learnpress/' . $custom_css;
+			@unlink( $custom_css );
+			delete_option( '_lp_custom_css' );
+		}
+
+		if ( $this->is_default_colors( $colors ) ) {
+			return false;
+		}
+//		var_dump(array_diff( $colors, $old_colors ));
+//		if ( array_diff( $colors, $old_colors ) ) {
+//			echo "1234";
+//			die();
+//			return;
+//		}
+//		die();
+
+		if ( !class_exists( 'scssc' ) ) {
+			include_once LP_PLUGIN_PATH . '/inc/libraries/scss.inc.php';
+		}
+
+		$scss = new scssc();
+		$scss->setImportPaths( LP_PLUGIN_PATH . '/assets/scss' );
+
+		$upload       = wp_upload_dir();
+		$custom_css   = $upload['basedir'];
+		$custom_file  = uniqid( 'lp-custom-css-' ) . '.css';
+		$scss_content = file_get_contents( LP_PLUGIN_PATH . '/assets/scss/learnpress.scss' );
+		$valid_colors = array();
+
+		// Rename inline variables to apply the new variables in our settings.
+		foreach ( $colors as $name => $value ) {
+			if ( !$value ) {
+				continue;
+			}
+
+			$valid_colors[$name] = $value;
+			$scss_content        = str_replace( '$' . $name . ':', '$' . $name . '-' . uniqid() . ':', $scss_content );
+		}
+
+		$scss->setVariables( $valid_colors );
+
+		$css_content = $scss_content = $scss->compile( $scss_content );
+		file_put_contents( $custom_css . '/learnpress/' . $custom_file, $css_content );
+		update_option( '_lp_custom_css', $custom_file );
+
+		return true;
+	}
+
+	/**
+	 * Return TRUE if all colors passed is equals with default colors.
+	 *
+	 * @param $colors
+	 *
+	 * @return bool
+	 */
+	protected function is_default_colors( $colors ) {
+		$color_schemas = learn_press_get_color_schemas();
+		foreach ( $color_schemas as $field ) {
+			if ( isset( $colors[$field['id']] ) && $colors[$field['id']] === $field['std'] ) {
+				continue;
+			}
+
+			return false;
+		}
+
+		return true;
 	}
 
 	protected function get_upload_path() {
 		$uploadDir = wp_upload_dir();
 		$uploadDir = $uploadDir['basedir'] . '/learnpress';
-
-		@wp_mkdir_p( $uploadDir);
+		@mkdir( $uploadDir, '0777', true );
 
 		return $uploadDir;
 	}
@@ -56,7 +143,7 @@ class LP_Settings_Advanced extends LP_Abstract_Settings_Page {
 
 		$writeDir = $this->get_upload_path();
 
-		if ( ! $exclude_libraries || ! sizeof( $exclude_libraries ) ) {
+		if ( !$exclude_libraries || !sizeof( $exclude_libraries ) ) {
 			@unlink( $writeDir . '/admin.plugins.all.js' );
 			@unlink( $writeDir . '/admin.bundle.min.css' );
 
@@ -114,7 +201,7 @@ class LP_Settings_Advanced extends LP_Abstract_Settings_Page {
 	public function build_frontend_assets( $exclude_libraries = array() ) {
 		$writeDir = $this->get_upload_path();
 
-		if ( ! $exclude_libraries || ! sizeof( $exclude_libraries ) ) {
+		if ( !$exclude_libraries || !sizeof( $exclude_libraries ) ) {
 			@unlink( $writeDir . '/plugins.all.js' );
 			@unlink( $writeDir . '/bundle.min.css' );
 
@@ -191,61 +278,76 @@ class LP_Settings_Advanced extends LP_Abstract_Settings_Page {
 			'learn_press_profile_settings',
 			array(
 				array(
-					'title'   => __( 'Enable custom colors', 'learnpress' ),
-					'id'      => 'enable_custom_colors',
-					'default' => 'no',
-					'type'    => 'yes-no',
-					'desc'    => __( 'Use color schema for main colors.', 'learnpress' )
+					'type'  => 'heading',
+					'title' => __( 'Style', 'learnpress' )
 				),
 				array(
-					'title'   => __( 'Color schema', 'learnpress' ),
+					'title'   => __( 'Color Schema', 'learnpress' ),
 					'id'      => 'color_schema',
 					'default' => '',
 					'type'    => 'color-schema'
 				),
 				array(
-					'title'   => __( 'Load css', 'learnpress' ),
+					'title'   => __( 'Load CSS', 'learnpress' ),
 					'id'      => 'load_css',
 					'default' => 'yes',
 					'type'    => 'yes-no',
 					'desc'    => __( 'Load default stylesheet for LearnPress.', 'learnpress' )
 				),
 				array(
-					'title'   => __( 'Debug mode', 'learnpress' ),
+					'type'  => 'heading',
+					'title' => __( 'Other', 'learnpress' )
+				),
+				array(
+					'title'   => __( 'Gutenberg', 'learnpress' ),
+					'id'      => 'enable_gutenberg',
+					'default' => 'no',
+					'type'    => 'checkbox_list',
+					'options' => array(
+//						'-1'            => __( 'Enable all', 'learnpress' ),
+						LP_COURSE_CPT   => __( 'Course', 'learnpress' ),
+						LP_LESSON_CPT   => __( 'Lesson', 'learnpress' ),
+						LP_QUIZ_CPT     => __( 'Quiz', 'learnpress' ),
+						LP_QUESTION_CPT => __( 'Question', 'learnpress' )
+					),
+					'desc'    => __( 'Enable Gutenberg editor.', 'learnpress' )
+				),
+				array(
+					'title'   => __( 'Debug Mode', 'learnpress' ),
 					'id'      => 'debug',
 					'default' => 'no',
 					'type'    => 'yes-no',
 					'desc'    => __( 'Turn on/off debug mode for developer.', 'learnpress' )
 				),
 				array(
-					'title' => __( 'JS and CSS libraries', 'learnpress' ),
+					'title' => __( 'Script Libraries', 'learnpress' ),
 					'id'    => 'js_css_libraries',
 					'type'  => 'html',
 					'html'  => learn_press_admin_view_content( 'settings-js-css' ),
 					'desc'  => __( 'Check the checkboxes to disable js/css from LearnPress (It must be loaded in other plugins or theme).', 'learnpress' )
 				),
+//				array(
+//					'title' => __( 'Hard cache', 'learnpress' ),
+//					'type'  => 'heading',
+//				),
 				array(
-					'title' => __( 'Hard cache', 'learnpress' ),
-					'type'  => 'heading',
-				),
-				array(
-					'title'   => __( 'Enable hard cache', 'learnpress' ),
+					'title'   => __( 'Hard Cache', 'learnpress' ),
 					'id'      => 'enable_hard_cache',
 					'default' => 'no',
 					'type'    => 'yes-no',
 					'desc'    => sprintf( __( 'Enable cache for static content such as content and settings of course, lesson, quiz. <a href="%s">%s</a>', 'learnpress' ), admin_url( 'admin.php?page=learn-press-tools&tab=cache' ), __( 'Advanced', 'learnpress' ) )
 				),
-				array(
-					'title' => __( 'Others', 'learnpress' ),
-					'type'  => 'heading',
-				),
-				array(
-					'title'   => __( 'Enable lesson video', 'learnpress' ),
-					'id'      => 'enable_lesson_video',
-					'default' => 'no',
-					'type'    => 'yes-no',
-					'desc'    => __( 'When this option is enabled, the first video embed in lesson content will be detected and move to the top.', 'learnpress' )
-				),
+//				array(
+//					'title' => __( 'Others', 'learnpress' ),
+//					'type'  => 'heading',
+//				),
+//				array(
+//					'title'   => __( 'Enable lesson video', 'learnpress' ),
+//					'id'      => 'enable_lesson_video',
+//					'default' => 'no',
+//					'type'    => 'yes-no',
+//					'desc'    => __( 'When this option is enabled, the first video embed in lesson content will be detected and move to the top.', 'learnpress' )
+//				),
 			)
 		);
 	}

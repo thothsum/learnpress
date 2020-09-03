@@ -59,7 +59,7 @@ class LP_Course_Section extends LP_Abstract_Object_Data {
 			$this->_data[ $k ] = $v;
 		}
 
-		$this->_curd = new LP_Section_CURD(0);
+		$this->_curd = new LP_Section_CURD( 0 );
 		$this->set_id( $this->_data['id'] );
 		// Load section items
 		$this->_load_items();
@@ -81,7 +81,7 @@ class LP_Course_Section extends LP_Abstract_Object_Data {
 			LP_Object_Cache::set( 'section-' . $this->get_id(), $items, 'learn-press/section-items' );
 		}
 
-		LP_Helper_CURD::cache_posts($items);
+		LP_Helper_CURD::cache_posts( $items );
 
 		foreach ( $items as $item ) {
 			// Create item
@@ -115,9 +115,9 @@ class LP_Course_Section extends LP_Abstract_Object_Data {
 	/**
 	 * Get data to array.
 	 *
+	 * @return array
 	 * @since 3.0.0
 	 *
-	 * @return array
 	 */
 	public function to_array() {
 		$data = array(
@@ -186,6 +186,10 @@ class LP_Course_Section extends LP_Abstract_Object_Data {
 	 * @return array
 	 */
 	public function get_items( $type = '', $preview = true ) {
+
+		/**
+		 * @var LP_Course_Item[] $items
+		 */
 		$items = apply_filters( 'learn-press/section-items', $this->items, $this );
 
 		if ( ! $items ) {
@@ -222,9 +226,9 @@ class LP_Course_Section extends LP_Abstract_Object_Data {
 	/**
 	 * Get items in this section to array.
 	 *
+	 * @return array
 	 * @since 3.0.0
 	 *
-	 * @return array
 	 */
 	public function get_items_array() {
 		$items = $this->get_items();
@@ -291,6 +295,12 @@ class LP_Course_Section extends LP_Abstract_Object_Data {
 
 		if ( ! $this->count_items() ) {
 			$class[] = 'section-empty';
+		}
+
+		$closed = learn_press_cookie_get( 'closed-section-' . $this->get_course_id() );
+
+		if ( $closed && in_array( $this->get_id(), $closed ) ) {
+			$class[] = 'closed';
 		}
 
 		$output = 'class="' . join( ' ', $class ) . '"';

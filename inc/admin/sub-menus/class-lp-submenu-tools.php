@@ -17,10 +17,11 @@ class LP_Submenu_Tools extends LP_Abstract_Submenu {
 		$this->tabs = apply_filters(
 			'learn-press/admin/tools-tabs',
 			array(
-				'template' => __( 'Template', 'learnpress' ),
+				'course'   => __( 'Course Data', 'learnpress' ),
 				'database' => __( 'Database', 'learnpress' ),
-				'course'   => __( 'Course', 'learnpress' ),
-				'cache'    => __( 'Cache', 'learnpress' )
+				'template' => __( 'Templates', 'learnpress' ),
+				'cron'     => __( 'Cron Jobs', 'learnpress' ),
+				'cache'    => __( 'Caches', 'learnpress' )
 			)
 		);
 
@@ -46,6 +47,14 @@ class LP_Submenu_Tools extends LP_Abstract_Submenu {
 				$has_action = false;
 		}
 
+		if ( LP_Request::get( 'generate-cron-url' ) && $nonce = LP_Request::get( '_wpnonce' ) ) {
+			if ( wp_verify_nonce( $nonce ) ) {
+				delete_option( 'learnpress_cron_url_nonce' );
+				wp_redirect( remove_query_arg( array('generate-cron-url', '_wpnonce' )) );
+				die();
+			}
+		}
+
 		if ( $has_action ) {
 			die();
 		}
@@ -65,6 +74,10 @@ class LP_Submenu_Tools extends LP_Abstract_Submenu {
 
 	public function page_content_course() {
 		learn_press_admin_view( 'tools/html-course' );
+	}
+
+	public function page_content_cron() {
+		learn_press_admin_view( 'tools/html-cron' );
 	}
 
 	public function enqueue_assets() {

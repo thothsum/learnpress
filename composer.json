@@ -1,28 +1,25 @@
 {
   "name": "learnpress/learnpress",
-  "description": "Coding Starndard for learnpress.",
-  "type": "library",
-  "license": "GPL-3.0-or-later",
-  "homepage": "https://github.com/LearnPress/learnpress",
-  "authors": [
-    {
-      "name": "LearnPress team",
-      "email": "learnpress@thimpress.com",
-      "homepage": "https://thimpress.com"
-    }
-  ],
-  "support": {
-    "issues": "https://github.com/LearnPress/learnpress/issues"
-  },
+  "type": "wordpress lms",
+  "license": "GPL",
   "require": {
+    "squizlabs/php_codesniffer": "2.*"
   },
   "require-dev": {
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4 || ^0.5.0 || ^0.6.0",
-    "squizlabs/php_codesniffer": "^3.1",
-    "wp-coding-standards/wpcs": "^1.0.0 || ^2.0.0"
+    "sstalle/php7cc": "^1.1",
+    "squizlabs/php_codesniffer": "^2.0",
+    "wimg/php-compatibility": "*",
+    "simplyadmire/composer-plugins": "@dev",
+    "wp-coding-standards/wpcs": "dev-develop"
   },
   "scripts": {
-    "format": "phpcbf --standard=phpcs.xml --report-summary --report-source",
-    "lint": "phpcs --standard=phpcs.xml"
+    "install-standards": [
+      "\"vendor/bin/phpcs\" --config-set installed_paths ../../wp-coding-standards/wpcs",
+      "rm -rf vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/PHPCompatibility",
+      "cp -r vendor/wimg/php-compatibility/PHPCompatibility vendor/squizlabs/php_codesniffer/CodeSniffer/Standards",
+      "rm -rf vendor/wimg/php-compatibility/PHPCompatibility"
+    ],
+    "post-install-cmd": "@install-standards",
+    "post-update-cmd": "@install-standards"
   }
 }

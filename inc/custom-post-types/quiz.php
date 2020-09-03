@@ -30,6 +30,11 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 		public static $metaboxes = array();
 
 		/**
+		 * @var string
+		 */
+		protected $_post_type = LP_QUIZ_CPT;
+
+		/**
 		 * LP_Quiz_Post_Type constructor.
 		 *
 		 * @param $post_type
@@ -107,6 +112,7 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 						'capability_type'    => LP_LESSON_CPT,
 						'map_meta_cap'       => true,
 						'show_in_menu'       => 'learn_press',
+						'show_in_rest'       => $this->is_support_gutenberg(),
 						'show_in_admin_bar'  => true,
 						'show_in_nav_menus'  => true,
 						'supports'           => array(
@@ -134,6 +140,7 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 			if ( LP_QUIZ_CPT !== get_post_type() ) {
 				return;
 			}
+
 			learn_press_admin_view( 'quiz/editor' );
 		}
 
@@ -190,7 +197,8 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 					'hidden_questions'          => ! empty( $hidden_questions ) ? $hidden_questions : array(),
 					'hidden_questions_settings' => $hidden_questions_settings ? $hidden_questions_settings : array(),
 					'disableUpdateList'         => false,
-					'externalComponent'         => apply_filters( 'learn-press/admin/external-js-component', array() )
+					'supportAnswerOptions'      => learn_press_get_question_support_answer_options()
+					//apply_filters( 'learn-press/admin/external-js-component', array() )
 				)
 			) ) );
 		}
@@ -213,9 +221,41 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 		}
 
 		/**
+		 * Admin editor
+		 *
+		 * @since 3.3.0
+		 *
+		 * @return bool|string
+		 */
+		public function admin_editor() {
+			$quiz = LP_Quiz::get_quiz();
+
+
+			//do_action( 'learn-press/question-admin-editor', $question );
+			return learn_press_admin_view_content( 'quiz/editor' );
+
+		}
+
+		/**
 		 * Add question meta box settings.
 		 */
 		public function add_meta_boxes() {
+			if ( $this->is_support_gutenberg() ) {
+				self::$metaboxes['quiz-editor'] = new RW_Meta_Box(
+					array(
+						'id'     => 'quiz-editor',
+						'title'  => __( 'Questions', 'learnpress' ),
+						'pages'  => array( LP_QUIZ_CPT ),
+						'fields' => array(
+							array(
+								'type'     => 'custom_html',
+								'callback' => array( $this, 'admin_editor' )
+							)
+						)
+					)
+				);
+			}
+
 			self::$metaboxes['quiz_settings'] = new RW_Meta_Box( self::settings_meta_box() );
 			parent::add_meta_boxes();
 		}
@@ -226,18 +266,81 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 		public static function settings_meta_box() {
 
 			$meta_box = array(
-				'title'      => __( 'General Settings', 'learnpress' ),
+				'title'      => __( 'Settings', 'learnpress' ),
 				'post_types' => LP_QUIZ_CPT,
 				'context'    => 'normal',
 				'priority'   => 'high',
 				'fields'     => array(
 					array(
-						'name' => __( 'Pagination Questions', 'learnpress' ),
-						'desc' => __( 'Show list of questions while doing quiz as ordered numbers (1, 2, 3, etc).', 'learnpress' ),
-						'id'   => '_lp_show_hide_question',
+						'name'         => __( 'Duration', 'learnpress' ),
+						'desc'         => __( 'Set 0 for unlimited time on the quiz.', 'learnpress' ),
+						'id'           => '_lp_duration',
+						'type'         => 'duration',
+						'default_time' => 'minute',
+						'min'          => 0,
+						'std'          => 10,
+					),
+					array(
+						'name'        => __( 'Passing Grade', 'learnpress' ),
+						'desc'        => __( 'The condition that must be achieved in order to be passed the quiz.', 'learnpress' ),
+						'id'          => '_lp_passing_grade',
+						'type'        => 'number',
+						'after_input' => '&nbsp;%',
+						'min'         => 0,
+						'max'         => 100,
+						'std'         => 80
+					),
+					array(
+						'name' => __( 'Instant Check', 'learnpress' ),
+						//'id'   => '_lp_show_check_answer',
+						'id'   => '_lp_instant_check',
 						'type' => 'yes_no',
+						'desc' => __( 'Allow students to immediately check their answers while doing the quiz.', 'learnpress' ),
 						'std'  => 'no'
 					),
+					array(
+						'name' => __( 'Negative Marking', 'learnpress' ),
+						//'id'   => '_lp_minus_points',
+						'id'   => '_lp_negative_marking',
+						'type' => 'yes_no',
+						'desc' => __( 'For each question which students answer wrongly, the total point is deducted exactly the question mark.', 'learnpress' ),
+						'std'  => 'no',
+					),
+					array(
+						'name' => __( 'Retry', 'learnpress' ),
+						//'id'   => '_lp_retake_count',
+						'id'   => '_lp_retry',
+						'type' => 'yes_no',
+						'desc' => __( 'Allow students to try the quiz one more time.', 'learnpress' ),
+						'std'  => 'no'
+					),
+					array(
+						'name' => __( 'Pagination', 'learnpress' ),
+						'desc' => __( 'Set a number of questions showed in each page.', 'learnpress' ),
+						//'id'   => '_lp_show_hide_question',
+						'id'   => '_lp_pagination',
+						'type' => 'number',
+						'std'  => 1,
+						'min'  => 1,
+						'step' => 1
+					),
+//					array(
+//						'name' => __( 'Page numbers', 'learnpress' ),
+//						'desc' => __( 'Show pages as numbers', 'learnpress' ),
+//						//'id'   => '_lp_show_hide_question',
+//						'id'   => '_lp_pagination_numbers',
+//						'type' => 'yes_no',
+//						'std'  => 'no'
+//					),
+					array(
+						'name' => __( 'Review', 'learnpress' ),
+						'id'   => '_lp_review',
+						'type' => 'yes-no',
+						'desc' => __( 'Allow students to review the quiz after submitted.', 'learnpress' ),
+						'std'  => 'yes'
+					),
+					/////////
+					/*
 					array(
 						'name' => __( 'Review Questions', 'learnpress' ),
 						'id'   => '_lp_review_questions',
@@ -262,21 +365,22 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 							)
 						)
 					),
-					array(
-						'name'         => __( 'Duration', 'learnpress' ),
-						'desc'         => __( 'Duration of the quiz. Set 0 to disable.', 'learnpress' ),
-						'id'           => '_lp_duration',
-						'type'         => 'duration',
-						'default_time' => 'minute',
-						'min'          => 0,
-						'std'          => 10,
-					),
+
+//					array(
+//						'name' => __( 'Preview Quiz', 'learnpress' ),
+//						'id'   => '_lp_preview',
+//						'type' => 'yes-no',
+//						'desc' => __( 'If this is a preview quiz, then student can do this quiz without taking the course.', 'learnpress' ),
+//						'std'  => 'no'
+//					),
 					array(
 						'name' => __( 'Minus Points', 'learnpress' ),
 						'id'   => '_lp_minus_points',
-						'type' => 'text',
+						'type' => 'number',
 						'desc' => __( 'How many points minus for each wrong question in quiz.', 'learnpress' ),
+						'min'  => 0,
 						'std'  => 0,
+						'step' => 0.25
 					),
 					array(
 						'name'       => __( 'Minus For Skip', 'learnpress' ),
@@ -295,16 +399,7 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 							)
 						)
 					),
-					array(
-						'name'        => __( 'Passing Grade (<span>%</span>)', 'learnpress' ),
-						'desc'        => __( 'Requires user reached this point to pass the quiz.', 'learnpress' ),
-						'id'          => '_lp_passing_grade',
-						'type'        => 'number',
-						'after_input' => '&nbsp;%',
-						'min'         => 0,
-						'max'         => 100,
-						'std'         => 80
-					),
+
 					array(
 						'name' => __( 'Re-take', 'learnpress' ),
 						'id'   => '_lp_retake_count',
@@ -347,7 +442,7 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 						'std'  => '0',
 						'min'  => - 1,
 						'max'  => 100
-					)
+					)*/
 				)
 			);
 
@@ -369,18 +464,23 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 				$columns = array_merge(
 					array_slice( $columns, 0, $pos + 1 ),
 					array(
-						'author'          => __( 'Author', 'learnpress' ),
+						'instructor'      => __( 'Author', 'learnpress' ),
 						LP_COURSE_CPT     => __( 'Course', 'learnpress' ),
 						'num_of_question' => __( 'Questions', 'learnpress' ),
 						'duration'        => __( 'Duration', 'learnpress' ),
-						'preview'         => __( 'Preview', 'learnpress' )
+						//'preview'         => __( 'Preview', 'learnpress' )
 					),
 					array_slice( $columns, $pos + 1 )
 				);
 			}
 			unset ( $columns['taxonomy-lesson-tag'] );
 			$user = wp_get_current_user();
+
 			if ( in_array( 'lp_teacher', $user->roles ) ) {
+				unset( $columns['instructor'] );
+			}
+
+			if ( ! empty( $columns['author'] ) ) {
 				unset( $columns['author'] );
 			}
 
@@ -391,11 +491,14 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 		 * Display content for custom column
 		 *
 		 * @param string $name
-		 * @param int $post_id
+		 * @param int    $post_id
 		 */
 		public function columns_content( $name, $post_id = 0 ) {
 			global $post;
 			switch ( $name ) {
+				case 'instructor':
+					$this->column_instructor( $post_id );
+					break;
 				case 'lp_course':
 					$this->_get_item_course( $post_id );
 					break;
@@ -531,7 +634,7 @@ if ( ! class_exists( 'LP_Quiz_Post_Type' ) ) {
 		 * @return mixed
 		 */
 		public function sortable_columns( $columns ) {
-			$columns['author']          = 'author';
+			$columns['instructor']      = 'author';
 			$columns[ LP_COURSE_CPT ]   = 'course-name';
 			$columns['num_of_question'] = 'question-count';
 

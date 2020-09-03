@@ -14,9 +14,8 @@ learn_press_admin_view( 'question/option' );
             <thead>
             <tr>
                 <th class="sort"></th>
-                <th class="order">#</th>
-                <th class="answer-text"><?php _e( 'Answer Text', 'learnpress' ); ?></th>
-                <th class="answer-correct"><?php _e( 'Correct?', 'learnpress' ); ?></th>
+                <th class="answer-text"><?php _e( 'Answers', 'learnpress' ); ?></th>
+                <th class="answer-correct"><?php _e( 'Correction', 'learnpress' ); ?></th>
                 <th class="actions"></th>
             </tr>
             </thead>
@@ -38,7 +37,7 @@ learn_press_admin_view( 'question/option' );
 </script>
 
 <script type="text/javascript">
-    jQuery(function ( $) {
+    jQuery(function ($) {
         var $store = window.LP_Question_Store;
 
         window.$Vue = window.$Vue || Vue;
@@ -92,7 +91,9 @@ learn_press_admin_view( 'question/option' );
                             _self.sort();
                         }
                     });
-                }, 1000)
+                }, 1000);
+
+
             },
             methods: {
                 // sort answer options
@@ -109,10 +110,10 @@ learn_press_admin_view( 'question/option' );
                 },
                 // change answer title
                 updateTitle: function (answer) {
-                    if (!this.draft) {
-                        // update title
-                        $store.dispatch('updateAnswerTitle', answer);
-                    }
+                    //if (!this.draft) {
+                    // update title
+                    $store.dispatch('updateAnswerTitle', answer);
+                    //}
                 },
                 // change correct answer
                 changeCorrect: function (correct) {
@@ -128,14 +129,12 @@ learn_press_admin_view( 'question/option' );
                 // new answer option
                 newAnswer: function () {
                     // new answer
-                    if (this.status === 'successful') {
-                        $store.dispatch('newAnswer', {
-                            answer: {
-                                value: LP.uniqueId(),
-                                text: $store.getters.i18n.new_option_label
-                            }
-                        });
-                    }
+                    $store.dispatch('newAnswer', {
+                        answer: {
+                            value: '',
+                            title: ''//$store.getters.i18n.new_option_label
+                        }
+                    });
                 }
             }
         })

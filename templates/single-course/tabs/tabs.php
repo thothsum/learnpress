@@ -4,50 +4,65 @@
  *
  * This template can be overridden by copying it to yourtheme/learnpress/single-course/tabs/tabs.php.
  *
- * @author  ThimPress
+ * @author   ThimPress
  * @package  Learnpress/Templates
- * @version  3.0.0
+ * @version  3.3.0
  */
 
 /**
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
+
+$tabs = learn_press_get_course_tabs();
+
+if ( empty( $tabs ) ) {
+	return;
+}
+
+$active_tab = learn_press_cookie_get( 'course-tab' );
+
+if ( ! $active_tab ) {
+	$tab_keys   = array_keys( $tabs );
+	$active_tab = reset( $tab_keys );
+}
+
 ?>
 
-<?php $tabs = learn_press_get_course_tabs(); ?>
-
-<?php if ( empty( $tabs ) ) {
-	return;
-} ?>
-
 <div id="learn-press-course-tabs" class="course-tabs">
+	<?php foreach ( $tabs as $key => $tab ) { ?>
+        <input type="radio" name="learn-press-course-tab-radio" id="tab-<?php echo $key; ?>-input"
+			<?php checked( $active_tab === $key ); ?>
+               value="<?php echo $key; ?>"/>
+	<?php } ?>
 
-    <ul class="learn-press-nav-tabs course-nav-tabs">
+    <ul class="learn-press-nav-tabs course-nav-tabs" data-tabs="<?php echo sizeof( $tabs ); ?>">
 
-        <?php foreach ( $tabs as $key => $tab ) { ?>
+		<?php foreach ( $tabs as $key => $tab ) { ?>
 
-            <?php $classes = array( 'course-nav course-nav-tab-' . esc_attr( $key ) );
-			if ( ! empty( $tab['active'] ) && $tab['active'] ) {
-				$classes[] = 'active default';
-			} ?>
+			<?php
+			$classes = array( 'course-nav course-nav-tab-' . esc_attr( $key ) );
+
+			if ( $active_tab === $key ) {
+				$classes[] = 'active';
+			}
+			?>
 
             <li class="<?php echo join( ' ', $classes ); ?>">
-                <a href="?tab=<?php echo esc_attr( $tab['id'] ); ?>"
-                   data-tab="#<?php echo esc_attr( $tab['id'] ); ?>"><?php echo $tab['title']; ?></a>
+                <label for="tab-<?php echo $key; ?>-input"><?php echo $tab['title']; ?></label>
             </li>
 
 		<?php } ?>
 
     </ul>
 
-	<?php foreach ( $tabs as $key => $tab ) { ?>
+    <div class="course-tab-panels">
+		<?php foreach ( $tabs as $key => $tab ) { ?>
 
-        <div class="course-tab-panel-<?php echo esc_attr( $key ); ?> course-tab-panel<?php echo ! empty( $tab['active'] ) && $tab['active'] ? ' active' : ''; ?>"
-             id="<?php echo esc_attr( $tab['id'] ); ?>">
+            <div class="course-tab-panel-<?php echo esc_attr( $key ); ?> course-tab-panel"
+                 id="<?php echo esc_attr( $tab['id'] ); ?>">
 
-			<?php
-			if ( apply_filters( 'learn_press_allow_display_tab_section', true, $key, $tab ) ) {
+				<?php
 				if ( is_callable( $tab['callback'] ) ) {
 					call_user_func( $tab['callback'], $key, $tab );
 				} else {
@@ -56,11 +71,10 @@ defined( 'ABSPATH' ) || exit();
 					 */
 					do_action( 'learn-press/course-tab-content', $key, $tab );
 				}
-			}
-			?>
+				?>
 
-        </div>
+            </div>
 
-	<?php } ?>
-
+		<?php } ?>
+    </div>
 </div>
