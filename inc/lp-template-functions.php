@@ -770,7 +770,7 @@ if ( ! function_exists( 'learn_press_content_item_summary_question_explanation' 
 				return;
 			}
 
-			if ( $user_quiz->has_checked_question( $question->get_id() ) || $user_quiz->is_answered_true( $question->get_id() ) || learn_press_is_review_questions() ) {
+			if ( $user_quiz->has_checked_question( $question->get_id() ) || $user_quiz->is_answered_true( $question->get_id() ) || ( learn_press_is_review_questions() && ( ! $user->can_retake_quiz( $quiz->get_id(), $course->get_id() ) || $quiz->get_show_result() ) ) ) {
 				learn_press_get_template( 'content-question/explanation.php', array( 'question' => $question ) );
 			}
 		}
