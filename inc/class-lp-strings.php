@@ -1,5 +1,12 @@
 <?php
 /**
+<<<<<<< HEAD
+ * Translate strings
+ */
+
+/**
+=======
+>>>>>>> 6f3786acbfe36fbedca42244dfe3741d8e6e6781
  * Class LP_Strings
  */
 class LP_Strings {
@@ -23,7 +30,7 @@ class LP_Strings {
 			'confirm-retake-course'            => __( 'Do you want to retake course "%s"?', 'learnpress' ),
 			'confirm-finish-course-not-passed' => __( 'You have not passed the course\' assessment (%s), are you sure to finish this course?', 'learnpress' ),
 		));
-
+		
 		self::$strings = $strings;
 	}
 
