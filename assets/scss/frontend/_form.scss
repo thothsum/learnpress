@@ -1,0 +1,167 @@
+.lp-list-table {
+    width: 100%;
+    margin-bottom: 20px;
+    th, td {
+        border: 0 solid rgba(204,204,204,0.3);
+        border-bottom-width: 1px;
+        line-height: 1;
+        font-size: 16px;
+        background: #FFF;
+        text-align: left;
+        padding: 20px;
+        @media (max-width: 767px) {
+            padding: 15px;
+        }
+    }
+
+    thead {
+        box-sizing: border-box;
+        border: 1px solid #e5e7f2;
+        tr {
+            th {
+                background: #f1f2f8;
+                color: #333;
+                border-bottom: none;
+                font-size: 18px;
+                height: 60px;
+            }
+        }
+    }
+    tbody,
+    tfoot {
+        border: 1px solid rgba(204,204,204,0.3);
+        border-top: 0;
+        box-sizing: border-box;
+        tr {
+            td, th {
+                background: #FFF;
+                font-size: 16px;
+                color: #666;
+                font-weight: 300;
+                height: 62px;
+                a {
+                    text-decoration: none;
+                    border-bottom: none;
+                    color: #666;
+                    &:hover {
+                        color: $primary-color;
+                    }
+                }
+            }
+
+            .column-status {
+                .result-percent {
+                    font-weight: 500;
+                }
+                .lp-label {
+                    font-weight: 600;
+                }
+            }
+
+            &:nth-child(odd) {
+                background: #F5F5F5;
+            }
+        }
+    }
+    .list-table-nav {
+        td {
+            font-size: 14px;
+            &.nav-text {
+                text-align: left;
+            }
+            &.nav-pages {
+                text-align: right;
+                .learn-press-pagination {
+                    text-align: right;
+                }
+                .page-numbers {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+
+}
+
+.lp-label {
+    font-size: 16px;
+    display: inline-block;
+    font-weight: 300;
+    line-height: 1;
+    color: #666;
+    /*padding: 3px 5px;
+    background: #DDD;
+    border-radius: 4px;*/
+
+    /*&.label-finished,
+    &.label-completed {
+        background: #ffdc1e;
+    }
+
+    &.label-passed {
+        background: #14c4ff;
+    }
+
+    &.label-failed {
+        background: #ff4d66;
+    }
+
+    &.label-enrolled,
+    &.label-started {
+        background: #d243ff;
+    }*/
+}
+
+.learn-press-form {
+    .form-fields {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        .form-field {
+            margin: 0 0 20px 0;
+            label {
+                display: block;
+                margin: 0 0 10px 0;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="number"],
+            input[type="password"],
+            textarea {
+                padding: 8px;
+                width: 100%;
+                @include box-sizing(border-box);
+            }
+            .description {
+                font-style: italic;
+                margin-top: 10px;
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            .asterisk {
+                color: #FF0000;
+            }
+        }
+    }
+}
+
+
+.form-desc {
+    font-size: smaller;
+    font-style: italic;
+}
+
+.become-teacher-form {
+    margin: 0 auto;
+    width: 90%;
+    max-width: 500px;
+    .form-field {
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="password"] {
+            width: 100%;
+        }
+    }
+}

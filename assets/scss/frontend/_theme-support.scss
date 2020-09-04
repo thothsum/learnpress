@@ -1,0 +1,115 @@
+/**
+ * CSS for overriding some style defaults of themes
+ */
+// Twenty Fifteen
+/**/
+
+// Twenty Sixteen
+body {
+    &.learnpress-page {
+        &.twentysixteen {
+            #primary {
+                .lp-entry-content {
+                    float: none;
+                    width: auto;
+                    margin: 0 15%;
+                }
+            }
+        }
+
+        &.twentyfifteen {
+            .course-summary-sidebar {
+                .widget {
+                    width: 100%;
+                    padding: 0;
+                }
+            }
+        }
+
+        &.twentysixteen {
+            .entry-footer {
+                display: none;
+            }
+
+            .lp-entry-content {
+                float: none;
+                width: auto;
+            }
+        }
+
+        &.twentyseventeen {
+            #primary {
+                article {
+                    &.type-page {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 61.5625em) {
+    body {
+        &.twentysixteen {
+            &.learnpress-page {
+                .entry-footer {
+                    display: none;
+                }
+
+                .lp-entry-content {
+                    float: none;
+                    width: auto;
+                }
+            }
+        }
+
+        &:not(.search-results) {
+            article:not(.type-page) {
+                .entry-footer {
+                    display: none;
+                }
+
+                .lp-entry-content {
+                    float: none;
+                    width: auto;
+                }
+            }
+        }
+    }
+}
+
+// Twenty Seventeen
+body.twentyseventeen.learnpress-page {
+    #primary {
+        article {
+            &.page {
+                .entry-header,
+                .lp-entry-content {
+                    width: 100%;
+                    float: none;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 48em) {
+    body {
+        &.twentyseventeen {
+            &.learnpress-page {
+                #primary {
+                    article {
+                        &.page {
+                            .entry-header,
+                            .lp-entry-content {
+                                width: 100%;
+                                float: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

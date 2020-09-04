@@ -195,7 +195,7 @@ if ( ! class_exists( 'LP_Question_Post_Type' ) ) {
 					'not_found'          => __( 'No questions found', 'learnpress' ),
 					'not_found_in_trash' => __( 'No questions found in trash', 'learnpress' ),
 				),
-				'public'             => true, // disable access directly via permalink url
+				'public'             => true,
 				'publicly_queryable' => true,
 				'show_ui'            => true,
 				'has_archive'        => false,

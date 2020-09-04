@@ -6,7 +6,7 @@
  *
  * @author   ThimPress
  * @package  Learnpress/Templates
- * @version  3.2.7.3
+ * @version  3.2.7.5
  */
 
 /**
@@ -19,11 +19,15 @@ $user   = LP_Global::user();
 
 $finish_not_passed = absint( $user->can_finish_course_not_passed( $course ) );
 $finish_passed     = absint( $user->can_finish_course_passed( $course ) );
+
+$message = LP_Strings::esc_attr( 'confirm-finish-course', '', array( $course->get_title() ) );
+
+if ( $finish_not_passed && ! $finish_passed ) {
+	$message = LP_Strings::esc_attr( 'confirm-finish-course-not-passed', '', array( absint( $course->get_passing_condition() ) . '%' ) );
+}
 ?>
 
-<form class="lp-form form-button form-button-finish-course" method="post"
-	  data-confirm="<?php ( $finish_not_passed && ! $finish_passed ) ? LP_Strings::esc_attr_e( 'confirm-finish-course-not-passed', '', array( absint( $course->get_passing_condition() ) . '%' ) ) : LP_Strings::esc_attr_e( 'confirm-finish-course', '', array( $course->get_title() ) ); ?>">
-
+<form class="lp-form form-button form-button-finish-course" method="post" data-confirm="<?php echo $message ?>">
 	<button class="lp-button"><?php _e( 'Finish course', 'learnpress' ); ?></button>
 	<input type="hidden" name="course-id" value="<?php echo $course->get_id(); ?>"/>
 	<input type="hidden" name="finish-course-nonce"
