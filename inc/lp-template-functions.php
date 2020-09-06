@@ -133,31 +133,62 @@ if ( ! function_exists( 'learn_press_course_enroll_button' ) ) {
 
 }
 
-if ( ! function_exists( 'learn_press_course_retake_button' ) ) {
+if (!function_exists('learn_press_course_retake_button')) {
 
-	/**
-	 * Retake course button
-	 */
-	function learn_press_course_retake_button() {
+    /**
+     * Retake course button
+     */
+    function learn_press_course_retake_button()
+    {
 
-		if ( ! isset( $course ) ) {
-			$course = learn_press_get_course();
-		}
+        if (!isset($course)) {
+            $course = learn_press_get_course();
+        }
 
-		if ( ! learn_press_current_user_enrolled_course() && $course->get_external_link() ) {
-			return;
-		}
+        if (!learn_press_current_user_enrolled_course() && $course->get_external_link()) {
+            return;
+        }
 
-		if ( ! isset( $user ) ) {
-			$user = learn_press_get_current_user();
-		}
+        if (!isset($user)) {
+            $user = learn_press_get_current_user();
+        }
 
-		// If user has not finished course
-		if ( ! $user->has_finished_course( $course->get_id() ) ) {
-			return;
-		}
-		learn_press_get_template( 'single-course/buttons/retake.php' );
-	}
+        if (!$user->has_finished_course($course->get_id())) {
+
+            if (!$user->has_enrolled_course($course->get_id())) {
+
+                return;
+
+            } else {
+
+                if ($course->is_expired() != false && $course->is_block_item_content_duration() == true) {
+
+                    if (is_admin() || is_super_admin()) {
+
+                        return;
+
+                    }
+
+                    if($course->expires_to_miliseconds() > 0){
+
+                        return;
+
+                    }
+
+                } else {
+
+                    return;
+
+                }
+
+            }
+
+        }
+
+        learn_press_get_template('single-course/buttons/retake.php');
+
+    }
+
 }
 
 if ( ! function_exists( 'learn_press_course_continue_button' ) ) {
@@ -188,6 +219,11 @@ if ( ! function_exists( 'learn_press_course_continue_button' ) ) {
 		if ( ! $course_data->get_item_at( 0 ) ) {
 			return;
 		}
+
+        if($course->is_block_item_content_duration() === true && $course->expires_to_miliseconds() <= 0){
+            return;
+        }
+
 
 		learn_press_get_template( 'single-course/buttons/continue.php' );
 	}

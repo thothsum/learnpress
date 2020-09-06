@@ -39,15 +39,13 @@ $can_view_item = $user->can_view_item( $course_item->get_id(), $course->get_id()
 			 *
 			 * Check more case $can_view_item = 'not-enrolled'
 			 */
-
-			//var_dump( $can_view_item );
+			
 
 			if ( ( is_bool( $can_view_item ) && $can_view_item ) || ( $can_view_item && $can_view_item != 'is_blocked' ) ) {
 				/**
 				 * @since 3.0.0
 				 */
 				do_action( 'learn-press/course-item-content' );
-
 			} else {
 				learn_press_get_template( 'single-course/content-protected.php', array( 'can_view_item' => $can_view_item ) );
 			}

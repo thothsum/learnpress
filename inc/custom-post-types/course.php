@@ -587,6 +587,13 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 						'desc' => __( 'The duration of the course.', 'learnpress' ),
 						'std'  => '10 weeks'
 					),
+                    array(
+                        'name' => __( 'Block Lessons', 'learnpress' ),
+                        'id'   => '_lp_block_lesson_duration_content',
+                        'type' => 'yes_no',
+                        'desc' => __( 'Block lessons when duration expires', 'learnpress' ),
+                        'std'  => 'no',
+                    ),
 					array(
 						'name' => __( 'Maximum Students', 'learnpress' ),
 						'id'   => '_lp_max_students',

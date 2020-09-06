@@ -1236,3 +1236,17 @@ add_action( 'wp_login', 'learn_press_mark_user_just_logged_in' );
 function learn_press_get_custom_thumbnail_sizes() {
 	return apply_filters( 'learn-press/custom-thumbnail-sizes', array( 'archive_course_thumbnail' => 'course_thumbnail' ) );
 }
+/**
+ * @since 3.2.7.6
+ */
+function learn_press_refresh_when_duration_expires() {
+    $course = learn_press_get_the_course();
+    if($course->is_block_item_content_duration() === true && $course && $course->expires_to_miliseconds() > 0){
+        echo '<script>';
+        echo 'setTimeout(function(){ window.location.reload(true) }, '.$course->expires_to_miliseconds().');';
+        echo '</script>';
+    }
+    ?>
+    <?php
+}
+add_action( 'wp_print_scripts', 'learn_press_refresh_when_duration_expires' );

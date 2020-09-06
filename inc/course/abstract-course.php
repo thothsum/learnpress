@@ -59,6 +59,7 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
 			'retake_count'         => 0,
 			'featured'             => '',
 			'block_lesson_content' => '',
+			'block_lesson_duration' => '',
 			'course_result'        => '',
 			'passing_conditional'  => '',
 			'external_link'        => '',
@@ -130,6 +131,7 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
 					'retake_count'         => get_post_meta( $id, '_lp_retake_count', true ),
 					'featured'             => get_post_meta( $id, '_lp_featured', true ),
 					'block_lesson_content' => get_post_meta( $id, '_lp_block_lesson_content', true ),
+                    'block_lesson_duration' => get_post_meta($id, '_lp_block_lesson_duration_content', true),
 					'course_result'        => get_post_meta( $id, '_lp_course_result', true ),
 					'passing_condition'    => get_post_meta( $id, '_lp_passing_condition', true ),
 					'payment'              => get_post_meta( $id, '_lp_payment', true ),
@@ -1483,6 +1485,16 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
 			return $this->get_data( 'block_lesson_content' ) === 'yes';
 		}
 
+        /**
+         * Return TRUE if option to block course's items after course is exceeded turn on.
+         *
+         * @return bool
+         */
+        public function is_block_item_content_duration()
+        {
+            return $this->get_data('block_lesson_duration') === 'yes';
+        }
+
 		/**
 		 * Calculate results of course by final quiz
 		 *
@@ -1829,5 +1841,26 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
 
 			return compact( 'type_items', 'section_items', 'course_sections' );
 		}
+    /**
+    * Checks if this course has expired
+    *
+    * @param int $user_id
+    * @param mixed
+    *
+    * @return mixed
+    */
+        public function expires_to_miliseconds($user_id = 0, $args = array())
+        {
+            settype($args, 'array');
+
+            if (!$user_id) {
+                $user_id = get_current_user_id();
+            }
+            $user = learn_press_get_user($user_id);
+            $expired = ($user->get_course_remaining_time_timestamp($this->get_id(), $args)) ;
+            $ms = $expired * 1000;
+            $duration_value = number_format($ms, 0, '.', '');
+            return apply_filters('expires_to_miliseconds', $duration_value !== false ? $duration_value : false);
+        }
 	}
 }
