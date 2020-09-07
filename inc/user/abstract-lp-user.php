@@ -2824,6 +2824,8 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
          * @param int $course_id
          *
          * @return bool|int|string
+         * @since 3.2.7.5
+         * @author hungkv
          */
         public function get_course_remaining_time_timestamp( $course_id ) {
             $course = learn_press_get_course( $course_id );

@@ -589,7 +589,7 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 					),
                     array(
                         'name' => __( 'Block Lessons', 'learnpress' ),
-                        'id'   => '_lp_block_lesson_duration_content',
+                        'id'   => '_lp_block_course_item_duration_content',
                         'type' => 'yes_no',
                         'desc' => __( 'Block lessons when duration expires', 'learnpress' ),
                         'std'  => 'no',

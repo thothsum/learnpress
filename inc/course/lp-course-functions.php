@@ -1236,17 +1236,22 @@ add_action( 'wp_login', 'learn_press_mark_user_just_logged_in' );
 function learn_press_get_custom_thumbnail_sizes() {
 	return apply_filters( 'learn-press/custom-thumbnail-sizes', array( 'archive_course_thumbnail' => 'course_thumbnail' ) );
 }
+
 /**
- * @since 3.2.7.6
+ * @return mixed
+ * @since 3.2.7.5
+ * @author hungkv
  */
 function learn_press_refresh_when_duration_expires() {
     $course = learn_press_get_the_course();
-    if($course->is_block_item_content_duration() === true && $course && $course->expires_to_miliseconds() > 0){
-        echo '<script>';
-        echo 'setTimeout(function(){ window.location.reload(true) }, '.$course->expires_to_miliseconds().');';
-        echo '</script>';
+    $item = LP_Global::course_item();
+    if(! current_user_can( LP_TEACHER_ROLE ) || ! is_admin()){
+        return;
     }
-    ?>
-    <?php
+    if($course->is_block_item_content_duration() === true && !empty($course) && $course->expires_to_miliseconds() > 0){
+        echo '<input type="hidden" class="course-item-is-blocked" value="'.$course->expires_to_miliseconds().'">';
+    }
+    return;
 }
-add_action( 'wp_print_scripts', 'learn_press_refresh_when_duration_expires' );
+add_action( 'wp_head', 'learn_press_refresh_when_duration_expires');
+

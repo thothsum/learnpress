@@ -59,7 +59,7 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
 			'retake_count'         => 0,
 			'featured'             => '',
 			'block_lesson_content' => '',
-			'block_lesson_duration' => '',
+			'block_course_item_duration' => '',
 			'course_result'        => '',
 			'passing_conditional'  => '',
 			'external_link'        => '',
@@ -131,7 +131,7 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
 					'retake_count'         => get_post_meta( $id, '_lp_retake_count', true ),
 					'featured'             => get_post_meta( $id, '_lp_featured', true ),
 					'block_lesson_content' => get_post_meta( $id, '_lp_block_lesson_content', true ),
-                    'block_lesson_duration' => get_post_meta($id, '_lp_block_lesson_duration_content', true),
+                    'block_course_item_duration' => get_post_meta($id, '_lp_block_course_item_duration_content', true),
 					'course_result'        => get_post_meta( $id, '_lp_course_result', true ),
 					'passing_condition'    => get_post_meta( $id, '_lp_passing_condition', true ),
 					'payment'              => get_post_meta( $id, '_lp_payment', true ),
@@ -1489,10 +1489,12 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
          * Return TRUE if option to block course's items after course is exceeded turn on.
          *
          * @return bool
+         * @since 3.2.7.5
+         * @author hungkv
          */
         public function is_block_item_content_duration()
         {
-            return $this->get_data('block_lesson_duration') === 'yes';
+            return $this->get_data('block_course_item_duration') === 'yes';
         }
 
 		/**
@@ -1846,7 +1848,8 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
     *
     * @param int $user_id
     * @param mixed
-    *
+     * @since 3.2.7.5
+     * @author hungkv
     * @return mixed
     */
         public function expires_to_miliseconds($user_id = 0, $args = array())
