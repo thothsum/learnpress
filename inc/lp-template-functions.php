@@ -153,18 +153,14 @@ if ( ! function_exists( 'learn_press_course_retake_button' ) ) {
 		}
 
         if (!$user->has_enrolled_course($course->get_id())) {
-
             return;
-
-        }else{
-            if ($course->is_expired() == false && $course->is_block_item_content_duration() == false) {
-                return;
-            }
         }
 
-		// If user has not finished course
-        if (!$user->has_finished_course($course->get_id())) {
-            return;
+        // If user has not finished course
+        if(!$user->has_finished_course($course->get_id())){
+            if ( $course->expires_to_milliseconds() > 0 && $course->is_block_item_content_duration() === true) {
+                return;
+            }
         }
 
 		learn_press_get_template( 'single-course/buttons/retake.php' );
