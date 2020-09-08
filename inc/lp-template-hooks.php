@@ -239,9 +239,9 @@ add_action( 'learn-press/before-content-item-summary/lp_quiz', 'learn_press_cont
 add_action( 'learn-press/before-content-item-summary/lp_quiz', 'learn_press_content_item_quiz_intro', 10 );
 
 /**
- * @see learn_press_content_item_summary_quiz_content
  * @see learn_press_content_item_summary_quiz_progress
  * @see learn_press_content_item_summary_quiz_result
+ * @see learn_press_content_item_summary_quiz_content
  * @see learn_press_content_item_summary_quiz_countdown
  * @see learn_press_content_item_summary_quiz_question
  *

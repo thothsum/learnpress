@@ -399,7 +399,7 @@
                 contentHeight = frameWidth * ratio;
                 $frame.css({
                     height: contentHeight,
-                    marginLeft: ($entryVideo.width() - frameWidth) / 2
+                    marginLeft: ( $entryVideo.width() - frameWidth) / 2
                 });
 
                 $wrapContent.css({
@@ -452,7 +452,7 @@
             fitVideo();
 
             fullScreen = window.localStorage && 'yes' === window.localStorage.getItem('lp-full-screen');
-            if ($(window).width() <= 768) {
+            if($(window).width()<=768){
                 fullScreen = true;
             }
             if (fullScreen) {
@@ -547,32 +547,26 @@
     }
 
 
-    $(document).ready(function () {
-        $(document).ready(function () {
-            new LP_Course({});
+	$(document).ready(function () {
+		new LP_Course({});
 
-            $(this).on('submit', 'form[name="course-external-link"]', function () {
-                var redirect = $(this).attr('action');
-                if (redirect) {
-                    window.location.href = redirect;
-                    return false;
-                }
-            })
-        });
-    });
+		$(this).on('submit', 'form[name="course-external-link"]', function () {
+			var redirect = $(this).attr('action');
+			if (redirect) {
+				window.location.href = redirect;
+				return false;
+			}
+		});
 
-    //window.reload when course duration expired
-    $(document).ready(function () {
-        var course_item_html = $('.course-item-is-blocked'),
-            course_item_value = course_item_html.val();
+		// Reload course page when course duration expired
+		var course_item_html = $('.course-item-is-blocked'),
+			course_item_value = course_item_html.val();
 
-        if (course_item_html.length) {
-            setTimeout(function () {
-                window.location.reload(true)
-            }, course_item_value);
-        }
-
-    });
-
+		if (course_item_html.length) {
+			setTimeout(function () {
+				window.location.reload(true)
+			}, course_item_value);
+		}
+	});
 })
 (jQuery, LP, _);

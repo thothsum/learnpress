@@ -1238,20 +1238,30 @@ function learn_press_get_custom_thumbnail_sizes() {
 }
 
 /**
+ * Show element to js handle reload page if course duration expire
+ *
  * @return mixed
- * @since 3.2.7.5
+ * @since  3.2.7.7
  * @author hungkv
  */
-function learn_press_refresh_when_duration_expires() {
-    $course = learn_press_get_the_course();
-    $item = LP_Global::course_item();
-    if(! current_user_can( LP_TEACHER_ROLE ) || ! is_admin()){
-        return;
-    }
-    if($course->is_block_item_content_duration() === true && !empty($course) && $course->expires_to_miliseconds() > 0){
-        echo '<input type="hidden" class="course-item-is-blocked" value="'.$course->expires_to_miliseconds().'">';
-    }
-    return;
-}
-add_action( 'wp_head', 'learn_press_refresh_when_duration_expires');
+function learn_press_reload_page_when_duration_expires() {
+	if ( is_admin() ) {
+		return;
+	}
 
+	if ( ! current_user_can( LP_TEACHER_ROLE ) || current_user_can( 'administrator' ) ) {
+		return;
+	}
+
+	// Todo: check execute on pages valid (E.g: page list items course, page single course)
+
+	$course = learn_press_get_the_course();
+	$item   = LP_Global::course_item();
+
+	if ( $course->is_block_item_content_duration() === true &&
+		! empty( $course ) && $course->expires_to_miliseconds() > 0 ) {
+		echo '<input type="hidden" class="course-item-is-blocked" value="' . $course->expires_to_miliseconds() . '">';
+	}
+}
+
+add_action( 'wp_head', 'learn_press_reload_page_when_duration_expires' );

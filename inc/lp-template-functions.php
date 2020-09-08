@@ -133,62 +133,31 @@ if ( ! function_exists( 'learn_press_course_enroll_button' ) ) {
 
 }
 
-if (!function_exists('learn_press_course_retake_button')) {
+if ( ! function_exists( 'learn_press_course_retake_button' ) ) {
 
-    /**
-     * Retake course button
-     */
-    function learn_press_course_retake_button()
-    {
+	/**
+	 * Retake course button
+	 */
+	function learn_press_course_retake_button() {
 
-        if (!isset($course)) {
-            $course = learn_press_get_course();
-        }
+		if ( ! isset( $course ) ) {
+			$course = learn_press_get_course();
+		}
 
-        if (!learn_press_current_user_enrolled_course() && $course->get_external_link()) {
-            return;
-        }
+		if ( ! learn_press_current_user_enrolled_course() && $course->get_external_link() ) {
+			return;
+		}
 
-        if (!isset($user)) {
-            $user = learn_press_get_current_user();
-        }
+		if ( ! isset( $user ) ) {
+			$user = learn_press_get_current_user();
+		}
 
-        if (!$user->has_finished_course($course->get_id())) {
-
-            if (!$user->has_enrolled_course($course->get_id())) {
-
-                return;
-
-            } else {
-
-                if ($course->is_expired() != false && $course->is_block_item_content_duration() == true) {
-
-                    if (is_admin() || is_super_admin()) {
-
-                        return;
-
-                    }
-
-                    if($course->expires_to_miliseconds() > 0){
-
-                        return;
-
-                    }
-
-                } else {
-
-                    return;
-
-                }
-
-            }
-
-        }
-
-        learn_press_get_template('single-course/buttons/retake.php');
-
-    }
-
+		// If user has not finished course
+		if ( ! $user->has_finished_course( $course->get_id() ) ) {
+			return;
+		}
+		learn_press_get_template( 'single-course/buttons/retake.php' );
+	}
 }
 
 if ( ! function_exists( 'learn_press_course_continue_button' ) ) {
@@ -219,11 +188,6 @@ if ( ! function_exists( 'learn_press_course_continue_button' ) ) {
 		if ( ! $course_data->get_item_at( 0 ) ) {
 			return;
 		}
-
-        if($course->is_block_item_content_duration() === true && $course->expires_to_miliseconds() <= 0){
-            return;
-        }
-
 
 		learn_press_get_template( 'single-course/buttons/continue.php' );
 	}
@@ -688,8 +652,16 @@ if ( ! function_exists( 'learn_press_content_item_summary_quiz_content' ) ) {
 
 	function learn_press_content_item_summary_quiz_content() {
 		$item = LP_Global::course_item();
+		$quiz = LP_Global::course_item_quiz();
+		$user = LP_Global::user();
 
-		if ( ! $item->get_viewing_question() ) {
+		/**
+		 * Check if not start quiz (is showing question)
+		 * and not completed quiz
+		 *
+		 * @editor tungnx
+		 */
+		if ( ! $item->get_viewing_question() && ! $user->has_completed_quiz( $quiz->get_id(), get_the_ID() ) ) {
 			learn_press_get_template( 'content-quiz/description.php' );
 		}
 	}
@@ -741,9 +713,6 @@ if ( ! function_exists( 'learn_press_content_item_summary_quiz_countdown' ) ) {
 if ( ! function_exists( 'learn_press_content_item_summary_quiz_result' ) ) {
 
 	function learn_press_content_item_summary_quiz_result() {
-
-		remove_action( 'learn-press/content-item-summary/lp_quiz', 'learn_press_content_item_summary_quiz_progress', 5 );
-
 		$quiz = LP_Global::course_item_quiz();
 		$user = LP_Global::user();
 		if ( ! $user->has_completed_quiz( $quiz->get_id(), get_the_ID() ) ) {
@@ -817,9 +786,21 @@ if ( ! function_exists( 'learn_press_content_item_summary_question_explanation' 
 				return;
 			}
 
+			/**
+			 * Show explanation of question if
+			 *
+			 * 1. Click check answer check button (Option 'Show Check Answer' value > 1)
+			 * OR
+			 * 2. Question answered is true
+			 * OR
+			 * 3. Option 'Review Questions' enable
+			 * AND
+			 * 3.1. Not retake OR Option 'Show Correct Answer' enable
+			 */
 			if ( $user_quiz->has_checked_question( $question->get_id() ) ||
 				$user_quiz->is_answered_true( $question->get_id() ) ||
-				( learn_press_is_review_questions() && ( ! $user->can_retake_quiz( $quiz->get_id(), $course->get_id() ) ||
+				( learn_press_is_review_questions() &&
+					( ! $user->can_retake_quiz( $quiz->get_id(), $course->get_id() ) ||
 						$quiz->get_show_result() ) ) ) {
 				learn_press_get_template( 'content-question/explanation.php', array( 'question' => $question ) );
 			}
@@ -1136,30 +1117,30 @@ if ( ! function_exists( 'learn_press_content_item_script' ) ) {
 		}
 		?>
 		<style type="text/css">
-			html, body {
-				overflow: hidden;
-			}
+            html, body {
+                overflow: hidden;
+            }
 
-			body.course-item-popup #learn-press-course-curriculum {
-				position: fixed;
-				top: 60px;
-				bottom: 0;
-				left: 0;
-				background: #FFF;
-				border-right: 1px solid #DDD;
-				overflow: auto;
-				z-index: 9999;
-			}
+            body.course-item-popup #learn-press-course-curriculum {
+                position: fixed;
+                top: 60px;
+                bottom: 0;
+                left: 0;
+                background: #FFF;
+                border-right: 1px solid #DDD;
+                overflow: auto;
+                z-index: 9999;
+            }
 
-			body.course-item-popup #learn-press-content-item {
-				position: fixed;
-				z-index: 9999;
-				background: #FFF;
-				top: 60px;
-				right: 0;
-				bottom: 0;
-				overflow: visible;
-			}
+            body.course-item-popup #learn-press-content-item {
+                position: fixed;
+                z-index: 9999;
+                background: #FFF;
+                top: 60px;
+                right: 0;
+                bottom: 0;
+                overflow: visible;
+            }
 		</style>
 		<?php
 	}

@@ -594,14 +594,16 @@ if ( ! class_exists( 'LP_Course_Item' ) ) {
 				$blocked = 'no';
 			} else if ( $user->has_course_status( $course->get_id(), array( 'enrolled', 'finished' ) ) ) {
 				$blocked = 'no';
+
 				// fixed option block lessons not working
 				if ( $course->is_block_item_content() && $course_item_data->get_finishing_type() == 'click' && $user->has_course_status( $course->get_id(), 'finished' ) ) {
 					$blocked = 'yes';
 				}
-                // Option block lesson when duration ended
-                if ($course->is_block_item_content_duration() && $course_item_data->is_exceeded() < 0 ) {
-                    $blocked = 'yes';
-                }
+
+				// Option block lesson when duration ended
+				if ( $course->is_block_item_content_duration() && $course_item_data->is_exceeded() < 0 ) {
+					$blocked = 'yes';
+				}
 			} else {
 				$blocked = 'yes';
 			}
@@ -609,28 +611,36 @@ if ( ! class_exists( 'LP_Course_Item' ) ) {
 			return $blocked;
 		}
 
-        /**
-         * @param $user_id
-         * @param $course_id
-         * @return string
-         * @since 3.2.7.5
-         * @author hungkv
-         */
-        public function is_blocked_by($user_id, $course_id ) {
-            $user             = learn_press_get_user( $user_id );
-            $course_item_data = $user->get_course_data( $course_id );
-            $course = learn_press_get_course( $course_id );
+		/**
+		 * Check course blocked return key message
+		 *
+		 * @param int $user_id
+		 * @param int $course_id
+		 *
+		 * @return string
+		 * @since  3.2.7.7
+		 * @author hungkv
+		 */
+		public function is_blocked_by( $user_id = 0, $course_id = 0 ) {
+			$user             = learn_press_get_user( $user_id );
+			$course_item_data = $user->get_course_data( $course_id );
+			$course           = learn_press_get_course( $course_id );
 
+			$blocked_by = '';
 
-            if ( $course->is_block_item_content() && $course_item_data->get_finishing_type() == 'click' && $user->has_course_status( $course->get_id(), 'finished' ) ) {
-                $blocked_by = 'by_finish_course';
-            }
+			// Todo: check duplicated condition
+			if ( $course->is_block_item_content() && $course_item_data->get_finishing_type() == 'click' &&
+				$user->has_course_status( $course->get_id(), 'finished' ) ) {
+				$blocked_by = 'by_finish_course';
+			}
 
-            if ($course->is_block_item_content_duration() && $course_item_data->is_exceeded() < 0 && $blocked_by !== 'by_finish_course' ) {
-                $blocked_by = 'by_duration_expires';
-            }
-            return $blocked_by;
-        }
+			if ( $course->is_block_item_content_duration() &&
+				$course_item_data->is_exceeded() < 0 && $blocked_by !== 'by_finish_course' ) {
+				$blocked_by = 'by_duration_expires';
+			}
+
+			return $blocked_by;
+		}
 
 		public function offsetExists( $offset ) {
 		}

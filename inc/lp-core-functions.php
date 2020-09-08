@@ -1456,61 +1456,54 @@ function learn_press_get_course_by_order( $order_id ) {
  * @return bool|string
  */
 function learn_press_seconds_to_weeks( $secs ) {
-    $secs = (int) $secs;
-    if ( $secs === 0 ) {
-        return false;
-    }
-    // variables for holding values
-    $mins  = 0;
-    $hours = 0;
-    $days  = 0;
-    $weeks = 0;
-    // calculations
-    if ( $secs >= 60 ) {
-        $mins = (int) ( $secs / 60 );
-        $message = false;
-    }elseif ($secs < 60 && $secs > 0){
-        $mins = 1;
-        $message = true;
-    }
-    if ( $mins >= 60 ) {
-        $hours = (int) ( $mins / 60 );
-        $mins  = $mins % 60;
-    }
-    if ( $hours >= 24 ) {
-        $days  = (int) ( $hours / 24 );
-        $hours = $hours % 24;
-    }
-    if ( $days >= 7 ) {
-        $weeks = (int) ( $days / 7 );
-        $days  = $days % 7;
-    }
-    // format result
-    $result = '';
-    if ( $weeks ) {
-        $result .= $weeks . ' ' . _n( 'week', 'weeks', $weeks, 'learnpress' ) . ' ';
-    }
+	$secs = (int) $secs;
+	if ( $secs === 0 ) {
+		return false;
+	}
+	// variables for holding values
+	$mins  = 0;
+	$hours = 0;
+	$days  = 0;
+	$weeks = 0;
+	// calculations
+	if ( $secs >= 60 ) {
+		$mins = (int) ( $secs / 60 );
+		$secs = $secs % 60;
+	}
+	if ( $mins >= 60 ) {
+		$hours = (int) ( $mins / 60 );
+		$mins  = $mins % 60;
+	}
+	if ( $hours >= 24 ) {
+		$days  = (int) ( $hours / 24 );
+		$hours = $hours % 24;
+	}
+	if ( $days >= 7 ) {
+		$weeks = (int) ( $days / 7 );
+		$days  = $days % 7;
+	}
+	// format result
+	$result = '';
+	if ( $weeks ) {
+		$result .= $weeks . ' ' . _n( 'week', 'weeks', $weeks, 'learnpress' ) . ' ';
+	}
 
-    if ( $days ) {
-        $result .= $days . ' ' . _n( 'day', 'days', $days, 'learnpress' ) . ' ';
-    }
+	if ( $days ) {
+		$result .= $days . ' ' . _n( 'day', 'days', $days, 'learnpress' ) . ' ';
+	}
 
-    if ( ! $weeks ) {
-        if ( $hours ) {
-            $result .= $hours . ' ' . _n( 'hour', 'hours', $hours, 'learnpress' ) . ' ';
+	if ( ! $weeks ) {
+		if ( $hours ) {
+			$result .= $hours . ' ' . _n( 'hour', 'hours', $hours, 'learnpress' ) . ' ';
 
-        }
-        if ( $mins ) {
-            if($message == false){
-                $result .= $mins . ' ' . _n( 'minute', 'minutes', $mins, 'learnpress' ) . ' ';
-            }else{
-                $result .=   'less than a minute';
-            }
-        }
-    }
-    $result = rtrim( $result );
+		}
+		if ( $mins ) {
+			$result .= $mins . ' ' . _n( 'minute', 'minutes', $mins, 'learnpress' ) . ' ';
+		}
+	}
+	$result = rtrim( $result );
 
-    return $result;
+	return $result;
 }
 
 
