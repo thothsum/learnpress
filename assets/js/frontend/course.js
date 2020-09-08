@@ -561,7 +561,6 @@
 		// Reload course page when course duration expired
 		var course_item_html = $('.course-item-is-blocked'),
 			course_item_value = course_item_html.val();
-
 		if (course_item_html.length) {
 			setTimeout(function () {
 				window.location.reload(true)

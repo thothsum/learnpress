@@ -1245,22 +1245,24 @@ function learn_press_get_custom_thumbnail_sizes() {
  * @author hungkv
  */
 function learn_press_reload_page_when_duration_expires() {
+
 	if ( is_admin() ) {
 		return;
 	}
-
-	if ( ! current_user_can( LP_TEACHER_ROLE ) || current_user_can( 'administrator' ) ) {
+	if ( current_user_can( LP_TEACHER_ROLE ) || current_user_can( 'administrator' ) ) {
 		return;
 	}
 
-	// Todo: check execute on pages valid (E.g: page list items course, page single course)
+    //Check function run on single course
+    if( ! is_singular('lp_course')){
+        return;
+    }
 
 	$course = learn_press_get_the_course();
-	$item   = LP_Global::course_item();
 
 	if ( $course->is_block_item_content_duration() === true &&
-		! empty( $course ) && $course->expires_to_miliseconds() > 0 ) {
-		echo '<input type="hidden" class="course-item-is-blocked" value="' . $course->expires_to_miliseconds() . '">';
+		! empty( $course ) && $course->expires_to_milliseconds() > 0 ) {
+		echo '<input type="hidden" class="course-item-is-blocked" value="' . $course->expires_to_milliseconds() . '">';
 	}
 }
 

@@ -1337,7 +1337,17 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
 					$view = 'enrolled';
 
 					if ( $item->is_blocked() ) {
-						$view = 'is_blocked';
+					    if($course_id){
+                            $user = LP_Global::user();
+                            $course_item_data = $user->get_course_data( $course_id );
+                        }
+
+                        if($course->is_block_item_content_duration() && $course_item_data->is_exceeded() < 0){
+                            $view = 'is_blocked_duration';
+                        }else{
+                            $view = 'is_blocked';
+                        }
+
 					}
 				} elseif ( ! $course->is_required_enroll() ) {
 					$view = 'no-required-enroll';
