@@ -12,25 +12,31 @@
 /**
  * Prevent loading this file directly
  */
-defined( 'ABSPATH' ) || exit();
+defined('ABSPATH') || exit();
 
 $course = LP_Global::course();
-$quiz   = LP_Global::course_item_quiz();
+$quiz = LP_Global::course_item_quiz();
 ?>
 
-<?php do_action( 'learn-press/before-quiz-start-button' ); ?>
+<?php
+if ($quiz->count_questions() > 0) {
+    do_action('learn-press/before-quiz-start-button');
+    ?>
 
     <form name="start-quiz" class="start-quiz" method="post" enctype="multipart/form-data">
 
-		<?php do_action( 'learn-press/begin-quiz-start-button' ); ?>
+        <?php do_action('learn-press/begin-quiz-start-button'); ?>
 
-        <button type="submit" class="button"><?php _e( 'Start', 'learnpress' ); ?></button>
+        <button type="submit" class="button"><?php _e('Start', 'learnpress'); ?></button>
 
-		<?php do_action( 'learn-press/end-quiz-start-button' ); ?>
+        <?php do_action('learn-press/end-quiz-start-button'); ?>
 
-		<?php LP_Nonce_Helper::quiz_action( 'start', $quiz->get_id(), $course->get_id(), true ); ?>
+        <?php LP_Nonce_Helper::quiz_action('start', $quiz->get_id(), $course->get_id(), true); ?>
         <input type="hidden" name="noajax" value="yes">
 
     </form>
 
-<?php do_action( 'learn-press/after-quiz-start-button' ); ?>
+    <?php
+    do_action('learn-press/after-quiz-start-button');
+}
+?>
