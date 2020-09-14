@@ -15,7 +15,11 @@
 defined( 'ABSPATH' ) || exit();
 ?>
 
-<?php $cart = learn_press_get_checkout_cart(); ?>
+<?php
+if ( ! isset( $cart ) ) {
+    return;
+}
+?>
 
 <h4><?php _e( 'Your order', 'learnpress' ) ?></h4>
 

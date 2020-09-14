@@ -227,7 +227,8 @@ if ( ! class_exists( 'LP_Quiz_Factory' ) ) {
 						$result['result']   = 'success';
 						$result['redirect'] = apply_filters( 'learn-press/quiz/completed-redirect', $redirect, $quiz_id, $course_id, $user->get_id() );
 						$result['remain']   = $remain;
-						$result['html']     = learn_press_get_template_content( 'content-question/content.php' );// $question->get_html( $quiz_data->get_question_answer( $question_id ) );
+						$result['html']     = learn_press_get_template_content( 'content-question/content.php' );
+						// $question->get_html( $quiz_data->get_question_answer( $question_id ) );
 					}
 				}
 			}

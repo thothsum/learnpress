@@ -2407,18 +2407,18 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
 
 				if ( $course->is_required_enroll() && ! $force ) {
 
-					if ( ! $order = learn_press_get_order( $order_id ) ) {
-						throw new Exception( __( 'Failed to enroll course.', 'learnpress' ), 10000 );
-					}
+                    if ( ! $order = learn_press_get_order( $order_id ) ) {
+                        throw new Exception( __( 'Failed to enroll course.', 'learnpress' ), 10000 );
+                    }
 
-					if ( ! $this->can_enroll_course( $course_id ) ) {
-						throw new Exception( __( 'Failed to enroll course.', 'learnpress' ), 10001 );
-					}
+                    if ( ! $this->can_enroll_course( $course_id ) ) {
+                        throw new Exception( __( 'Failed to enroll course.', 'learnpress' ), 10001 );
+                    }
 
-					if ( ! $this->get_id() ) {
-						throw new Exception( __( 'Please login to enroll course.', 'learnpress' ), 10002 );
-					}
-				}
+                    if ( ! $this->get_id() ) {
+                        throw new Exception( __( 'Please login to enroll course.', 'learnpress' ), 10002 );
+                    }
+                }
 
 				$user_item_api = new LP_User_Item_CURD();
 				$course_item   = $user_item_api->get_item_by(

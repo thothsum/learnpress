@@ -16,8 +16,12 @@ defined( 'ABSPATH' ) || exit();
 ?>
 
 <?php
-$checkout  = LP()->checkout();
-$is_exists = $checkout->checkout_email_exists();
+if ( ! isset( $checkout ) ) {
+    return;
+}
+if ( ! isset( $is_exists ) ) {
+    return;
+}
 ?>
 
 <div id="checkout-guest-email" class="<?php echo $is_exists ? ' email-exists' : ''; ?>">

@@ -13,13 +13,13 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-
-$lesson = LP_Global::course_item();
-
+if ( ! isset( $item ) ) {
+    return;
+}
 $message = __( 'Lesson content is empty.', 'learnpress' );
 
-if ( $lesson->current_user_can_edit() ) {
-	$message .= sprintf( '<a href="%s" class="edit-content">%s</a>', $lesson->get_edit_link(), __( 'Edit', 'learnpress' ) );
+if ( $item->current_user_can_edit() ) {
+	$message .= sprintf( '<a href="%s" class="edit-content">%s</a>', $item->get_edit_link(), __( 'Edit', 'learnpress' ) );
 }
 
 learn_press_display_message( $message, 'notice' );

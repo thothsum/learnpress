@@ -47,7 +47,8 @@ if ( ! class_exists( 'LP_Shortcode_Checkout' ) ) {
 				if ( LP()->cart->is_empty() ) {
 					learn_press_get_template( 'checkout/empty-cart.php' );
 				} else {
-					learn_press_get_template( 'checkout/form.php' );
+                    $checkout = LP()->checkout();
+					learn_press_get_template( 'checkout/form.php', array('checkout'=> $checkout) );
 				}
 			}
 

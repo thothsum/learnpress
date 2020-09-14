@@ -13,16 +13,31 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-$course = LP_Global::course();
-$user   = LP_Global::user();
-$item   = LP_Global::course_item();
 
-if ( $item->is_preview() && ! $user->has_enrolled_course( $course->get_id() ) ) {
+if ( ! isset( $course ) ) {
+    return;
+}
+if ( ! isset( $user ) ) {
+    return;
+}
+if ( ! isset( $item ) ) {
+    return;
+}
+if ( ! isset( $completed ) ) {
+    return;
+}
+if ( ! isset( $security ) ) {
+    return;
+}
+if ( ! isset( $preview ) ) {
+    return;
+}
+if ( ! isset( $has_enrolled ) ) {
+    return;
+}
+if ( $preview && ! $has_enrolled ) {
 	return;
 }
-
-$completed = $user->has_completed_item( $item->get_id(), $course->get_id() );
-$security  = $item->create_nonce( 'complete' );
 ?>
 
 <form method="post" name="learn-press-form-complete-lesson"

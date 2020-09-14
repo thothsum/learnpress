@@ -13,12 +13,16 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-
-$lesson = LP_Global::course_item();
+if ( ! isset( $item ) ) {
+    return;
+}
+if ( ! isset( $content ) ) {
+    return;
+}
 
 // lesson no content
-if ( ! $content = $lesson->get_content() ) {
-	learn_press_get_template( 'content-lesson/no-content.php' );
+if ( ! $content ) {
+	learn_press_get_template( 'content-lesson/no-content.php', array('item'=>$item) );
 
 	return;
 }

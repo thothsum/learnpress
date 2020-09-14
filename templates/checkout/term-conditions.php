@@ -13,6 +13,9 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
+if ( ! isset( $page_link ) ) {
+    return;
+}
 ?>
 <p class="learn-press-terms learn-press-terms-and-conditions">
 	<input type="checkbox" class="input-checkbox" name="terms_conditions" id="terms_conditions">
