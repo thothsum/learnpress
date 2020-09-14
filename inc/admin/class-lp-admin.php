@@ -903,9 +903,9 @@ if ( ! class_exists( 'LP_Admin' ) ) {
 					$post_link .= '<span id="editable-post-name-full">' . $post_slug . '</span>';
 				}
 			} else {
-				$post_link_preview = sprintf( '<a class="button" href="%s" target="_blank">%s</a>', learn_press_get_preview_url( $post_id ), __( 'Preview', 'learnpress' ) );
+				// $post_link_preview = sprintf( '<a class="button" href="%s" target="_blank">%s</a>', learn_press_get_preview_url( $post_id ), __( 'Preview', 'learnpress' ) );
 				$post_link_message = '<span>' . __( 'Permalink only available if the item is already assigned to a course.', 'learnpress' ) . '</span>';
-				$post_link         = sprintf( '<div id="learn-press-box-edit-slug">%s %s</div>', $post_link_message, $post_link_preview );
+				$post_link         = sprintf( '<div id="learn-press-box-edit-slug">%s</div>', $post_link_message );
 			}
 
 			return $post_link;

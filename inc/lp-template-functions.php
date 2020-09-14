@@ -152,16 +152,23 @@ if ( ! function_exists( 'learn_press_course_retake_button' ) ) {
 			$user = learn_press_get_current_user();
 		}
 
-        if (!$user->has_enrolled_course($course->get_id())) {
-            return;
-        }
+		// Check user not enroll course
+		if ( ! $user->has_enrolled_course( $course->get_id() ) ) {
+			return;
+		}
 
-        // If user has not finished course
-        if(!$user->has_finished_course($course->get_id())){
-            if ( $course->expires_to_milliseconds() > 0 && $course->is_block_item_content_duration() === true) {
-                return;
-            }
-        }
+		// If user has not finished course
+		if ( ! $user->has_finished_course( $course->get_id() ) ) {
+			/**
+			 * Check course duration not expire
+			 *
+			 * @author hungkv
+			 * @since  3.2.7.7
+			 */
+			if ( $course->expires_to_milliseconds() > 0 && $course->is_block_item_content_duration() === true ) {
+				return;
+			}
+		}
 
 		learn_press_get_template( 'single-course/buttons/retake.php' );
 	}
@@ -196,9 +203,15 @@ if ( ! function_exists( 'learn_press_course_continue_button' ) ) {
 			return;
 		}
 
-        if($course->is_block_item_content_duration() === true && $course->expires_to_milliseconds() <= 0){
-            return;
-        }
+		/**
+		 * Check course duration expire
+		 *
+		 * @author hungkv
+		 * @since  3.2.7.7
+		 */
+		if ( $course->is_block_item_content_duration() === true && $course->expires_to_milliseconds() <= 0 ) {
+			return;
+		}
 
 		learn_press_get_template( 'single-course/buttons/continue.php' );
 	}
@@ -888,7 +901,25 @@ if ( ! function_exists( 'learn_press_content_item_summary_question_numbers' ) ) 
 		if ( ! $quiz->get_viewing_question() ) {
 			return;
 		}
-		learn_press_get_template( 'content-quiz/question-numbers.php' );
+
+		$questions = $quiz->get_questions();
+
+		if ( ! $questions ) {
+			return;
+		}
+
+		$questions = array_values( $questions );
+
+		if ( count( $questions ) < 2 ) {
+			return;
+		}
+
+		$args = array(
+			'quiz'      => $quiz,
+			'questions' => $questions
+		);
+
+		learn_press_get_template( 'content-quiz/question-numbers.php', $args );
 	}
 }
 
@@ -937,7 +968,18 @@ if ( ! function_exists( 'learn_press_quiz_start_button' ) ) {
 		if ( ! $user->has_course_status( $course->get_id(), array( 'enrolled' ) ) && $course->is_required_enroll() && ! $quiz->get_preview() ) {
 			return;
 		}
-		learn_press_get_template( 'content-quiz/buttons/start.php' );
+
+		// Check quiz has any question
+		if ( $quiz->count_questions() == 0 ) {
+			return;
+		}
+
+		$args = array(
+			'course' => $course,
+			'quiz'   => $quiz,
+		);
+
+		learn_press_get_template( 'content-quiz/buttons/start.php', $args );
 	}
 }
 
@@ -1128,30 +1170,30 @@ if ( ! function_exists( 'learn_press_content_item_script' ) ) {
 		}
 		?>
 		<style type="text/css">
-            html, body {
-                overflow: hidden;
-            }
+			html, body {
+				overflow: hidden;
+			}
 
-            body.course-item-popup #learn-press-course-curriculum {
-                position: fixed;
-                top: 60px;
-                bottom: 0;
-                left: 0;
-                background: #FFF;
-                border-right: 1px solid #DDD;
-                overflow: auto;
-                z-index: 9999;
-            }
+			body.course-item-popup #learn-press-course-curriculum {
+				position: fixed;
+				top: 60px;
+				bottom: 0;
+				left: 0;
+				background: #FFF;
+				border-right: 1px solid #DDD;
+				overflow: auto;
+				z-index: 9999;
+			}
 
-            body.course-item-popup #learn-press-content-item {
-                position: fixed;
-                z-index: 9999;
-                background: #FFF;
-                top: 60px;
-                right: 0;
-                bottom: 0;
-                overflow: visible;
-            }
+			body.course-item-popup #learn-press-content-item {
+				position: fixed;
+				z-index: 9999;
+				background: #FFF;
+				top: 60px;
+				right: 0;
+				bottom: 0;
+				overflow: visible;
+			}
 		</style>
 		<?php
 	}
