@@ -6,7 +6,7 @@
  *
  * @author   ThimPress
  * @package  Learnpress/Templates
- * @version  3.0.0
+ * @version  3.1.0
  */
 
 /**
@@ -16,11 +16,14 @@ defined( 'ABSPATH' ) || exit();
 
 isset( $question ) or die( __( 'Invalid question!', 'learnpress' ) );
 
+if ( ! isset( $quiz ) ) {
+    return;
+}
+
 if ( ! $answers = $question->get_answers() ) {
 	return;
 }
 
-$quiz = LP_Global::course_item_quiz();
 $question->setup_data( $quiz->get_id() );
 
 ?>

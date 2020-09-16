@@ -13,7 +13,9 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-
+if ( ! isset( $question ) ) {
+    return;
+}
 if ( ! $hint = $question->get_hint() ) {
 	return;
 }

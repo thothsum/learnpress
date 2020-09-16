@@ -1,12 +1,12 @@
 <?php
 /**
- * Template for displaying description of lesson.
+ * Template for displaying content of lesson.
  *
- * This template can be overridden by copying it to yourtheme/learnpress/content-lesson/description.php.
+ * This template can be overridden by copying it to yourtheme/learnpress/content-lesson/content.php.
  *
  * @author   ThimPress
  * @package  Learnpress/Templates
- * @version  3.0.0
+ * @version  3.1.0
  */
 
 /**

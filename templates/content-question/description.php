@@ -14,8 +14,6 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$quiz = LP_Global::course_item_quiz();
-
 if ( ! $question = LP_Global::quiz_question() ) {
 	return;
 }

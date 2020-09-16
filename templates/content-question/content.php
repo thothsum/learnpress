@@ -6,7 +6,7 @@
  *
  * @author  ThimPress
  * @package  Learnpress/Templates
- * @version  3.0.0
+ * @version  3.1.0
  */
 
 /**
@@ -14,8 +14,10 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$question = LP_Global::quiz_question(); ?>
-
+if ( ! isset( $question ) ) {
+    return;
+}
+?>
 <div class="content-question-summary" id="content-question-<?php echo $question->get_id(); ?>">
 	<?php
 	/**

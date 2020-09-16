@@ -14,9 +14,14 @@
  */
 defined( 'ABSPATH' ) || exit();
 
+if ( ! isset( $question ) ) {
+    return;
+}
+
 if ( ! $explanation = $question->get_explanation() ) {
 	return;
 }
+
 ?>
 
 <div class="question-explanation-content">

@@ -664,7 +664,7 @@ if ( ! class_exists( 'LP_Question' ) ) {
 		 */
 		public function render( $args = false ) {
 			$this->set_answered( $args );
-
+            $quiz = LP_Global::course_item_quiz();
 			$type = '';
 			switch ( $this->get_type() ) {
 				case 'true_or_false':
@@ -676,7 +676,7 @@ if ( ! class_exists( 'LP_Question' ) ) {
 					break;
 			}
 
-			learn_press_get_template( 'content-question/' . $type . '/answer-options.php', array( 'question' => $this ) );
+			learn_press_get_template( 'content-question/' . $type . '/answer-options.php', array( 'question' => $this, 'quiz' => $quiz ) );
 		}
 
 		public function setup_data( $quiz_id, $course_id = 0, $user_id = 0 ) {

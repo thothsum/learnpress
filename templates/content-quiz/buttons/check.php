@@ -16,10 +16,15 @@ defined( 'ABSPATH' ) || exit();
 ?>
 
 <?php
-$quiz     = LP_Global::course_item_quiz();
-$question = LP_Global::quiz_question();
-$user     = LP_Global::user();
-
+if ( ! isset( $user ) ) {
+    return;
+}
+if ( ! isset( $quiz ) ) {
+    return;
+}
+if ( ! isset( $question ) ) {
+    return;
+}
 $checked     = $user->has_checked_answer( $question->get_id(), $quiz->get_id(), get_the_ID() );
 $button_text = $checked ? __( 'Checked', 'learnpress' ) : __( 'Check', 'learnpress' );
 ?>
