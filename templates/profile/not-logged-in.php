@@ -14,6 +14,8 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$profile = LP_Global::profile();
+if ( ! isset($profile) ) {
+    return;
+}
 
 learn_press_display_message( sprintf( __( 'Please <a href="%s">login</a> to see your profile content', 'learnpress' ), $profile->get_login_url() ) );

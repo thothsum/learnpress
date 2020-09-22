@@ -15,7 +15,7 @@
 defined( 'ABSPATH' ) || exit();
 ?>
 
-<?php if ( ! $messages ) {
+<?php if ( ! isset($messages) ) {
 	return;
 } ?>
 

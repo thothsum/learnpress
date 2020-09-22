@@ -13,11 +13,11 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-?>
 
-<?php if ( ! $messages ) {
-	return;
-} ?>
+if ( ! isset($messages) ) {
+    return;
+}
+?>
 
 <?php foreach ( $messages as $message ) { ?>
 

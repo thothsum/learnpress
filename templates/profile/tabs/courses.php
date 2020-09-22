@@ -14,8 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$profile = learn_press_get_profile();
-$query   = $profile->query_courses();
+if ( ! isset($profile) || ! isset($query) ) {
+    return;
+}
 
 if ( ! $query['total'] ) {
 	learn_press_display_message( __( 'You haven\'t got any courses yet!', 'learnpress' ) );

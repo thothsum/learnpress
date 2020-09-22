@@ -9,7 +9,9 @@
 
 defined( 'ABSPATH' ) or die();
 
-$user = LP_Profile::instance()->get_user();
+if ( ! isset($user) ) {
+    return;
+}
 ?>
 <div class="user-bio">
 	<?php echo $user->get_description(); ?>

@@ -14,9 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$quiz        = LP_Global::course_item_quiz();
-$question    = LP_Global::quiz_question();
-$user        = LP_Global::user();
+if ( ! isset( $quiz ) || ! isset( $question ) || ! isset( $user ) ) {
+    return;
+}
 $hinted      = $user->has_hinted_answer( $question->get_id(), $quiz->get_id(), get_the_ID() );
 $button_text = $hinted ? __( 'Hinted', 'learnpress' ) : __( 'Hint', 'learnpress' );
 ?>

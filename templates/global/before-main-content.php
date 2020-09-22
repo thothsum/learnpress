@@ -15,7 +15,11 @@
 defined( 'ABSPATH' ) || exit();
 ?>
 
-<?php $user = learn_press_get_current_user(); ?>
+<?php
+if ( ! isset( $user ) ) {
+    return;
+}
+?>
 
 <?php if ( learn_press_is_course() ){ ?>
 

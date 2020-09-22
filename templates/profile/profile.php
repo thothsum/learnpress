@@ -14,7 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$profile = LP_Global::profile();
+if ( ! isset($profile) ) {
+    return;
+}
 
 if ( $profile->is_public() ) {
 	?>

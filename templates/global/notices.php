@@ -15,7 +15,7 @@
 defined( 'ABSPATH' ) || exit();
 ?>
 
-<?php if ( ! $notices ) {
+<?php if ( ! isset($notices) ) {
 	return;
 } ?>
 

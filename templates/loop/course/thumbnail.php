@@ -14,7 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$course = LP_Global::course();
+if ( ! isset( $course ) ) {
+    return;
+}
 ?>
 
 <div class="course-thumbnail">

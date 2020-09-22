@@ -12,10 +12,13 @@
 /**
  * Prevent loading this file directly
  */
-defined( 'ABSPATH' ) || exit();
-?>
 
-<?php $quiz = LP_Global::course_item_quiz(); ?>
+defined( 'ABSPATH' ) || exit();
+
+if ( ! isset( $quiz ) ) {
+    return;
+}
+?>
 
 <?php do_action( 'learn-press/quiz/before-complete-button' ); ?>
 

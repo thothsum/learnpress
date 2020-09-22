@@ -14,9 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$profile       = learn_press_get_profile();
-$filter_status = LP_Request::get_string( 'filter-status' );
-$query         = $profile->query_courses( 'purchased', array( 'status' => $filter_status ) );
+if ( ! isset($profile) || ! isset($filter_status) || ! isset($query) ) {
+    return;
+}
 ?>
 
 <div class="learn-press-subtab-content">

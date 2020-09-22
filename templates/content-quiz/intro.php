@@ -14,9 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$course = LP_Global::course();
-$quiz   = LP_Global::course_item_quiz();
-$count  = $quiz->get_retake_count();
+if ( ! isset( $course ) || ! isset( $quiz ) || ! isset( $count ) ) {
+    return;
+}
 ?>
 
 <ul class="quiz-intro">

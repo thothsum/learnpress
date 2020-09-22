@@ -348,10 +348,16 @@ function learn_press_profile_tab_courses_content( $current, $tab, $user ) {
 }
 
 function learn_press_profile_tab_quizzes_content( $current, $tab, $user ) {
+    $profile       = learn_press_get_profile();
+    $filter_status = LP_Request::get_string( 'filter-status' );
+    $query         = $profile->query_quizzes( array( 'status' => $filter_status ) );
 	learn_press_get_template( 'profile/tabs/quizzes.php', array(
-		'user'    => $user,
-		'current' => $current,
-		'tab'     => $tab
+		'user'             => $user,
+		'current'          => $current,
+		'tab'              => $tab,
+		'profile'          => $profile,
+		'filter_status'    => $filter_status,
+		'query'            => $query,
 	) );
 }
 

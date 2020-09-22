@@ -14,8 +14,12 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$course = LP_Global::course();
-$quiz   = LP_Global::course_item_quiz();
+if ( ! isset( $course ) ) {
+    return;
+}
+if ( ! isset( $quiz ) ) {
+    return;
+}
 
 do_action( 'learn-press/before-quiz-review-button' ); ?>
 

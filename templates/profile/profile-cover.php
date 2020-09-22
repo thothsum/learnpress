@@ -14,9 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-$profile = LP_Profile::instance();
-
-$user = $profile->get_user();
+if ( ! isset($profile) || ! isset($user) ) {
+    return;
+}
 ?>
 
 <div id="learn-press-profile-header" class="lp-profile-header">
