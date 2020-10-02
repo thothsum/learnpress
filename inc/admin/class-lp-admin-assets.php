@@ -11,9 +11,17 @@ class LP_Admin_Assets extends LP_Abstract_Assets {
 	 * Init Asset
 	 */
 	public function __construct() {
+        add_action( 'admin_enqueue_scripts', array( $this, 'learn_press_admin_enqueue_script' ) );
 		parent::__construct();
-
 	}
+
+    /**
+     * Register and enqueue a custom stylesheet in the WordPress admin.
+     */
+    function wpdocs_enqueue_custom_admin_style() {
+        wp_register_style( 'custom_wp_admin_css', get_template_directory_uri() . '/admin-style.css', false, '1.0.0' );
+        wp_enqueue_style( 'custom_wp_admin_css' );
+    }
 
 	protected function _get_script_data() {
 		return array(
@@ -60,14 +68,15 @@ class LP_Admin_Assets extends LP_Abstract_Assets {
 				'wp-color-picker'    => array(
 					'screens' => 'learnpress_page_learn-press-settings'
 				),
-				'select2'            => LP_Admin_Assets::url( '../inc/libraries/meta-box/js/select2/select2.min.js' ),
-				'lp-vue'             => array(
-					'url'     => self::url( 'js/vendor/vue.min.js' ),
-					'ver'     => '2.5.16',
-					'screens' => array(
-						'learnpress'
-					)
-				),
+				'select2'            => LP_Admin_Assets::url( '../inc/libraries/meta-box/js/select2/select2.full.min.js' ),
+				'jsautocomplete'            => LP_Admin_Assets::url( '../inc/libraries/meta-box/js/autocomplete.js' ),
+//				'lp-vue'             => array(
+//					'url'     => self::url( 'js/vendor/vue.min.js' ),
+//					'ver'     => '2.5.16',
+//					'screens' => array(
+//						'learnpress'
+//					)
+//				),
 				'lp-plugins-all'     => array(
 					'url'     => ( $url = $this->get_all_plugins_url( $min ) ) ? $url : self::url( 'js/vendor/admin.plugins.all' . $min . '.js' ),
 					'screens' => array(
@@ -215,7 +224,7 @@ class LP_Admin_Assets extends LP_Abstract_Assets {
 //				'learn-press-chartjs'               => array(
 //					'url'     => $this->url( 'js/vendor/chart.min.js' ),
 //					'screens' => 'dashboard'
-//				)
+//				),
 			)
 		);
 	}
@@ -294,6 +303,19 @@ class LP_Admin_Assets extends LP_Abstract_Assets {
 
 		do_action( 'learn-press/admin/after-enqueue-scripts' );
 	}
+
+    /**
+     * @since 3.2.7.8
+     * @author hungkv
+     *
+     */
+
+    function learn_press_admin_enqueue_script(){
+        // Check js
+        wp_register_script('learnpress-jspdf',
+                LP_PLUGIN_URL . 'assets/js/admin/jspdf.js',
+                false, false);
+    }
 }
 
 /**
