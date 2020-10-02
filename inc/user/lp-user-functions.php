@@ -392,32 +392,13 @@ function learn_press_user_become_teacher_registration_form() {
 	<p>
 		<label for="become_teacher">
 			<input type="checkbox" name="become_teacher" id="become_teacher">
-			<?php _e( 'Want to become an instructor?', 'learnpress' ) ?>
+			<?php esc_html_e( 'Want to become an instructor?', 'learnpress' ) ?>
 		</label>
 	</p>
 	<?php
 }
 
 add_action( 'register_form', 'learn_press_user_become_teacher_registration_form' );
-
-/**
- * Process instructor registration while user register new account
- *
- * @param $user_id
- */
-function learn_press_update_user_teacher_role( $user_id ) {
-	if ( LP()->settings->get( 'instructor_registration' ) != 'yes' ) {
-		return;
-	}
-	if ( ! isset( $_POST['become_teacher'] ) ) {
-		return;
-	}
-	$new_user = new WP_User( $user_id );
-	$new_user->set_role( LP_TEACHER_ROLE );
-}
-
-add_action( 'user_register', 'learn_press_update_user_teacher_role', 10, 1 );
-
 
 /**
  * Update data into table learnpress_user_items.

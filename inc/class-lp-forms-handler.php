@@ -246,6 +246,21 @@ class LP_Forms_Handler {
 				'user_login'    => $args['reg_username'],
 				'user_password' => $args['reg_password']
 			) );
+
+			// Send email when check enable Instructor.
+			if ( LP()->settings->get( 'instructor_registration' ) == 'yes' && isset( $_POST['become_teacher'] ) ) {
+				update_user_meta( $user_id, '_requested_become_teacher', 'yes' );
+				do_action(
+					'learn-press/become-a-teacher-sent',
+					array(
+						'bat_email'   => $args['reg_email'],
+						'bat_phone'   => '',
+						'bat_message' => apply_filters( 'learnpress_become_instructor_message', esc_html__( 'I need become a instructor', 'learnpress' ) ),
+					)
+				);
+
+				learn_press_add_message( __( 'Your request become a instructor has been sent. We will get back to you soon!', 'learnpress' ), 'success' );
+			}
 		}
 
 		learn_press_maybe_send_json( $result, 'learn_press_print_messages' );
