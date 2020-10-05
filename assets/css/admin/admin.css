@@ -4176,12 +4176,17 @@ body.lp-item-moving {
 #lp-invoice__content thead th {
   border-bottom: 1px solid #000;
   border-top: 1px solid #000;
+  padding: 10px 20px;
 }
 #lp-invoice__content tbody td {
   border-bottom: 1px solid #000;
+  text-align: center;
+  padding: 10px 20px;
 }
 #lp-invoice__content tfoot td {
   border-bottom: 1px solid #000;
+  text-align: center;
+  padding: 10px 20px;
 }
 #lp-invoice__content,
 .export-options__content {
@@ -4244,6 +4249,11 @@ body.lp-item-moving {
   flex-direction: row;
   justify-content: flex-end;
 }
+.lp-invoice__body table{
+  border-spacing: 0;
+  width: 100%;
+}
+
 /*fix responsive for block Courses Setting
 
  */
