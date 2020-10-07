@@ -1152,6 +1152,7 @@ function learn_press_update_user_profile_avatar() {
 function learn_press_update_user_profile_basic_information( $wp_error = false ) {
 
 	$user_id = get_current_user_id();
+	$current_user = get_user_by( 'id', $user_id );
 
 	$update_data = array(
 		'ID'           => $user_id,
@@ -1169,6 +1170,8 @@ function learn_press_update_user_profile_basic_information( $wp_error = false ) 
 
 	if ( ! is_email( $update_data['user_email'] ) ) {
 		return new WP_Error( 'error_email', esc_html__( 'Display name cannot be changed to email address due to privacy concern.', 'learnpress' ) );
+	} elseif ( email_exists( $update_data['user_email'] ) && $update_data['user_email'] !== $current_user->user_email ) {
+		return new WP_Error( 'error_email', esc_html__( 'This email address is already registered.', 'learnpress' ) );
 	}
 
 	$update_data = apply_filters( 'learn-press/update-profile-basic-information-data', $update_data );
