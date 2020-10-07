@@ -13,11 +13,11 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-
-if ( ! isset($messages) ) {
-    return;
-}
 ?>
+
+<?php if ( ! $messages ) {
+	return;
+} ?>
 
 <ul class="learn-press-message error">
 

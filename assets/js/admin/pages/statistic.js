@@ -101,14 +101,15 @@
     var statistic_wrapper = $('#learn-press-statistic'),
         from = $('input[name="from"]'),
         to = $('input[name="to"]');
-    if(statistic_wrapper.length){
-      to.change(function(){
-        if(from.val() && to.val()){
+    if (statistic_wrapper.length) {
+      to.change(function () {
+        if (from.val() && to.val()) {
           $('button.button-primary').prop("disabled", false);
         }
       });
     }
   });
+
   $.fn.LP_Chart_Line = function (data, config) {
     return $.each(this, function () {
       var $elem = $(this),
@@ -118,7 +119,6 @@
       new Chart($canvas.get(0).getContext('2d')).Line(data, config);
     }); //
   };
-
 
   $.fn.LP_Statistic_Users = function () {
     if (parseInt($(this).length) === 0) {
@@ -414,7 +414,6 @@
 
   if (typeof data == 'undefined') return;
   drawCoursesChart(data, config);
-
 })(jQuery);
 
 /***/ })

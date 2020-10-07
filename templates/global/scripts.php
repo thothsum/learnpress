@@ -13,9 +13,6 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-if( ! isset($code) ){
-    return;
-}
 ?>
 
 <script type="text/javascript">

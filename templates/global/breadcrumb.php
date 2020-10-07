@@ -13,9 +13,6 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-if ( ! isset( $wrap_before ) || ! isset( $before ) || ! isset( $after ) || ! isset( $delimiter ) || ! isset( $wrap_after ) ) {
-    return;
-}
 ?>
 
 <?php

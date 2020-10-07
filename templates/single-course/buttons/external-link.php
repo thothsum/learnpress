@@ -14,9 +14,7 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset($course) ) {
-    return;
-}
+$course = LP_Global::course();
 ?>
 
 <form name="course-external-link" class="course-external-link form-button lp-form" method="post">

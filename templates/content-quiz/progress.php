@@ -14,9 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset( $user ) || ! isset( $quiz ) || ! isset( $question ) ) {
-    return;
-}
+$user        = LP_Global::user();
+$quiz        = LP_Global::course_item_quiz();
+$question    = LP_Global::quiz_question();
 $course_data = $user->get_course_data( get_the_ID() );
 $quiz_item   = $course_data->get_item_quiz( $quiz->get_id() );
 $quiz_data   = $user->get_quiz_data( $quiz->get_id() );

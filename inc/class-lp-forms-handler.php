@@ -62,8 +62,8 @@ class LP_Forms_Handler {
 	 * Basic filtering for become-teacher fields if it is required.
 	 *
 	 * @param string $name
-	 * @param array  $field
-	 * @param mixed  $value
+	 * @param array $field
+	 * @param mixed $value
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -76,8 +76,7 @@ class LP_Forms_Handler {
 					throw new Exception( __( 'Your email does not exist!', 'learnpress' ) );
 				}
 			}
-		}
-		catch ( Exception $ex ) {
+		} catch ( Exception $ex ) {
 			$validate = new WP_Error( 'invalid_email', $ex->getMessage() );
 		}
 
@@ -247,7 +246,7 @@ class LP_Forms_Handler {
 				'user_password' => $args['reg_password']
 			) );
 
-			// Send email when check enable Instructor.
+			// Send email require become to teacher of user to Admin mail.
 			if ( LP()->settings->get( 'instructor_registration' ) == 'yes' && isset( $_POST['become_teacher'] ) ) {
 				update_user_meta( $user_id, '_requested_become_teacher', 'yes' );
 				do_action(
@@ -299,8 +298,7 @@ class LP_Forms_Handler {
 				if ( ! preg_match( '#[~!@\#$%^&*()]#', $value ) ) {
 					throw new Exception( __( 'Password must include at least one of these characters ~!@#$%^&*() !', 'learnpress' ), 125 );
 				}
-			}
-			catch ( Exception $ex ) {
+			} catch ( Exception $ex ) {
 				$validate = new WP_Error( $ex->getCode(), $ex->getMessage() );
 			}
 		}

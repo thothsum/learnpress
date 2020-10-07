@@ -14,8 +14,8 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset( $profile ) || ! isset( $fields ) ) {
-    return;
+if (! isset( $fields ) ) {
+	return;
 }
 ?>
 
@@ -38,9 +38,9 @@ if ( ! isset( $profile ) || ! isset( $fields ) ) {
         </ul>
 
 		<?php do_action( 'learn-press/after-form-register-fields' ); ?>
-        
-        <?php do_action( 'register_form' ); ?>
-        
+
+		<?php do_action( 'register_form' ); ?>
+
         <p>
 			<?php wp_nonce_field( 'learn-press-register', 'learn-press-register-nonce' ); ?>
             <button type="submit"><?php _e( 'Register', 'learnpress' ); ?></button>

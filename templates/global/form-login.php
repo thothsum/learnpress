@@ -14,9 +14,8 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset( $profile ) || ! isset( $fields ) ) {
-    return;
-}
+$profile = LP_Global::profile();
+$fields  = $profile->get_login_fields();
 ?>
 
 <div class="learn-press-form-login learn-press-form">

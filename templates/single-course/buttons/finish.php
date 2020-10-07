@@ -14,9 +14,8 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset($course) || ! isset($user) ) {
-    return;
-}
+$course = LP_Global::course();
+$user   = LP_Global::user();
 
 $finish_not_passed = absint( $user->can_finish_course_not_passed( $course ) );
 $finish_passed     = absint( $user->can_finish_course_passed( $course ) );

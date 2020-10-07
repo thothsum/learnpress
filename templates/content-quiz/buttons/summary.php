@@ -14,9 +14,8 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset( $course ) || ! isset( $quiz ) ) {
-    return;
-}
+$course = LP_Global::course();
+$quiz   = LP_Global::course_item_quiz();
 
 do_action( 'learn-press/before-quiz-result-button' );
 ?>

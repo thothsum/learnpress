@@ -14,7 +14,10 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset( $tab_key, $tab_data ) || ! isset($profile) ) {
+$profile = LP_Profile::instance();
+
+
+if ( ! isset( $tab_key, $tab_data ) ) {
 	return;
 }
 

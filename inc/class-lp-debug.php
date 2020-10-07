@@ -172,10 +172,6 @@ class LP_Debug {
 	 * @param bool   $force
 	 */
 	public function add( $message, $handle = 'log', $clear = false, $force = false ) {
-		if ( ! $handle ) {
-			$handle = 'log';
-		}
-
 		if ( $this->_lock === null ) {
 			$this->_lock = ! ( LP_Settings::instance()->get( 'debug' ) == 'yes' );
 		}

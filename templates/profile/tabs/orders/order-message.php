@@ -7,9 +7,11 @@
 
 defined( 'ABSPATH' ) or exit();
 
-if ( ! isset( $order ) || ! isset($profile) ) {
+if ( ! isset( $order ) ) {
 	return;
 }
+
+$profile = LP_Profile::instance();
 ?>
 
 <?php if ( $order->get_user_id() != get_current_user_id() ) { ?>

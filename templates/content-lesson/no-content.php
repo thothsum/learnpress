@@ -6,20 +6,22 @@
  *
  * @author   ThimPress
  * @package  Learnpress/Templates
- * @version  3.0.0
+ * @version  3.0.1
  */
 
 /**
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-if ( ! isset( $item ) ) {
-    return;
+
+if ( ! isset( $lesson ) ) {
+	return;
 }
+
 $message = __( 'Lesson content is empty.', 'learnpress' );
 
-if ( $item->current_user_can_edit() ) {
-	$message .= sprintf( '<a href="%s" class="edit-content">%s</a>', $item->get_edit_link(), __( 'Edit', 'learnpress' ) );
+if ( $lesson->current_user_can_edit() ) {
+	$message .= sprintf( '<a href="%s" class="edit-content">%s</a>', $lesson->get_edit_link(), __( 'Edit', 'learnpress' ) );
 }
 
 learn_press_display_message( $message, 'notice' );

@@ -13,8 +13,9 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-if ( ! isset($order) || ! $order->is_guest() ) {
-    return;
+
+if ( ! $order->is_guest() ) {
+	return;
 } ?>
 
 <div>

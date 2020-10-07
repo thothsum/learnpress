@@ -13,10 +13,8 @@
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-if ( ! isset( $user ) ) {
-    return;
-}
-?>
+
+$user = LP_Global::user(); ?>
 
 <?php do_action( 'learn-press/quiz/before-continue-button' ); ?>
 

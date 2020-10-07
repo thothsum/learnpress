@@ -6,23 +6,20 @@
  *
  * @author   ThimPress
  * @package  Learnpress/Templates
- * @version  3.1.0
+ * @version  3.0.1
  */
 
 /**
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-if ( ! isset( $item ) ) {
-    return;
-}
-if ( ! isset( $content ) ) {
-    return;
+if ( ! isset( $item ) || ! isset( $content ) ) {
+	return;
 }
 
 // lesson no content
 if ( ! $content ) {
-	learn_press_get_template( 'content-lesson/no-content.php', array('item'=>$item) );
+	learn_press_get_template( 'content-lesson/no-content.php', array( 'lesson' => $item ) );
 
 	return;
 }

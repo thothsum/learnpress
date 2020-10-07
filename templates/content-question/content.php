@@ -4,9 +4,9 @@
  *
  * This template can be overridden by copying it to yourtheme/learnpress/content-question/content.php.
  *
- * @author  ThimPress
+ * @author   ThimPress
  * @package  Learnpress/Templates
- * @version  3.1.0
+ * @version  3.0.0
  */
 
 /**
@@ -15,9 +15,10 @@
 defined( 'ABSPATH' ) || exit();
 
 if ( ! isset( $question ) ) {
-    return;
+	return;
 }
 ?>
+
 <div class="content-question-summary" id="content-question-<?php echo $question->get_id(); ?>">
 	<?php
 	/**

@@ -14,9 +14,7 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset( $course ) ) {
-    return;
-}
+$course = LP_Global::course();
 ?>
 
 <div class="course-price">

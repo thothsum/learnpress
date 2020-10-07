@@ -173,8 +173,7 @@ if ( ! class_exists( 'LP_Profile' ) ) {
 		}
 
 		public function output_section( $tab_key, $tab_data, $user ) {
-            $profile = LP_Profile::instance();
-			learn_press_get_template( 'profile/tabs/sections.php', compact( 'tab_key', 'tab_data', 'user', 'profile') );
+			learn_press_get_template( 'profile/tabs/sections.php', compact( 'tab_key', 'tab_data', 'user' ) );
 		}
 
 		public function output_section_content( $section, $args, $user ) {

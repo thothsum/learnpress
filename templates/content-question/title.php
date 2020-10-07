@@ -6,7 +6,7 @@
  *
  * @author   ThimPress
  * @package  Learnpress/Templates
- * @version  3.1.0
+ * @version  3.0.1
  */
 
 /**
@@ -14,9 +14,9 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset( $global_question ) ) {
-    return;
+if ( ! isset( $title ) ) {
+	return;
 }
 ?>
 
-<h4 class="question-title"><?php echo $global_question->get_title( 'display' ); ?></h4>
+<h4 class="question-title"><?php echo $title; ?></h4>

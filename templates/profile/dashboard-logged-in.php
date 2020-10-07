@@ -14,9 +14,7 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset($profile) ) {
-    return;
-}
+$profile = LP_Profile::instance();
 
 if ( ! $profile->is_current_user() ) {
 	return;

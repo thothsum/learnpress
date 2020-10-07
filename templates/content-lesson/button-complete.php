@@ -14,28 +14,8 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset( $course ) ) {
-    return;
-}
-if ( ! isset( $user ) ) {
-    return;
-}
-if ( ! isset( $item ) ) {
-    return;
-}
-if ( ! isset( $completed ) ) {
-    return;
-}
-if ( ! isset( $security ) ) {
-    return;
-}
-if ( ! isset( $preview ) ) {
-    return;
-}
-if ( ! isset( $has_enrolled ) ) {
-    return;
-}
-if ( $preview && ! $has_enrolled ) {
+if ( ! isset( $course ) || ! isset( $item ) ||
+	! isset( $security ) || ! isset( $completed ) ) {
 	return;
 }
 ?>

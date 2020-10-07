@@ -14,9 +14,8 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset($profile) ) {
-    return;
-}
+$profile = LP_Profile::instance();
+
 $query_orders = $profile->query_orders( array( 'fields' => 'ids' ) );
 if ( ! $query_orders['items'] ) {
 	learn_press_display_message( __( 'No orders!', 'learnpress' ) );

@@ -14,10 +14,7 @@
  */
 defined( 'ABSPATH' ) || exit();
 
-if ( ! isset($user) ) {
-    return;
-}
-
+$user = LP_Global::user();
 ?>
 
 <form name="continue-course" class="continue-course form-button lp-form" method="post"

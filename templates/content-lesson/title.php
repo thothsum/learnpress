@@ -6,21 +6,15 @@
  *
  * @author   ThimPress
  * @package  Learnpress/Templates
- * @version  3.1.0
+ * @version  3.0.1
  */
 
 /**
  * Prevent loading this file directly
  */
 defined( 'ABSPATH' ) || exit();
-if ( ! isset( $title ) ) {
-    return;
-}
-if ( ! isset( $get_title ) ) {
-    return;
-}
 
-if ( ! $get_title ) {
+if ( ! isset( $title ) ) {
 	return;
 }
 ?>
