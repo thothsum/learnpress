@@ -27,7 +27,6 @@ if ( ! $user->has_enrolled_course( $course->get_id() ) ) {
 
 $course_data       = $user->get_course_data( $course->get_id() );
 $course_results    = $course_data->get_results( false );
-
 $passing_condition = $course->get_passing_condition();
 ?>
 
@@ -64,7 +63,14 @@ $passing_condition = $course->get_passing_condition();
                         class="percentage-sign">%</span></span>
 			<?php if ( $grade = $course_results['grade'] ) { ?>
                 <span class="lp-label grade <?php echo esc_attr( $grade ); ?>">
-				<?php learn_press_course_grade_html( $grade ); ?>
+				<?php
+                if($user->user_check_blocked_duration($course->get_id()) == true && ! $course_data->is_passed()){
+                    $grade = 'Fail';
+                }else{
+                    $grade = $course_results['grade'];
+                }
+                learn_press_course_grade_html( $grade );
+                ?>
 				</span>
 			<?php } ?>
         </div>

@@ -833,10 +833,13 @@ if ( ! class_exists( 'LP_Admin' ) ) {
 		}
 
 		public function get_course_items_of_user_backend( $query ) {
-			global $post_type, $pagenow, $wpdb;
+			global $post_type, $pagenow;
 
-			if ( ! current_user_can( LP_TEACHER_ROLE ) ||
-				! current_user_can( 'administrator' ) || ( $pagenow != 'edit.php' ) ) {
+			if ( current_user_can( 'administrator' ) )  {
+				return $query;
+			}
+
+			if ( ! current_user_can( LP_TEACHER_ROLE ) || ( $pagenow != 'edit.php' ) ) {
 				return $query;
 			}
 

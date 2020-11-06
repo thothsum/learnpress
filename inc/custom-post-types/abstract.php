@@ -177,7 +177,9 @@ abstract class LP_Abstract_Post_Type {
 			<?php
 		}
 
-		if ( $pagenow === 'post.php' ) {
+		if ( $pagenow === 'post.php' && (in_array( get_post_type(), array( LP_LESSON_CPT, LP_QUIZ_CPT, LP_QUESTION_CPT ) )) ) {
+			// move js from learnpress/inc/custom-post-types/abstract.php to
+			// issue: uv104920102020
 			?>
             <script>
                 jQuery(function ($) {
@@ -193,7 +195,6 @@ abstract class LP_Abstract_Post_Type {
                             $message.remove();
                         }
                     });
-
                 })
             </script>
 			<?php

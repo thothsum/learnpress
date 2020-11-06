@@ -60,7 +60,7 @@ class LP_Admin_Assets extends LP_Abstract_Assets {
 				'wp-color-picker'    => array(
 					'screens' => 'learnpress_page_learn-press-settings'
 				),
-				'select2'            => LP_Admin_Assets::url( '../inc/libraries/meta-box/js/select2/select2.min.js' ),
+				'select2'            => LP_Admin_Assets::url( '../inc/libraries/meta-box/js/select2/select2.full.min.js' ),
 				'jsautocomplete'            => LP_Admin_Assets::url( '../inc/libraries/meta-box/js/autocomplete.js' ),
 //				'lp-vue'             => array(
 //					'url'     => self::url( 'js/vendor/vue.min.js' ),
@@ -302,6 +302,8 @@ class LP_Admin_Assets extends LP_Abstract_Assets {
 		} else {
 			wp_register_script( 'learnpress-jspdf', LP_PLUGIN_URL . 'assets/js/admin/jspdf.min.js', false, LEARNPRESS_VERSION, true );
 		}
+
+		wp_enqueue_script( 'jquery-ui-autocomplete', array(), false, true );
 
 		do_action( 'learn-press/admin/after-enqueue-scripts' );
 	}

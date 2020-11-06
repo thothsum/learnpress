@@ -95,6 +95,7 @@ if ( ! function_exists( 'learn_press_course_enroll_button' ) ) {
 
 			return;
 		}
+		
 
 		// Locked course for user
 		if ( $user->is_locked_course( $course->get_id() ) ) {
@@ -119,13 +120,16 @@ if ( ! function_exists( 'learn_press_course_enroll_button' ) ) {
 		}
 
 		$purchased = $user->has_purchased_course( $course->get_id() );
-
 		// For free course and user does not purchased
 		if ( $course->is_free() && ! $purchased ) {
 			learn_press_get_template( 'single-course/buttons/enroll.php' );
 		} elseif ( $purchased && $course_data = $user->get_course_data( $course->get_id() ) ) {
-			if ( in_array( $course_data->get_status(), array( 'purchased', '' ) ) ) {
-				learn_press_get_template( 'single-course/buttons/enroll.php' );
+			if ( in_array( $course_data->get_status(), array( 'purchased', 'enrolled' ) ) ) {
+                //Retake count > 0 && course duration is blocked
+                if($course->get_retake_count() <= 0 && $user->user_check_blocked_duration($course->get_id()) == true){
+                    learn_press_get_template( 'single-course/buttons/enroll.php' );
+                }
+
 			}
 		}
 

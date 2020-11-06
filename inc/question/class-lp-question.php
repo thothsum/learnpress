@@ -230,6 +230,9 @@ if ( ! class_exists( 'LP_Question' ) ) {
 				$this->_set_data( 'show_correct_answers', $yes_or_no );
 			}
 
+
+
+			var_dump($this->get_data( 'show_correct_answers' ));
 			return $this->get_data( 'show_correct_answers' );
 		}
 

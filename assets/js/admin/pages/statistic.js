@@ -1,106 +1,10 @@
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./assets/src/js/admin/pages/statistic.js");
-/******/ })
-/************************************************************************/
-/******/ ({
-
-/***/ "./assets/src/js/admin/pages/statistic.js":
-/*!************************************************!*\
-  !*** ./assets/src/js/admin/pages/statistic.js ***!
-  \************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-;
 
 (function ($) {
   $(document).ready(function () {
     // check input (from - to) has value active go button
     var statistic_wrapper = $('#learn-press-statistic'),
-        from = $('input[name="from"]'),
-        to = $('input[name="to"]');
+        from = $('#learn-press-statistic input[name="from"]'),
+        to = $('#learn-press-statistic input[name="to"]');
     if (statistic_wrapper.length) {
       to.change(function () {
         if (from.val() && to.val()) {
@@ -117,7 +21,7 @@
       $elem.html('');
       $canvas.appendTo($elem);
       new Chart($canvas.get(0).getContext('2d')).Line(data, config);
-    }); //
+    })
   };
 
   $.fn.LP_Statistic_Users = function () {
@@ -131,12 +35,13 @@
             type = $button.data('type'),
             from = '',
             to = '',
-            $container = $('#learn-press-chart');
+            $container = $('#learn-press-chart'),
+            load_area = $('.lp-chart__loading');
         $buttons.not(this).not('[data-type="user-custom-time"]').prop('disabled', false);
 
         if (type == 'user-custom-time') {
-          from = $('#user-custom-time input[name="from"]').val();
-          to = $('#user-custom-time input[name="to"]').val();
+          from = $('#learn-press-statistic input[name="from"]').val();
+          to = $('#learn-press-statistic input[name="to"]').val();
 
           if (from == '' || to == '') {
             return false;
@@ -144,8 +49,7 @@
         } else {
           $button.prop('disabled', true);
         }
-
-        $container.addClass('loading');
+        load_area.addClass('active');
         $.ajax({
           url: 'admin-ajax.php',
           data: {
@@ -157,7 +61,7 @@
           success: function success(response) {
             response = LP.parseJSON(response);
             $container.LP_Chart_Line(response, LP_Chart_Config);
-            $container.removeClass('loading');
+            load_area.removeClass('active');
           }
         });
         return false;
@@ -187,12 +91,13 @@
             type = $button.data('type'),
             from = '',
             to = '',
-            $container = $('#learn-press-chart');
+            $container = $('#learn-press-chart'),
+            load_area = $('.lp-chart__loading');
         $buttons.not(this).not('[data-type="course-custom-time"]').prop('disabled', false);
 
         if (type == 'course-custom-time') {
-          from = $('#course-custom-time input[name="from"]').val();
-          to = $('#course-custom-time input[name="to"]').val();
+          from = $('#learn-press-statistic input[name="from"]').val();
+          to = $('#learn-press-statistic input[name="to"]').val();
 
           if (from == '' || to == '') {
             return false;
@@ -200,8 +105,7 @@
         } else {
           $button.prop('disabled', true);
         }
-
-        $container.addClass('loading');
+        load_area.addClass('active');
         $.ajax({
           url: 'admin-ajax.php',
           data: {
@@ -211,9 +115,10 @@
           },
           dataType: 'text',
           success: function success(response) {
+            console.log(response);
             response = LP.parseJSON(response);
             $container.LP_Chart_Line(response, LP_Chart_Config);
-            $container.removeClass('loading');
+            load_area.removeClass('active');
           }
         });
         return false;
@@ -259,18 +164,17 @@
           report_sales_by = 'date',
           cat_id = 0,
           course_id = 0;
-      report_sales_by = $('#report_sales_by').val();
+      report_sales_by = $('#report_sales_by').val(),
+      load_area = $('.lp-chart__loading');
       $container = $('#learn-press-chart');
-      $container.addClass('loading'); // get type
-
       var $buttons = $('.chart-buttons button:disabled').not('[data-type="order-custom-time"]');
 
       if (parseInt($buttons.length) > 0) {
         type = $($buttons[0]).data('type');
       } else {
         type = 'order-custom-time';
-        from = $('#order-custom-time input[name="from"]').val();
-        to = $('#order-custom-time input[name="to"]').val();
+        from = $('#learn-press-statistic input[name="from"]').val();
+        to = $('#learn-press-statistic input[name="to"]').val();
 
         if (from == '' || to == '') {
           return false;
@@ -282,7 +186,7 @@
       } else if ('category' === report_sales_by) {
         cat_id = $('#report-by-course-category-id').val();
       }
-
+      load_area.addClass('active');
       $.ajax({
         url: 'admin-ajax.php',
         data: {
@@ -297,57 +201,38 @@
         success: function success(response) {
           response = LP.parseJSON(response);
           $container.LP_Chart_Line(response, LP_Chart_Config);
-          $container.removeClass('loading');
+          load_area.removeClass('active');
         }
+
       });
     };
 
     $('#report-by-course-id').select2({
-      placeholder: 'Select a course',
       minimumInputLength: 1,
+      placeholder: 'Search a course',
       ajax: {
-        url: ajaxurl + '?action=learnpress_search_course',
+        url: ajaxurl,
         dataType: 'json',
-        quietMillis: 250,
-        data: function data(term, page) {
+        delay: 250,
+        data: function (params) {
           return {
-            q: term // search term
-
+            q: params.term, // search query
+            action: 'learnpress_search_course_by_name' // AJAX action for admin-ajax.php
           };
         },
-        results: function results(data, page) {
-          return {
-            results: data.items
-          };
+        processResults: function( data ) {
+          if ( data ) {
+
+            return {
+              results: data
+            };
+
+          }
         },
         cache: true
       }
     });
-    $('#report-by-course-id').on('change', function () {
-      LP_Statistic_Orders_Upgrade_Chart();
-    });
-    $('#report-by-course-category-id').select2({
-      placeholder: 'Select a course',
-      minimumInputLength: 1,
-      ajax: {
-        url: ajaxurl + '?action=learnpress_search_course_category',
-        dataType: 'json',
-        quietMillis: 250,
-        data: function data(term, page) {
-          return {
-            q: term // search term
-
-          };
-        },
-        results: function results(data, page) {
-          return {
-            results: data.items
-          };
-        },
-        cache: true
-      }
-    });
-    $('#report-by-course-category-id').on('change', function () {
+    $('#report-by-course-id').change(function () {
       LP_Statistic_Orders_Upgrade_Chart();
     });
     var $buttons = $('.chart-buttons button').on('click', function () {
@@ -360,8 +245,8 @@
 
       if (type !== 'order-custom-time') {
         $button.prop('disabled', true);
-        $('#order-custom-time input[name="from"]').val('');
-        $('#order-custom-time input[name="to"]').val('');
+        $('#learn-press-statistic input[name="from"]').val('');
+        $('#learn-press-statistic input[name="to"]').val('');
       }
 
       LP_Statistic_Orders_Upgrade_Chart();
@@ -380,16 +265,76 @@
     });
   };
 
+  $.fn.LP_Statistic_Generals = function ()  {
+    if (parseInt($(this).length) === 0) {
+      return;
+    }
+
+    return $.each(this, function () {
+      var $buttons = $('.chart-buttons button').on('click', function () {
+            var $button = $(this),
+                type = $button.data('type'),
+                from = '',
+                to = '',
+                $container = $('#learn-press-chart'),
+                load_area = $('.lp-chart__loading');
+            $buttons.not(this).not('[data-type="general-custom-time"]').prop('disabled', false);
+
+            if (type === 'general-custom-time') {
+              from = $('#learn-press-statistic input[name="from"]').val();
+              to = $('#learn-press-statistic input[name="to"]').val();
+
+              if (from === '' || to === '') {
+                return false;
+              }
+            } else {
+              $button.prop('disabled', true);
+            }
+
+            load_area.addClass('active');
+            $.ajax({
+              url: 'admin-ajax.php',
+              data: {
+                action: 'learnpress_load_chart',
+                type: type,
+                range: [from, to]
+              },
+              dataType: 'text',
+              success: function success(response) {
+                console.log(response);
+                response = LP.parseJSON(response);
+                $container.LP_Chart_Line(response, LP_Chart_Config);
+                load_area.removeClass('active');
+              }
+            });
+            return false;
+          }),
+          $inputs = $('.chart-buttons .learn-press-statistic-general input[type="text"]').change(function () {
+            var _valid_date = function _valid_date() {
+              if (new Date($inputs[0].value) < new Date($inputs[1].value)) {
+                return true;
+              }
+            };
+
+            $buttons.filter('[data-type="general-custom-time"]').prop('disabled', $inputs.filter(function () {
+              return this.value == '';
+            }).get().length || !_valid_date());
+          });
+    });
+  };
+
   $(document).ready(function () {
     if (typeof $.fn.datepicker != 'undefined') {
-      $(".date-picker").datepicker({
-        dateFormat: 'yy/mm/dd'
-      });
+        $( ".date-picker" ).datepicker({
+          dateFormat: 'yy/mm/dd'
+        });
     }
 
     $('.learn-press-statistic-users').LP_Statistic_Users();
     $('.learn-press-statistic-courses').LP_Statistic_Courses();
     $('.learn-press-statistic-orders').LP_Statistic_Orders();
+    $('.learn-press-statistic-general').LP_Statistic_Generals();
+
   });
   return;
   var student_chart;
@@ -415,7 +360,3 @@
   if (typeof data == 'undefined') return;
   drawCoursesChart(data, config);
 })(jQuery);
-
-/***/ })
-
-/******/ });

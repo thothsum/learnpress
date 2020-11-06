@@ -30,7 +30,7 @@ $count          = 0;
 		<li>
 			<form id="order-custom-time">
 				<span><?php _e( 'From', 'learnpress' ) ?></span>
-				<input type="text" placeholder="Y/m/d" name="from" class="date-picker" readonly="readonly">
+				<input  type="text" placeholder="Y/m/d" name="from" class="date-picker" readonly="readonly">
 				<span><?php _e( 'To', 'learnpress' ) ?></span>
 				<input type="text" placeholder="Y/m/d" name="to" class="date-picker" readonly="readonly">
 				<input type="hidden" name="action" value="learnpress_custom_stats">
@@ -45,26 +45,27 @@ $count          = 0;
 		<select id="report_sales_by">
 			<option value="date"><?php _e( 'Date', 'learnpress' ); ?></option>
 			<option value="course"><?php _e( 'Course', 'learnpress' ); ?></option>
-			<option value="category"><?php _e( 'Course Category', 'learnpress' ); ?></option>
 		</select>
 		<span id="panel_report_sales_by_course" class="panel_report_option">
 			<?php _e( 'Select a course', 'learnpress' );?>
-			<input id="report-by-course-id" class="statistics-search-course" />
-		</span>
-		<span id="panel_report_sales_by_category" class="panel_report_option">
-			<?php _e( 'Select a course category', 'learnpress' );?>
-			<input id="report-by-course-category-id" class="statistics-search-course-category" />
+			<select id="report-by-course-id" class="statistics-search-course postName form-control" style="width:500px" name="postName"></select>
 		</span>
 	</div>
 
 	<div class="clear"></div>
+
 	<ul class="chart-description">
 		<li class="all"><span><?php _e( 'All', 'learnpress' ); ?></span></li>
 		<li class="instructors"><span><?php _e( 'Completed', 'learnpress' ); ?></span></li>
 		<li class="students"><span><?php _e( 'Pending', 'learnpress' ); ?></span></li>
 	</ul>
-	<div id="learn-press-chart" class="learn-press-chart">
-	</div>
+
+    <div class="lp-chart__wrapper">
+        <div id="learn-press-chart" class="learn-press-chart"></div>
+        <div class="lp-chart__loading">
+            <div class="loader"></div>
+        </div>
+    </div>
 
 	<script type="text/javascript">
 		var LP_Chart_Config =  <?php learn_press_config_chart();?>;

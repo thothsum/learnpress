@@ -45,12 +45,14 @@ if ( ! class_exists( 'LP_Admin_Ajax' ) ) {
 				//'update_add_on_status'    => false,
 				'bundle_activate_add_ons' => false,
 				'install_sample_data'     => false,
-
 				// Remove Notice
 				'remove_notice_popup'     => false,
 				// Update order status
 				//'update_order_status'     => false,
 				'update_order_exports'    => false,
+				'update_statistic_exports_directional' => false,
+				'update_result_statistic' => false,
+                'search_course_by_name'  => false,
 			);
 			foreach ( $ajaxEvents as $ajaxEvent => $nopriv ) {
 				add_action( 'wp_ajax_learnpress_' . $ajaxEvent, array( __CLASS__, $ajaxEvent ) );
@@ -561,6 +563,35 @@ if ( ! class_exists( 'LP_Admin_Ajax' ) ) {
 			) );
 
 		}
+
+        /**
+         * Search course by name.
+         * @since 3.2.8.1
+         * @author Physcode - Hungkv
+         */
+        public static function search_course_by_name() {
+            $search = $_GET['q'];
+            if(!isset($search)){
+                $json = [];
+            }else{
+                global $wpdb;
+                $query = "
+        SELECT      $wpdb->posts.post_title as title, $wpdb->posts.ID as id
+        FROM        $wpdb->posts
+        WHERE       $wpdb->posts.post_title LIKE '%$search%'
+        AND         $wpdb->posts.post_type = 'lp_course'
+        ORDER BY    $wpdb->posts.post_title
+        LIMIT 10
+        ";
+                if ( $_results = $wpdb->get_results( $query ) ) {
+                    foreach ( $_results as $result ) {
+                        $json[] = ['id'=>$result->id, 'text'=>$result->title];
+                    }
+                }
+            }
+            echo json_encode($json);
+            exit();
+        }
 
 		/**
 		 * Search course category.
@@ -1190,6 +1221,520 @@ if ( ! class_exists( 'LP_Admin_Ajax' ) ) {
 			echo $html;
 			die();
 		}
+		/**
+		 * @package Export Statistic to .csv
+         * @sub-package:update directional
+		 * @since 3.2.9.1
+		 * @author hungkv
+		 */
+		public static function update_statistic_exports_directional()
+		{
+
+			$statistic_export_type = LP_Helper::sanitize_params_submitted($_POST['select_value']);
+			ob_start();
+			$directional_array = array( 'directional_type' => $statistic_export_type);
+			learn_press_admin_view( 'statistics/directional', $directional_array );
+			$html = ob_get_clean();
+			echo $html;
+			die();
+
+		}
+		/**
+		 * @package Update Statistic exports directional to .csv
+         * @sub-packae: update results
+		 * @since 3.2.9.1
+		 * @author hungkv
+		 */
+		public static function update_result_statistic()
+		{
+			$select = isset($_POST['select']) ? $_POST['select'] : '';
+			$type = isset($_POST['type']) ? $_POST['type'] : '';
+			$role = isset($_POST['role']) ? $_POST['role'] : '';
+			$from = isset($_POST['from']) ? $_POST['from'] : '';
+			$to = isset($_POST['to']) ? $_POST['to'] : '';
+			$courseid = isset($_POST['course']) ? $_POST['course'] : '';
+			if(isset($courseid)){
+                $coursename = get_the_title($courseid);
+            }else{
+                $coursename = '';
+            }
+			$saleby = isset($_POST['sale_by']) ? $_POST['sale_by'] : '';
+			switch ($select){
+				case "users": ?>
+
+                    <h2><?php echo esc_html__('Your search results for "users"', 'learnpress'); ?></h2>
+                    <table >
+                        <thead>
+                        <tr>
+                            <th><?php echo esc_html__('Numerical order', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('User name', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Display Name', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Email', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Role', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Registration Date', 'learnpress'); ?></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+						<?php
+
+						if (isset($from) && $from != '') {
+							$datefrom = date('F d, Y', strtotime($from));
+						} else {
+							$datefrom = '';
+						}
+						if (isset($to) && $to != '') {
+							$dateto = date('F d, Y', strtotime($to));
+						} else {
+							$dateto = '';
+						}
+						if ($type === 'last-7-days') {
+							$date_query = array('after' => '7 days ago', 'inclusive' => true);
+						} elseif ($type === 'last-12-months') {
+							$date_query = array('after' => '1 years ago', 'inclusive' => true);
+						} elseif ($type === 'custom-time') {
+
+							$date_query = array(
+								'after' => $datefrom,
+								'before' => $dateto,
+								'inclusive' => true,
+							);
+
+						} else {
+							$date_query = '';
+						}
+
+						$args = array(
+							'role' => $role,
+							'date_query' => array(
+								$date_query
+							),
+							'posts_per_page' => -1,
+						);
+
+						$wp_user_query = new WP_User_Query($args);
+						// Get the results
+						$authors = $wp_user_query->get_results();
+						$i = 0;
+						if(!empty($authors)):
+						foreach ($authors as $author) {
+							// get all the user's data
+							$author_info = get_userdata($author->ID);
+
+							$i++;
+							?>
+                            <tr>
+                                <td><?php echo esc_html($i); ?></td>
+                                <td><?php echo esc_html($author_info->user_login); ?></td>
+                                <td><?php echo esc_html($author_info->user_nicename); ?></td>
+                                <td><?php echo esc_html($author_info->user_email); ?></td>
+                                <td><?php echo esc_html($author_info->roles[0]); ?></td>
+                                <td><?php echo esc_html($author_info->user_registered); ?></td>
+                            </tr>
+						<?php }
+						else:
+                            echo '<h3>'.esc_html('There is no result in this period of time','learnpress').'</h3>';
+						endif;
+						?>
+                        </tbody>
+                    </table>
+                    <!--Script export to csv-->
+                    <script>
+                        // generate user data
+                        const userData = [
+							<?php
+							$i = 0;
+							foreach ($authors as $author) {
+							// get all the user's data
+							$author_info = get_userdata($author->ID);
+							$i++;
+							?>
+                            {
+                                "Numerical order": <?php echo esc_html($i); ?>,
+                                "User name": "<?php echo esc_html($author_info->user_login); ?>",
+                                "User Nicename": "<?php echo esc_html($author_info->user_nicename); ?>",
+                                "Email": "<?php echo sanitize_email($author_info->user_email); ?>",
+                                "Role": "<?php echo esc_html($author_info->roles[0]); ?>",
+                                "Registration Date": "<?php echo esc_html($author_info->user_registered); ?>",
+                            },
+							<?php  }  ?>
+                        ];
+
+                        convertArrayOfObjectsToCSV = args => {
+                            const data = args.data;
+                            if (!data || !data.length) return;
+
+                            const columnDelimiter = args.columnDelimiter || ',';
+                            const lineDelimiter = args.lineDelimiter || '\n';
+
+                            const keys = Object.keys(data[0]);
+
+                            let result = '';
+                            result += keys.join(columnDelimiter);
+                            result += lineDelimiter;
+
+                            data.forEach(item => {
+                                ctr = 0;
+                                keys.forEach(key => {
+                                    if (ctr > 0) result += columnDelimiter;
+                                    result += item[key];
+                                    ctr++;
+                                });
+                                result += lineDelimiter;
+                            });
+
+                            return result;
+                        }
+
+                        downloadCSV = args => {
+                            let csv = convertArrayOfObjectsToCSV({
+                                data: userData
+                            });
+                            if (!csv) return;
+
+                            const filename = args.filename || 'export.csv';
+
+                            if (!csv.match(/^data:text\/csv/i)) {
+                                csv = 'data:text/csv;charset=utf-8,' + csv;
+                            }
+
+                            const data = encodeURI(csv);
+
+                            const link = document.createElement('a');
+                            link.setAttribute('href', data);
+                            link.setAttribute('download', filename);
+                            link.click();
+                        }
+
+                    </script>
+                    <!--End script export to csv-->
+
+					<?php
+					break;
+				case "courses": ?>
+
+                    <h2><?php echo esc_html__('Your search results for "courses":', 'learnpress'); ?></h2>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th><?php echo esc_html__('Numerical order', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Course Name', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Author', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Content', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Students', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Price', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Date', 'learnpress'); ?></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+						<?php
+						if (isset($from) && $from != '') {
+							$datefrom = date('F d, Y', strtotime($from));
+						} else {
+							$datefrom = '';
+						}
+						if (isset($to) && $to != '') {
+							$dateto = date('F d, Y', strtotime($to));
+						} else {
+							$dateto = '';
+						}
+						if ($type === 'last-7-days') {
+							$date_query = array('after' => '7 days ago', 'inclusive' => true);
+						} elseif ($type === 'last-12-months') {
+							$date_query = array('after' => '1 years ago', 'inclusive' => true);
+						} elseif ($type === 'custom-time') {
+
+							$date_query = array(
+								'after' => $datefrom,
+								'before' => $dateto,
+								'inclusive' => true,
+							);
+
+						} else {
+							$date_query = '';
+						}
+						$args = array(
+							'post_type' => 'lp_course',
+							'post_status' => 'publish',
+							'posts_per_page' => -1,
+							'orderby' => 'title',
+							'order' => 'ASC',
+							'date_query' => array(
+								$date_query
+							),
+						);
+
+						$wp_course_query = new WP_Query($args);
+						$i = 0;
+						if($wp_course_query->have_posts()): while($wp_course_query->have_posts()): $wp_course_query->the_post();
+							$i++;
+							$course = LP_Global::course();
+							?>
+                            <tr>
+                                <td><?php echo esc_html($i); ?></td>
+                                <td><?php echo get_the_title(); ?></td>
+                                <td><?php echo get_the_author_meta( 'nicename' ); ?></td>
+                                <td><?php echo $course->count_items('lp_lesson').esc_html__(' lessons, ').$course->count_items('lp_quiz').esc_html__(' quizzes'); ?></td>
+                                <td><?php echo $course->count_students(); ?></td>
+                                <td><?php echo learn_press_format_price(!empty($course->get_price()) ? $course->get_price() : 0, isset($currency_symbol) ? $currency_symbol : '$'); ?></td>
+                                <td><?php echo get_the_date(); ?></td>
+                            </tr>
+                        <?php
+                        endwhile;
+                        else:
+                            echo '<h3>'.esc_html('There is no result in this period of time','learnpress').'</h3>';
+                        endif;
+                        wp_reset_postdata();
+                        ?>
+                        </tbody>
+                    </table>
+                    <!--Script export to csv-->
+                    <script>
+                        // generate user data
+                        const userData = [
+							<?php
+							$i = 0;
+							if($wp_course_query->have_posts()): while($wp_course_query->have_posts()): $wp_course_query->the_post();
+							$i++;
+							?>
+                            {
+                                "Numerical order": <?php echo esc_html($i); ?>,
+                                "Course Name": "<?php echo get_the_title(); ?>",
+                                "Author": "<?php echo get_the_author_meta( 'nicename' ); ?>",
+                                "Content": "<?php echo $course->count_items('lp_lesson').esc_html__(' lessons, ').$course->count_items('lp_quiz').esc_html__(' quizzes'); ?>",
+                                "Students": "<?php echo $course->count_students(); ?>",
+                                "Price": "<?php echo learn_press_format_price(!empty($course->get_price()) ? $course->get_price() : 0, isset($currency_symbol) ? $currency_symbol : '$'); ?>",
+                                "Date": "<?php echo get_the_date(); ?>",
+                            },
+							<?php  endwhile;
+							endif;
+							wp_reset_postdata();  ?>
+                        ];
+
+                        convertArrayOfObjectsToCSV = args => {
+                            const data = args.data;
+                            if (!data || !data.length) return;
+
+                            const columnDelimiter = args.columnDelimiter || ',';
+                            const lineDelimiter = args.lineDelimiter || '\n';
+
+                            const keys = Object.keys(data[0]);
+
+                            let result = '';
+                            result += keys.join(columnDelimiter);
+                            result += lineDelimiter;
+
+                            data.forEach(item => {
+                                ctr = 0;
+                                keys.forEach(key => {
+                                    if (ctr > 0) result += columnDelimiter;
+                                    result += item[key];
+                                    ctr++;
+                                });
+                                result += lineDelimiter;
+                            });
+
+                            return result;
+                        }
+
+                        downloadCSV = args => {
+                            let csv = convertArrayOfObjectsToCSV({
+                                data: userData
+                            });
+                            if (!csv) return;
+
+                            const filename = args.filename || 'export.csv';
+
+                            if (!csv.match(/^data:text\/csv/i)) {
+                                csv = 'data:text/csv;charset=utf-8,' + csv;
+                            }
+
+                            const data = encodeURI(csv);
+
+                            const link = document.createElement('a');
+                            link.setAttribute('href', data);
+                            link.setAttribute('download', filename);
+                            link.click();
+                        }
+
+                    </script>
+                    <!--End script export to csv-->
+
+					<?php
+					break;
+				case "orders": ?>
+
+                    <h2><?php echo esc_html__('Your search results for "orders":', 'learnpress'); ?></h2>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th><?php echo esc_html__('Numerical order', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Customer name', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Email', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Invoice No.', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Total Price', 'learnpress'); ?></th>
+                            <th><?php echo esc_html__('Date', 'learnpress'); ?></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+						<?php
+
+						if (isset($from) && $from != '') {
+							$datefrom = date('F d, Y', strtotime($from));
+						} else {
+							$datefrom = '';
+						}
+						if (isset($to) && $to != '') {
+							$dateto = date('F d, Y', strtotime($to));
+						} else {
+							$dateto = '';
+						}
+						if ($type === 'last-7-days') {
+							$date_query = array('after' => '7 days ago', 'inclusive' => true);
+						} elseif ($type === 'last-12-months') {
+							$date_query = array('after' => '1 years ago', 'inclusive' => true);
+						} elseif ($type === 'custom-time') {
+
+							$date_query = array(
+								'after' => $datefrom,
+								'before' => $dateto,
+								'inclusive' => true,
+							);
+
+						} else {
+							$date_query = '';
+						}
+
+						if(isset($coursename) && $coursename != ''){
+							global $wpdb;
+							$table = $wpdb->prefix . 'learnpress_order_items';
+							$sql = "SELECT order_id FROM {$table} WHERE `order_item_name` = '$coursename'";
+							$data = $wpdb->get_results( $wpdb->prepare($sql), ARRAY_N  );
+							$result = call_user_func_array("array_merge", $data);
+						}else{
+							$result = '';
+						}
+						$args = array(
+							'post_type' => 'lp_order',
+							'post__in'      => $result,
+							'post_status' => array('lp-completed','lp-pending','lp-processing'),
+                            'post_parent' => 0,
+							'posts_per_page' => -1,
+							'date_query' => array(
+								$date_query
+							),
+						);
+						$i = 0;
+						$ordersloop = new WP_Query( $args );
+						if($ordersloop->have_posts()):
+						while ( $ordersloop->have_posts() ) : $ordersloop->the_post();
+							$i++;
+							$order = learn_press_get_order(get_the_ID());
+							if (isset($order_items)) {
+								$currency_symbol = learn_press_get_currency_symbol($order_items->currency);
+							} else {
+								$currency_symbol = learn_press_get_currency_symbol();
+							}
+
+							?>
+                            <tr>
+                                <td><?php echo esc_html($i); ?></td>
+                                <td><?php echo esc_html($order->get_customer_name()); ?></td>
+                                <td><?php echo esc_html($order->get_user('email')); ?></td>
+                                <td><?php echo esc_attr($order->get_order_number()); ?></td>
+                                <td><?php echo learn_press_format_price((!empty($order->get_total())) ? $order->get_total() : 0, isset($currency_symbol) ? $currency_symbol : '$'); ?></td>
+                                <td><?php echo date('d-m-Y h:i:s', esc_attr($order->get_order_date('timestamp'))); ?></td>
+                            </tr>
+						<?php
+						endwhile;
+						else:
+                            echo '<h3>'.esc_html('There is no result in this period of time','learnpress').'</h3>';
+                        endif;
+						wp_reset_postdata();
+						?>
+                        </tbody>
+                    </table>
+                    <!--Script export to csv-->
+                    <script>
+                        // generate user data
+                        const userData = [
+
+							<?php
+							$i = 0;
+	                        $ordersloop = new WP_Query( $args );
+							while ( $ordersloop->have_posts() ) : $ordersloop->the_post();
+							$i++;
+							$order = learn_press_get_order(get_the_ID());
+							?>
+                            {
+                                "Numerical order": "<?php echo esc_html($i); ?>",
+                                "Customer name": "<?php echo esc_html($order->get_customer_name()); ?>",
+                                "Email": "<?php echo esc_html($order->get_user('email')); ?>",
+                                "Invoice No.": "<?php echo esc_attr(str_replace('#','',$order->get_order_number())); ?>",
+                                "Total Price": "<?php echo ($order->get_total()) ?$order->get_total() : 0; ?>",
+                                "Date": "<?php echo date('d-m-Y h:i:s', esc_attr($order->get_order_date('timestamp'))); ?>",
+                            },
+							<?php endwhile; wp_reset_postdata(); ?>
+                        ];
+
+                        convertArrayOfObjectsToCSV = args => {
+                            const data = args.data;
+                            if (!data || !data.length) return;
+
+                            const columnDelimiter = args.columnDelimiter || ',';
+                            const lineDelimiter = args.lineDelimiter || '\n';
+
+                            const keys = Object.keys(data[0]);
+
+                            let result = '';
+                            result += keys.join(columnDelimiter);
+                            result += lineDelimiter;
+
+                            data.forEach(item => {
+                                ctr = 0;
+                                keys.forEach(key => {
+                                    if (ctr > 0) result += columnDelimiter;
+                                    result += item[key];
+                                    ctr++;
+                                });
+                                result += lineDelimiter;
+                            });
+
+                            return result;
+                        }
+
+                        downloadCSV = args => {
+                            let csv = convertArrayOfObjectsToCSV({
+                                data: userData
+                            });
+                            if (!csv) return;
+
+                            const filename = args.filename || 'export.csv';
+
+                            if (!csv.match(/^data:text\/csv/i)) {
+                                csv = 'data:text/csv;charset=utf-8,' + csv;
+                            }
+
+                            const data = encodeURI(csv);
+
+                            const link = document.createElement('a');
+                            link.setAttribute('href', data);
+                            link.setAttribute('download', filename);
+                            link.click();
+                        }
+
+                    </script>
+                    <!--End script export to csv-->
+
+					<?php
+					break;
+			}
+			?>
+            <!--Html results export statistic-->
+
+            <!--End html results export statistic-->
+			<?php
+			exit();
+		}
 	}
 
 	if ( defined( 'DOING_AJAX' ) ) {
@@ -1197,4 +1742,7 @@ if ( ! class_exists( 'LP_Admin_Ajax' ) ) {
 	}
 
 	add_action( 'init', array( 'LP_Admin_Ajax', 'init' ) );
+
+
+
 }
