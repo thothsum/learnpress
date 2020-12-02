@@ -587,7 +587,7 @@ if ( ! class_exists( 'LP_Profile' ) ) {
 
 			}
 			if ( is_wp_error( $return ) ) {
-				learn_press_add_message( $return->get_error_message(), 'error' );
+				learn_press_add_message( $return->get_error_message() );
 			} else {
 				if ( $return ) {
 					learn_press_add_message( $message );

@@ -1152,7 +1152,6 @@ function learn_press_update_user_profile_avatar() {
 function learn_press_update_user_profile_basic_information( $wp_error = false ) {
 
 	$user_id = get_current_user_id();
-	$current_user = get_user_by( 'id', $user_id );
 
 	$update_data = array(
 		'ID'           => $user_id,
@@ -1160,19 +1159,8 @@ function learn_press_update_user_profile_basic_information( $wp_error = false ) 
 		'last_name'    => filter_input( INPUT_POST, 'last_name', FILTER_SANITIZE_STRING ),
 		'display_name' => filter_input( INPUT_POST, 'display_name', FILTER_SANITIZE_STRING ),
 		'nickname'     => filter_input( INPUT_POST, 'nickname', FILTER_SANITIZE_STRING ),
-		'description'  => filter_input( INPUT_POST, 'description', FILTER_SANITIZE_STRING ),
-		'user_email'   => filter_input( INPUT_POST, 'user_email', FILTER_SANITIZE_EMAIL ),
+		'description'  => filter_input( INPUT_POST, 'description', FILTER_SANITIZE_STRING )
 	);
-
-	if ( empty( $update_data['user_email'] ) ) {
-		return new WP_Error( 'exist_email', esc_html__( 'Email is required', 'learnpress' ) );
-	}
-
-	if ( ! is_email( $update_data['user_email'] ) ) {
-		return new WP_Error( 'error_email', esc_html__( 'Display name cannot be changed to email address due to privacy concern.', 'learnpress' ) );
-	} elseif ( email_exists( $update_data['user_email'] ) && $update_data['user_email'] !== $current_user->user_email ) {
-		return new WP_Error( 'error_email', esc_html__( 'This email address is already registered.', 'learnpress' ) );
-	}
 
 	$update_data = apply_filters( 'learn-press/update-profile-basic-information-data', $update_data );
 	$return      = wp_update_user( $update_data );

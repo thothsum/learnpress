@@ -4,10 +4,10 @@
  * Plugin URI: http://thimpress.com/learnpress
  * Description: LearnPress is a WordPress complete solution for creating a Learning Management System (LMS). It can help you to create courses, lessons and quizzes.
  * Author: ThimPress
- * Version: 3.2.7.9
+ * Version: 3.2.8.1
  * Author URI: http://thimpress.com
  * Requires at least: 3.8
- * Tested up to: 5.5.1
+ * Tested up to: 5.5.3
  * Text Domain: learnpress
  * Domain Path: /languages/
  *
@@ -156,7 +156,7 @@ if ( ! class_exists( 'LearnPress' ) ) {
 		/**
 		 * Add new task to a background process.
 		 *
-		 * @param mixed  $data
+		 * @param mixed $data
 		 * @param string $background
 		 *
 		 * @return LP_Abstract_Background_Process|bool
@@ -241,6 +241,7 @@ if ( ! class_exists( 'LearnPress' ) ) {
 			require_once 'inc/abstracts/abstract-addon.php';
 			require_once 'inc/class-lp-thumbnail-helper.php';
 			require_once 'inc/cache.php';
+			require_once 'inc/class-lp-asset-key.php';
 
 			// Background processes
 			require_once 'inc/abstracts/abstract-background-process.php';
@@ -250,12 +251,16 @@ if ( ! class_exists( 'LearnPress' ) ) {
 			//require_once 'inc/background-process/class-lp-background-installer.php';
 			//require_once 'inc/background-process/class-lp-background-global.php';
 
+			// Filter query
+			require_once 'inc/question/filters/class-lp-question-filter.php';
+
 			// Query Database
 			require_once 'inc/class-lp-database.php';
 			require_once 'inc/course/class-lp-course-database.php';
 			require_once 'inc/lesson/class-lp-lesson-database.php';
 			require_once 'inc/section/class-lp-section-database.php';
 			require_once 'inc/quiz/class-lp-quiz-database.php';
+			require_once 'inc/question/class-lp-question-database.php';
 
 			// curds
 			require_once 'inc/curds/class-lp-helper-curd.php';
@@ -285,6 +290,7 @@ if ( ! class_exists( 'LearnPress' ) ) {
 			require_once 'inc/class-lp-request-handler.php';
 			require_once 'inc/abstract-settings.php';
 			require_once 'inc/admin/helpers/class-lp-plugins-helper.php';
+			require_once 'inc/class-lp-rest-response.php';
 
 			//require_once( 'inc/class-lp-market-products.php' );
 
@@ -530,7 +536,7 @@ if ( ! class_exists( 'LearnPress' ) ) {
 
 			$this->api = new LP_Core_API();
 
-			$this->view_log();
+			//$this->view_log();
 
 			$this->get_session();
 
@@ -550,10 +556,12 @@ if ( ! class_exists( 'LearnPress' ) ) {
 		 * View log.
 		 *
 		 * @since 3.0.0
+		 * @deprecated 3.2.8
+		 * @editor tungnx
 		 */
-		public function view_log() {
+		/*public function view_log() {
 			if ( ! empty( $_REQUEST['view-log'] ) ) {
-				$log = $_REQUEST['view-log'];
+				$log = LP_Helper::sanitize_params_submitted( $_REQUEST['view-log'] );
 				echo '<pre>';
 				if ( is_multisite() ) {
 					$log = "{$log}-" . get_current_blog_id();
@@ -563,7 +571,7 @@ if ( ! class_exists( 'LearnPress' ) ) {
 				echo '<pre>';
 				die();
 			}
-		}
+		}*/
 
 		/**
 		 * Get session object instance.

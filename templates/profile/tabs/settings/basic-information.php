@@ -6,7 +6,7 @@
  *
  * @author  ThimPress
  * @package  Learnpress/Templates
- * @version  3.0.1
+ * @version  3.0.0
  */
 
 /**
@@ -81,14 +81,6 @@ $user = $profile->get_user();
             <label for="display_name"><?php _e( 'Display name publicly as', 'learnpress' ); ?></label>
             <div class="form-field-input">
 				<?php learn_press_profile_list_display_names(); ?>
-            </div>
-        </li>
-        <li class="form-field">
-            <label for="user_email"><?php _e( 'Email', 'learnpress' ); ?></label>
-            <div class="form-field-input">
-                <input type="text" name="user_email" id="user_email"
-                       value="<?php echo esc_attr( $user->get_data( 'email' ) ) ?>"
-                       class="regular-text"/>
             </div>
         </li>
 

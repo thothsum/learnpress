@@ -20,7 +20,6 @@ if ( !class_exists( 'LP_Statistic_Status' ) ) :
 					$specific_statuses[] = $status;
 				}
 			}
-//			var_dump($status);
 			$counts = learn_press_count_orders( array( 'status' => $specific_statuses ) );
 			?>
 			<ul class="learnpress-statistic-status">

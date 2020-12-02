@@ -1938,7 +1938,7 @@ if ( ! function_exists( 'learn_press_is_course_archive' ) ) {
 		$is_category       = defined( 'LEARNPRESS_IS_CATEGORY' ) && LEARNPRESS_IS_CATEGORY;
 		$page_id           = learn_press_get_page_id( 'courses' );
 
-		return ( ( $is_courses || $is_category || $is_tag ) || is_post_type_archive( 'lp_course' ) || ( $page_id && ( $queried_object_id && is_page( $page_id ) ) ) ) ? true : false;
+		return ( $is_courses || $is_category || $is_tag ) || is_post_type_archive( 'lp_course' ) || ( $page_id && ( $queried_object_id && is_page( $page_id ) ) );
 	}
 }
 
@@ -2086,7 +2086,7 @@ function learn_press_setcookie( $name, $value, $expire = 0, $secure = false ) {
 		setcookie( $name, $value, $expire, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, $secure );
 	} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 		headers_sent( $file, $line );
-		trigger_error( "{$name} cookie cannot be set - headers already sent by {$file} on line {$line}", E_USER_NOTICE );
+		//trigger_error( "{$name} cookie cannot be set - headers already sent by {$file} on line {$line}", E_USER_NOTICE );
 	}
 }
 
@@ -2292,28 +2292,32 @@ function learn_press_get_checkout_cart() {
 	return apply_filters( 'learn_press_checkout_cart', LP()->cart );
 }
 
-function learn_press_front_scripts() {
-	if ( is_admin() ) {
-		return;
-	}
-	$js = array(
-		'ajax'        => admin_url( 'admin-ajax.php' ),
-		'plugin_url'  => LP()->plugin_url(),
-		'siteurl'     => home_url(),
-		'current_url' => learn_press_get_current_url(),
-		'localize'    => array(
-			'button_ok'     => __( 'OK', 'learnpress' ),
-			'button_cancel' => __( 'Cancel', 'learnpress' ),
-			'button_yes'    => __( 'Yes', 'learnpress' ),
-			'button_no'     => __( 'No', 'learnpress' )
-		)
-	);
-	foreach ( $js as $k => $v ) {
-		LP_Assets::add_param( $k, $v, array( 'learn-press-single-course', 'learn-press-global' ), 'LP_Settings' );
-	}
-}
-
-add_action( 'wp_print_scripts', 'learn_press_front_scripts' );
+/**
+ * @editor tungnx
+ * @reason not use because on file class-lp-assets.php is added on _get_script_data() key lp-global
+ */
+//function learn_press_front_scripts() {
+//	if ( is_admin() ) {
+//		return;
+//	}
+//	$js = array(
+//		'ajax'        => admin_url( 'admin-ajax.php' ),
+//		'plugin_url'  => LP()->plugin_url(),
+//		'siteurl'     => home_url(),
+//		'current_url' => learn_press_get_current_url(),
+//		'localize'    => array(
+//			'button_ok'     => __( 'OK', 'learnpress' ),
+//			'button_cancel' => __( 'Cancel', 'learnpress' ),
+//			'button_yes'    => __( 'Yes', 'learnpress' ),
+//			'button_no'     => __( 'No', 'learnpress' )
+//		)
+//	);
+//	foreach ( $js as $k => $v ) {
+//		LP_Assets::add_param( $k, $v, array( 'learn-press-single-course', 'learn-press-global' ), 'LP_Settings' );
+//	}
+//}
+//
+//add_action( 'wp_print_scripts', 'learn_press_front_scripts' );
 
 function learn_press_user_time( $time, $format = 'timestamp' ) {
 	if ( is_string( $time ) ) {
@@ -3150,37 +3154,6 @@ function learn_press_get_unassigned_items( $type = '' ) {
 	}
 
 	return $items;
-}
-
-/**
- * Get all questions are unassigned to any quiz.
- *
- * @return array
- * @since 3.0.0
- *
- */
-function learn_press_get_unassigned_questions() {
-	global $wpdb;
-
-	if ( false === ( $questions = LP_Object_Cache::get( 'questions', 'learn-press/unassigned' ) ) ) {
-		$query = $wpdb->prepare( "
-            SELECT p.ID
-            FROM {$wpdb->posts} p
-            WHERE p.post_type = %s
-            AND p.ID NOT IN(
-                SELECT qq.question_id 
-                FROM {$wpdb->learnpress_quiz_questions} qq
-                INNER JOIN {$wpdb->posts} p ON p.ID = qq.question_id
-                WHERE p.post_type = %s
-            )
-            AND p.post_status NOT IN(%s, %s)
-        ", LP_QUESTION_CPT, LP_QUESTION_CPT, 'auto-draft', 'trash' );
-
-		$questions = $wpdb->get_col( $query );
-		LP_Object_Cache::set( 'questions', $questions, 'learn-press/unassigned' );
-	}
-
-	return $questions;
 }
 
 /**

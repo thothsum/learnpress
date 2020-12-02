@@ -42,7 +42,7 @@ if ( ! class_exists( 'LP_Admin_Dashboard' ) ) {
 				<?php
 
 				$order_statuses    = learn_press_get_order_statuses( true, true );
-				$specific_statuses = array( 'lp-completed', 'lp-failed');
+				$specific_statuses = array( 'lp-completed', 'lp-failed'/*, 'lp-on-hold'*/ );
 
 				foreach ( $order_statuses as $status ) {
 					if ( ! in_array( $status, $specific_statuses ) ) {
@@ -64,9 +64,7 @@ if ( ! class_exists( 'LP_Admin_Dashboard' ) ) {
                         <div class="counter-inner">
                             <a href="<?php echo esc_url( $url ); ?>">
                                 <strong>
-									<?php
-//                                    var_dump($count);
-                                    if ( $count ) {
+									<?php if ( $count ) {
 										printf( translate_nooped_plural( _n_noop( '%d order', '%d orders' ), $count, 'learnpress' ), $count );
 									} else {
 										printf( __( '%d order', 'learnpress' ), 0 );
@@ -119,7 +117,7 @@ if ( ! class_exists( 'LP_Admin_Dashboard' ) ) {
 		 * @return int|string
 		 */
 		private function _get_order_total_raised() {
-            $orders = learn_press_get_orders( array( 'post_status' => 'lp-completed', 'post_parent'=>'0','posts_per_page' => -1 ) );
+			$orders = learn_press_get_orders( array( 'post_status' => 'lp-completed' ) );
 			$total  = 0;
 			if ( $orders ) {
 				foreach ( $orders as $order ) {

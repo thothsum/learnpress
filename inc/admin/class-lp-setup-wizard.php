@@ -41,9 +41,12 @@ class LP_Setup_Wizard {
 		}
 
 		$settings = LP_Request::get( 'settings' );
-		foreach ( $settings['pages'] as $page => $page_id ) {
-			if ( empty( $page_id ) ) {
-				$_REQUEST['settings']['pages'][ $page ] = $this->create_page( $page );
+
+		if ( ! empty( $settings ) ) {
+			foreach ( $settings['pages'] as $page => $page_id ) {
+				if ( empty( $page_id ) ) {
+					$_REQUEST['settings']['pages'][ $page ] = $this->create_page( $page );
+				}
 			}
 		}
 
@@ -119,6 +122,7 @@ class LP_Setup_Wizard {
 
 		@do_action( 'admin_enqueue_scripts' );
 
+		// TODO: move handle enqueue style on class-lp-admin-assets.php
 		wp_enqueue_style( 'buttons' );
 		wp_enqueue_style( 'common' );
 		wp_enqueue_style( 'forms' );
@@ -128,17 +132,8 @@ class LP_Setup_Wizard {
 		wp_enqueue_style( 'lp-admin', $assets->url( 'css/admin/admin.css' ) );
 		wp_enqueue_style( 'lp-setup', $assets->url( 'css/admin/setup.css' ) );
 		wp_enqueue_style( 'lp-select2', $assets->url( '../inc/libraries/meta-box/css/select2/select2.css' ) );
+		// TODO: move handle enqueue style on class-lp-admin-assets.php
 
-		$assets->enqueue_script( 'learn-press-global' );
-		wp_enqueue_script( 'lp-select2', $assets->url( '../inc/libraries/meta-box/js/select2/select2.min.js' ) );
-		wp_enqueue_script( 'lp-utils', $assets->url( 'js/admin/utils.js' ) );
-		wp_enqueue_script( 'lp-admin', $assets->url( 'js/admin/admin.js' ) );
-		wp_enqueue_script( 'lp-setup', $assets->url( 'js/admin/pages/setup.js' ), array(
-			'learn-press-global',
-			'lp-select2',
-			'lp-admin',
-			'lp-utils'
-		) );
 		learn_press_admin_view( 'setup/header' );
 		learn_press_admin_view( 'setup/content', array( 'steps' => $this->get_steps() ) );
 		learn_press_admin_view( 'setup/footer' );
@@ -148,9 +143,9 @@ class LP_Setup_Wizard {
 	public function save() {
 		$step = LP_Request::get_string( 'lp-setup-step' );
 
-		if ( ! wp_verify_nonce( sanitize_key( LP_Request::get_string( 'lp-setup-nonce' ) ), 'lp-setup-step-' . $step ) ) {
-			return;
-		}
+//		if ( ! wp_verify_nonce( sanitize_key( LP_Request::get_string( 'lp-setup-nonce' ) ), 'lp-setup-step-' . $step ) ) {
+//			return;
+//		}
 
 		$postdata = LP_Request::get_array( 'settings' );
 		$steps    = array( 'payment', 'pages', 'currency', 'emails' );

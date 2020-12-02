@@ -137,6 +137,8 @@ if ( ! class_exists( 'LP_Meta_Box_Helper' ) ) {
 			}
 		}
 
+		public static $is_error_duplicate_show = 0;
+
 		/**
 		 * Search field class/path and include if it does not load.
 		 * Return true when class is loaded, otherwise false.
@@ -146,6 +148,18 @@ if ( ! class_exists( 'LP_Meta_Box_Helper' ) ) {
 		 * @return bool
 		 */
 		public static function include_field( $field ) {
+			if ( ! method_exists( 'RWMB_Field', 'map_types' ) ) {
+				$reflector         = new ReflectionClass( "RWMB_Field" );
+				$pathFileDuplicate = $reflector->getFileName();
+
+				if ( ! self::$is_error_duplicate_show ) {
+					self::$is_error_duplicate_show = 1;
+
+					echo '<div class="lp-notice notice notice-error">Class RWMB_Field use on another file not of LP. So to use LP you must disable that plugin<br/>Path file in ' . $pathFileDuplicate . '</div>';
+				}
+
+				return;
+			}
 
 			$field = RWMB_Field::map_types( $field );
 
@@ -266,7 +280,7 @@ if ( ! class_exists( 'LP_Meta_Box_Helper' ) ) {
 			$min = learn_press_is_debug() ? '' : '.min';
 
 			// Enqueue js and localize settings.
-			wp_enqueue_script( 'lp-conditional-logic', LP()->plugin_url( 'assets/js/admin/conditional-logic' . $min . '.js' ) );
+			wp_enqueue_script( 'lp-conditional-logic', learn_press_admin_assets()->url( LP_Admin_Assets::$_folder_source . 'js/admin/share/conditional-logic' . LP_Assets::$_min_assets . '.js' ) );
 			wp_localize_script( 'lp-conditional-logic', 'lp_conditional_logic', self::$conditional_logic );
 		}
 	}

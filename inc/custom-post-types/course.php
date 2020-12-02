@@ -149,7 +149,7 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 				'query_var'          => true,
 				'publicly_queryable' => true,
 				'show_ui'            => true,
-				'has_archive'        => true,
+				'has_archive'        => 'courses',
 				// ( $page_id = learn_press_get_page_id( 'courses' ) ) && get_post( $page_id ) ? get_page_uri( $page_id ) : 'courses',
 				'capability_type'    => LP_COURSE_CPT,
 				'map_meta_cap'       => true,
@@ -791,14 +791,7 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 
 			$payment = get_post_meta( $course_id, '_lp_payment', true );
 
-			$current_user = learn_press_get_current_user();
-			$role         = $current_user->get_role();
-
-			$user_can_set_course_price = apply_filters( 'learn-press/user-set-course-price-roles',
-				array( 'admin', 'instructor' )
-			);
-
-			if ( in_array( $role, $user_can_set_course_price ) ) {
+			if ( current_user_can( LP_TEACHER_ROLE ) || current_user_can( 'administrator' ) ) {
 				$message    = '';
 				$price      = get_post_meta( $course_id, '_lp_price', true );
 				$sale_price = '';

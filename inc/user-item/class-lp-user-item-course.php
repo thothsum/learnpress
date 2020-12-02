@@ -225,7 +225,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 	}
 
 	public function evaluate() {
-        //todo: remove blank function
+
 	}
 
 	/**
@@ -278,6 +278,7 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 
 			LP_Object_Cache::set( 'course-' . $this->get_item_id() . '-' . $this->get_user_id(), $results, 'course-results' );
 		}
+
 		if ( $prop === 'status' ) {
 			if ( isset( $results['grade'] ) ) {
 				$prop = 'grade';
@@ -347,7 +348,9 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 
 		if ( ! in_array( $this->get_status(), array( 'purchased', 'viewed' ) ) ) {
 			$results['grade'] = $this->is_finished() ? $this->_is_passed( $results['result'] ) : 'in-progress';
+		} else {
 		}
+
 		$this->update_meta( 'course_results_' . $course_result, $results );
 		$this->update_meta( 'grade', $results['grade'] );
 
@@ -760,6 +763,10 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 
 		$this->read_items();
 
+		if ( ! $this->_course ) {
+			return;
+		}
+
 		$key = sprintf( '%d-%d-%s', $this->get_user_id(), $this->_course->get_id(), md5( build_query( func_get_args() ) ) );
 
 		if ( false === ( $completed_items = LP_Object_Cache::get( $key, 'learn-press/user-completed-items' ) ) ) {
@@ -858,7 +865,6 @@ class LP_User_Item_Course extends LP_User_Item implements ArrayAccess {
 	public function is_graduated() {
 		return $this->get_results( 'grade' ) == 'passed';
 	}
-
 
 	/**
 	 * @return bool

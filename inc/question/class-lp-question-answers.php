@@ -388,6 +388,7 @@ if ( ! class_exists( 'LP_Question_Answer_Option' ) ) {
 			}
 			$is_checked = $this->is_checked();
 			$is_true    = $this->is_true();
+
 			if ( $this->get_question()->show_correct_answers() === 'yes' ) {
 
 				if ( $is_true ) {

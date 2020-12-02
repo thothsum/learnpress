@@ -368,6 +368,8 @@ function learn_press_get_request_args( $args = array() ) {
 
 	return $request;
 }
+
+
 /**
  * Redirect to question if user access to a quiz that user has started
  *

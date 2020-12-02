@@ -22,31 +22,29 @@ abstract class LP_Abstract_Assets {
 	/**
 	 * @var array
 	 */
-	protected $_enqueue_scripts = array();
-
-	/**
-	 * @var array
-	 */
-	protected $_enqueue_styles = array();
-
-	/**
-	 * @var array
-	 */
 	protected $_script_data = array();
+
+	public static $_min_assets = '.min';
+	public static $_version_assets = LEARNPRESS_VERSION;
+	public static $_folder_source = '';
 
 	/**
 	 * LP_Abstract_Assets constructor.
 	 */
-	public function __construct() {
-
+	protected function __construct() {
 		$priory = 1000;
+
+		if ( LP_Debug::is_debug() ) {
+			self::$_min_assets     = '';
+			self::$_version_assets = uniqid();
+			self::$_folder_source  = 'src/';
+		}
+
 		if ( is_admin() ) {
-			//add_action( 'admin_enqueue_scripts', array( $this, 'do_register' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'load_scripts' ), $priory );
-			add_action( 'admin_print_footer_scripts', array( $this, 'localize_printed_admin_scripts' ), $priory + 10 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'load_scripts' ) );
+			add_action( 'admin_print_footer_scripts', array( $this, 'localize_printed_admin_scripts' ) );
 
 		} else {
-			//add_action( 'wp_enqueue_scripts', array( $this, 'do_register' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ), $priory );
 			add_action( 'wp_print_scripts', array( $this, 'localize_printed_scripts' ), $priory + 10 );
 			add_action( 'wp_print_footer_scripts', array( $this, 'localize_printed_scripts' ), $priory + 10 );
@@ -74,56 +72,12 @@ abstract class LP_Abstract_Assets {
 	}
 
 	/**
-	 * Register and/or enqueue scripts registered.
-	 */
-	protected function _do_enqueue_scripts() {
-		if ( ! $this->_scripts ) {
-			return;
-		}
-
-		foreach ( $this->_scripts as $handle => $data ) {
-			// Enqueue script if handle is in the queue
-			if ( in_array( $handle, $this->_enqueue_scripts ) ) {
-				call_user_func_array( 'wp_enqueue_script', $data );
-			} else {
-				call_user_func_array( 'wp_register_script', $data );
-			}
-		}
-	}
-
-	/**
-	 * Register and/or enqueue styles registered.
-	 */
-	protected function _do_enqueue_styles() {
-		if ( ! $this->_styles ) {
-			return;
-		}
-
-		foreach ( $this->_styles as $handle => $data ) {
-			// Enqueue style if handle is in the queue
-			if ( in_array( $handle, $this->_enqueue_styles ) ) {
-				call_user_func_array( 'wp_enqueue_style', $data );
-			} else {
-				call_user_func_array( 'wp_register_style', $data );
-			}
-		}
-	}
-
-	/**
-	 * Register or enqueue styles+scripts registered.
-	 */
-	public function do_enqueue() {
-		$this->_do_enqueue_scripts();
-		$this->_do_enqueue_styles();
-	}
-
-	/**
 	 * Register style
 	 *
 	 * @param        $handle
 	 * @param        $src
-	 * @param array  $deps
-	 * @param bool   $ver
+	 * @param array $deps
+	 * @param bool $ver
 	 * @param string $media
 	 */
 	public function register_style( $handle, $src, $deps = array(), $ver = false, $media = 'all' ) {
@@ -138,8 +92,8 @@ abstract class LP_Abstract_Assets {
 	 * @param       $handle
 	 * @param       $src
 	 * @param array $deps
-	 * @param bool  $ver
-	 * @param bool  $in_footer
+	 * @param bool $ver
+	 * @param bool $in_footer
 	 */
 	public function register_script( $handle, $src, $deps = array(), $ver = false, $in_footer = false ) {
 		if ( ! isset( $this->_scripts[ $handle ] ) ) {
@@ -152,16 +106,14 @@ abstract class LP_Abstract_Assets {
 	 *
 	 * @param        $handle
 	 * @param string $src
-	 * @param array  $deps
-	 * @param bool   $ver
+	 * @param array $deps
+	 * @param bool $ver
 	 * @param string $media
 	 */
 	public function enqueue_style( $handle, $src = '', $deps = array(), $ver = false, $media = 'all' ) {
 		$this->register_style( $handle, $src, $deps, $ver, $media );
 		if ( did_action( 'init' ) || did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' ) || did_action( 'login_enqueue_scripts' ) ) {
-			call_user_func_array( 'wp_enqueue_style', $this->_styles[ $handle ] );
-		} else {
-			$this->_enqueue_styles[] = $handle;
+			wp_enqueue_style( $handle, $src, $deps, $ver, $media );
 		}
 	}
 
@@ -171,15 +123,13 @@ abstract class LP_Abstract_Assets {
 	 * @param       $handle
 	 * @param       $src
 	 * @param array $deps
-	 * @param bool  $ver
-	 * @param bool  $in_footer
+	 * @param bool $ver
+	 * @param bool $in_footer
 	 */
 	public function enqueue_script( $handle, $src = '', $deps = array(), $ver = false, $in_footer = false ) {
 		$this->register_script( $handle, $src, $deps, $ver, $in_footer );
 		if ( did_action( 'init' ) || did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' ) || did_action( 'login_enqueue_scripts' ) ) {
-			call_user_func_array( 'wp_enqueue_script', $this->_scripts[ $handle ] );
-		} else {
-			$this->_enqueue_scripts[] = $handle;
+			wp_enqueue_script( $handle, $src, $deps, $ver, $in_footer );
 		}
 	}
 
@@ -217,62 +167,60 @@ abstract class LP_Abstract_Assets {
 
 	/**
 	 * Register scripts and styles for admin.
+	 *
+	 * @editor tungnx
+	 * @reason not user
 	 */
-	protected function _register_scripts() {
-		$wp_scripts = $this->_get_wp_scripts();
-		$wp_styles  = $this->_get_wp_styles();
-
-		// No use cache if debug mode is turn on
-		$no_cache = '';
-		if ( learn_press_is_debug() ) {
-			$no_cache = microtime( true );
-		}
-
-		if ( $default_scripts = $this->_get_scripts() ) {
-
-			foreach ( $default_scripts as $handle => $data ) {
-				if ( is_string( $data ) ) {
-					$data = array( 'url' => $data );
-				}
-
-				if ( empty( $data['url'] ) ) {
-					continue;
-				}
-
-				$data = wp_parse_args(
-					$data,
-					array(
-						'deps' => null,
-						'ver'  => LEARNPRESS_VERSION
-					)
-				);
-				$wp_scripts->add( $handle, $no_cache ? add_query_arg( 'nocache', $no_cache, $data['url'] ) : $data['url'], $data['deps'], $data['ver'] );
-			}
-
-		}
-
-		if ( $default_styles = $this->_get_styles() ) {
-
-			foreach ( $default_styles as $handle => $data ) {
-				if ( is_string( $data ) ) {
-					$data = array( 'url' => $data );
-				}
-
-				$data = wp_parse_args(
-					$data,
-					array(
-						'deps' => null,
-						'ver'  => LEARNPRESS_VERSION
-					)
-				);
-				$wp_styles->add( $handle, $no_cache ? add_query_arg( 'nocache', $no_cache, $data['url'] ) : $data['url'], $data['deps'], $data['ver'] );
-			}
-
-		}
-	}
+//	protected function _register_scripts() {
+//		$wp_scripts = $this->_get_wp_scripts();
+//		$wp_styles  = $this->_get_wp_styles();
+//
+//		// No use cache if debug mode is turn on
+//		$no_cache = '';
+//		if ( learn_press_is_debug() ) {
+//			$no_cache = microtime( true );
+//		}
+//
+//		if ( $default_scripts = $this->_get_scripts() ) {
+//			foreach ( $default_scripts as $handle => $data ) {
+//				if ( empty( $data['url'] ) ) {
+//					continue;
+//				}
+//
+//				$data = wp_parse_args(
+//					$data,
+//					array(
+//						'deps' => null,
+//						'ver'  => LEARNPRESS_VERSION
+//					)
+//				);
+//				$wp_scripts->add( $handle, $no_cache ? add_query_arg( 'nocache', $no_cache, $data['url'] ) : $data['url'], $data['deps'], $data['ver'] );
+//			}
+//
+//		}
+//
+//		if ( $default_styles = $this->_get_styles() ) {
+//
+//			foreach ( $default_styles as $handle => $data ) {
+//				if ( is_string( $data ) ) {
+//					$data = array( 'url' => $data );
+//				}
+//
+//				$data = wp_parse_args(
+//					$data,
+//					array(
+//						'deps' => null,
+//						'ver'  => LEARNPRESS_VERSION
+//					)
+//				);
+//				$wp_styles->add( $handle, $no_cache ? add_query_arg( 'nocache', $no_cache, $data['url'] ) : $data['url'], $data['deps'], $data['ver'] );
+//			}
+//
+//		}
+//	}
 
 	public function get_script_var_name( $handle ) {
-		$handle = str_replace( array( 'learn-press', '_', '-' ), ' ', $handle );
+		$handle = str_replace( array( 'learn-press', '_', '-', 'lp' ), ' ', $handle );
 		$handle = ucwords( $handle );
 
 		return 'lp' . str_replace( ' ', '', $handle ) . 'Settings';
@@ -302,6 +250,7 @@ abstract class LP_Abstract_Assets {
 			$data = apply_filters( 'learn-press/script-data', $data, $handle );
 			wp_localize_script( $handle, $this->get_script_var_name( $handle ), $data );
 
+			// todo: check and rewrite this code - make addon certificate run not right if comment that code
 			if ( isset( $wp_scripts->registered[ $handle ] ) ) {
 				if ( isset( $wp_scripts->registered[ $handle ]->extra['data'] ) ) {
 					if ( $data = $wp_scripts->registered[ $handle ]->extra['data'] ) {
@@ -371,7 +320,7 @@ abstract class LP_Abstract_Assets {
 		return $url;
 	}
 
-	public function get_compressible_assets(){
+	public function get_compressible_assets() {
 		return array();
 	}
 

@@ -34,7 +34,7 @@ if ( ! isset( $block_by_check ) ) {
 	} elseif ( $can_view_item == 'is_blocked' ) {
 		if ( $block_by_check === 'by_duration_expires' ) {
 			echo apply_filters( 'learn_press_content_item_locked_message',
-				esc_html__( 'The course duration has run out. You cannot access the content of this course more.', 'learnpress' ) );
+				__( 'The course duration has run out. You cannot access the content of this course more.', 'learnpress' ) );
 		} else {
 			echo apply_filters( 'learn_press_content_item_locked_message',
 				__( 'This lesson has been locked', 'learnpress' ) );

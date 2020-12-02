@@ -1,9 +1,9 @@
-=== LearnPress - WordPress LMS Plugin ===  
+=== LearnPress - WordPress LMS Plugin ===
 Contributors: thimpress, tunnhn, phonglq.foobla, thongta, kendy73, leehld, tungnx89
 Donate link:
 Tags: elearning, education, course, lms, learning management system
 Requires at least: 3.8
-Tested up to: 5.5
+Tested up to: 5.5.3
 Requires PHP: 7.0
 Stable tag: 5.4.3
 License: GPLv2 or later
@@ -200,6 +200,19 @@ https://www.transifex.com/projects/p/learnpress/
 8. Add-ons of LearnPress.
 
 == Changelog ==
+
+= 3.2.8.1 =
+~ Fix WPBakery load style inline on course's item page
+~ Fix make co-instructor not show list courses on backend
+~ Fix miss lib vue js on LearnPress / Tools / Course page
+
+= 3.2.8 =
+~ Fix query get posts (courses, items courses) on Backend - multiple site
+~ Fix error not same param on hook of Yoast SEO vs Yoast SEO premium
+~ Fix security XSS function view_log
+~ Fix check if get user on function learn_press_course_purchase_button() is null
+~ Fix create statics pages LP on 'lp setup' page
+~ Show message duplicate class RWMB_Field with another plugins
 
 = 3.2.7.9 =
 ~ Fix question not show description
