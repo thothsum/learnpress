@@ -157,6 +157,9 @@ class LP_Assets extends LP_Abstract_Assets {
 
 		$this->handle_js( $page_current );
 
+		// Perform deregister script
+		$this->lp_deregister_script();
+
 		/**
 		 * Enqueue scripts
 		 *
@@ -192,6 +195,19 @@ class LP_Assets extends LP_Abstract_Assets {
 					wp_enqueue_script( $handle );
 				}
 			}
+
+		}
+	}
+
+	/**
+	 *  Check and remove script conflig by default theme
+	 * @since 3.2.8.2
+	 */
+	protected function lp_deregister_script(){
+		$theme = wp_get_theme(); // gets the current theme
+		// deregister global js if theme active is twenty seventeen
+		if ( 'Twenty Seventeen' == $theme->name || 'Twenty Seventeen' == $theme->parent_theme ) {
+			wp_deregister_script(  'twentyseventeen-global' );
 		}
 	}
 

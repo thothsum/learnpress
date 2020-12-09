@@ -70,7 +70,7 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 			global $post, $pagenow;
 
 			if ( empty( $post ) || ( get_post_type() !== $this->_post_type ) ||
-				! in_array( $pagenow, array( 'post.php', 'post-new.php', ) ) ) {
+			     ! in_array( $pagenow, array( 'post.php', 'post-new.php', ) ) ) {
 				return;
 			}
 
@@ -699,15 +699,15 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 
 			$course_result_option_desc = array(
 				'evaluate_lesson'     => __( 'Evaluate by number of lessons completed per number of total lessons.', 'learnpress' )
-					. sprintf( '<p>%s</p>', __( 'E.g: Course has 10 lessons and user completed 5 lessons then the result = 5/10 = 50.%', 'learnpress' ) ),
+				                         . sprintf( '<p>%s</p>', __( 'E.g: Course has 10 lessons and user completed 5 lessons then the result = 5/10 = 50.%', 'learnpress' ) ),
 				'evaluate_final_quiz' => __( 'Evaluate by results of final quiz in course. You have to add a quiz into end of course.', 'learnpress' ),
 				'evaluate_quizzes'    => __( 'Evaluate as a percentage of completed quizzes on the total number of quizzes.', 'learnpress' )
-					. __( '<p>E.g: Course has 3 quizzes and user completed quiz 1: 30% correct, quiz 2: 50% corect, quiz 3: 100% correct => Result: (30% + 50% + 100%) / 3 = 60%.</p>', 'learnpress' ),
+				                         . __( '<p>E.g: Course has 3 quizzes and user completed quiz 1: 30% correct, quiz 2: 50% corect, quiz 3: 100% correct => Result: (30% + 50% + 100%) / 3 = 60%.</p>', 'learnpress' ),
 				// 'evaluate_passed_quizzes' => __( 'Evaluate by achieved points of quizzes passed per total point of all quizzes.', 'learnpress' ),
 				'evaluate_quiz'       => __( '<p>Evaluate by number of quizzes completed per number of total quizzes.</p>', 'learnpress' )
-					. __( '<p>E.g: Course has 10 quizzes and user completed 5 quizzes then the result = 5/10 = 50%.</p>', 'learnpress' ),
+				                         . __( '<p>E.g: Course has 10 quizzes and user completed 5 quizzes then the result = 5/10 = 50%.</p>', 'learnpress' ),
 				'evaluate_questions'  => __( 'Evaluate by achieved points of question passed per total point of all questions.', 'learnpress' )
-					. sprintf( '<p>%s</p>', __( 'E.g: Course has 10 questions. User correct 5 questions. Result is 5/10 = 50%.', 'learnpress' ) ),
+				                         . sprintf( '<p>%s</p>', __( 'E.g: Course has 10 questions. User correct 5 questions. Result is 5/10 = 50%.', 'learnpress' ) ),
 				'evaluate_mark'       => __( 'Evaluate by achieved marks per total marks of all questions.', 'learnpress' ),
 			);
 
@@ -727,20 +727,20 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 						'desc'    => $course_result_desc,
 						'options' => array(
 							'evaluate_lesson'     => __( 'Evaluate via lessons', 'learnpress' )
-								. learn_press_quick_tip( $course_result_option_desc['evaluate_lesson'], false ),
+							                         . learn_press_quick_tip( $course_result_option_desc['evaluate_lesson'], false ),
 							'evaluate_final_quiz' => __( 'Evaluate via results of the final quiz', 'learnpress' )
-								. sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_final_quiz'] )
-								. $quiz_passing_condition_html,
+							                         . sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_final_quiz'] )
+							                         . $quiz_passing_condition_html,
 							'evaluate_quizzes'    => __( 'Evaluate via results of quizzes', 'learnpress' ) . sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_quizzes'] ),
 							// @nhamdv: remove after version: 3.2.7.3
 							// 'evaluate_passed_quizzes' => __( 'Evaluate via results of quizzes passed', 'learnpress' )
 							// . sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_passed_quizzes'] ),
 							'evaluate_quiz'       => __( 'Evaluate via quizzes', 'learnpress' )
-								. sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_quiz'] ),
+							                         . sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_quiz'] ),
 							'evaluate_questions'  => __( 'Evaluate via questions', 'learnpress' )
-								. sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_questions'] ),
+							                         . sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_questions'] ),
 							'evaluate_mark'       => __( 'Evaluate via mark', 'learnpress' )
-								. sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_mark'] ),
+							                         . sprintf( $course_result_option_tip, $course_result_option_desc['evaluate_mark'] ),
 						),
 						'std'     => 'evaluate_lesson',
 						'inline'  => false,
@@ -851,11 +851,11 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 						'min'        => 0,
 						'step'       => 0.01,
 						'desc'       => sprintf(
-								'%s %s',
-								sprintf( __( 'Course sale price in <strong>%s</strong> currency.', 'learnpress' ), learn_press_get_currency() ),
-								__( 'Leave blank to remove sale price.', 'learnpress' )
-							)
-							. ' <a href="#"' . ( $start_date || $end_date ? ' style="display:none;"' : '' ) . ' id="_lp_sale_price_schedule">' . __( 'Schedule', 'learnpress' ) . '</a>',
+							                '%s %s',
+							                sprintf( __( 'Course sale price in <strong>%s</strong> currency.', 'learnpress' ), learn_press_get_currency() ),
+							                __( 'Leave blank to remove sale price.', 'learnpress' )
+						                )
+						                . ' <a href="#"' . ( $start_date || $end_date ? ' style="display:none;"' : '' ) . ' id="_lp_sale_price_schedule">' . __( 'Schedule', 'learnpress' ) . '</a>',
 						'std'        => $sale_price,
 						'visibility' => $conditional,
 					),
@@ -1395,7 +1395,8 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 					}
 					break;
 				case 'students':
-					$count = $course->count_completed_orders();
+					// Replace count_completed_orders() by count_enrolled_course()
+					$count = $course->count_enrolled_course($post_id);
 					echo '<span class="lp-label-counter' . ( ! $count ? ' disabled' : '' ) . '">' . $count . '</span>';
 
 			}

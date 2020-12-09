@@ -129,4 +129,27 @@ class LP_Database {
 
 		return $this->wpdb->get_var( $query );
 	}
+
+	/**
+	 * @param $course_id
+	 * Count enrolled course
+	 * since 3.2.8.2
+	 * @editor Hungkv
+	 * @return mixed
+	 */
+	public function count_enrolled_course($course_id){
+		global $wpdb;
+		$query = $wpdb->prepare( "
+                    SELECT count(item_id) as c
+                    FROM $this->tb_lp_user_items
+                    WHERE status = %s AND item_id = %s
+                ", 'enrolled',$course_id );
+		if ( $_results = $wpdb->get_results( $query ) ) {
+			foreach ( $_results as $k => $v ) {
+				$results = $v->c;
+			}
+		}
+
+		return $results;
+	}
 }
