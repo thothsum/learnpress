@@ -99,7 +99,8 @@ if ( is_user_logged_in() ) {
             <p>
 				<?php wp_nonce_field( 'learn-press-login', 'learn-press-login-nonce' ); ?>
                 <button id="learn-press-checkout-login-button"><?php _e( 'Login', 'learnpress' ); ?></button>
-                <a href="" class="checkout-form-login-toggle"
+                <a href="javascript:void(0)" class="checkout-form-login-toggle"
+                   title="<?php _e( 'Cancel', 'learnpress' ); ?>"
                    data-toggle="hide"><?php _e( 'Cancel', 'learnpress' ); ?></a>
             </p>
 		<?php } ?>
@@ -109,18 +110,22 @@ if ( is_user_logged_in() ) {
     </div>
 
     <p>
-        <a href="" class="checkout-form-login-toggle" data-toggle="show"><?php _e( 'Login', 'learnpress' ); ?></a>
+        <a href="javascript:void(0)"
+           class="checkout-form-login-toggle" data-toggle="show"
+           title="<?php _e( 'Login', 'learnpress' ); ?>">
+			<?php _e( 'Login', 'learnpress' ); ?>
+        </a>
     </p>
 	<?php
-	/**
-	 * @since 3.0.0
-	 */
-	do_action( 'learn-press/after-checkout-form-login-fields' );
+		   /**
+		    * @since 3.0.0
+		    */
+		   do_action( 'learn-press/after-checkout-form-login-fields' );
 
-	/**
-	 * @deprecated
-	 */
-	do_action( 'learn_press_checkout_after_user_login_form' );
-	?>
+		   /**
+		    * @deprecated
+		    */
+		   do_action( 'learn_press_checkout_after_user_login_form' );
+		   ?>
 
 </div>

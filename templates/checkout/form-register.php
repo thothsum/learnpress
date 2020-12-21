@@ -37,7 +37,10 @@ if ( is_user_logged_in() ) {
 
     <p><?php echo __( 'Register Account', 'learnpress' ); ?></p>
 
-    <p><?php _e( 'By creating an account you will be able to keep track of the course\'s progress you have previously enrolled.', 'learnpress' ); ?></p>
+    <p>
+		<?php _e( 'By creating an account you will be able to keep track of the course\'s progress you have previously enrolled.',
+			'learnpress' ); ?>
+    </p>
 
     <div id="checkout-form-register">
 
@@ -56,8 +59,11 @@ if ( is_user_logged_in() ) {
 		?>
 
         <p>
-            <a href="" class="checkout-form-register-toggle"
-               data-toggle="show"><?php _e( 'Register', 'learnpress' ); ?></a>
+            <a href="javascript:void(0)"
+               class="checkout-form-register-toggle" data-toggle="show"
+               title="<?php _e( 'Register', 'learnpress' ); ?>">
+                <?php _e( 'Register', 'learnpress' ); ?>
+            </a>
         </p>
     </div>
 

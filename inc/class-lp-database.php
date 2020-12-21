@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class LP_Database
  */
 class LP_Database {
-	public static $_instance;
+	protected static $_instance;
 	public $wpdb;
 	public $tb_lp_user_items, $tb_lp_user_itemmeta;
 	public $tb_posts, $tb_postmeta;
@@ -131,6 +131,8 @@ class LP_Database {
 	}
 
 	/**
+	 * Count student enrolled course
+	 *
 	 * @param $course_id
 	 * Count enrolled course
 	 * since 3.2.8.2
@@ -139,19 +141,13 @@ class LP_Database {
 	 */
 	public function count_enrolled_course($course_id){
 		global $wpdb;
-		$query = $wpdb->prepare("SELECT COUNT(DISTINCT u.ID ) FROM wp_learnpress_order_itemmeta oim INNER JOIN wp_learnpress_order_items "
-                        . "oi ON oim.learnpress_order_item_id = oi.order_item_id INNER "
-                        . "JOIN wp_posts p ON oi.order_id = p.ID INNER JOIN wp_postmeta pm ON oi.order_id = pm.post_id "
-                        . "AND pm.meta_key = '_user_id' INNER JOIN wp_users u on u.ID = pm.meta_value LEFT JOIN wp_learnpress_user_items lui ON lui.user_id = u.ID "
-                        . "AND lui.item_type='lp_course' AND lui.item_id = oim.meta_value "
-                        . "WHERE oim.meta_value=%s and oim.meta_key = '_course_id' "
-                        . "and p.post_status = 'lp-completed' ",$course_id);
-		if ( $_results = $wpdb->get_results( $query ) ) {
-			foreach ( $_results as $k => $v ) {
-				$results = $v->c;
-			}
-		}
 
-		return $results;
+		$query = $wpdb->prepare( "
+                    SELECT count(item_id) as c
+                    FROM $this->tb_lp_user_items
+                    WHERE status = %s AND item_id = %s
+                ", 'enrolled',$course_id );
+
+		return $wpdb->get_var( $query );
 	}
 }

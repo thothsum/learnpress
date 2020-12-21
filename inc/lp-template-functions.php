@@ -139,7 +139,9 @@ if ( ! function_exists( 'learn_press_course_enroll_button' ) ) {
 		if ( $course->is_free() && ! $purchased ) {
 			learn_press_get_template( 'single-course/buttons/enroll.php' );
 		} elseif ( $purchased && $course_data ) {
-			learn_press_get_template( 'single-course/buttons/enroll.php' );
+			if ( in_array( $course_data->get_status(), array( 'purchased', '' ) ) ) {
+				learn_press_get_template( 'single-course/buttons/enroll.php' );
+			}
 		}
 	}
 
@@ -2192,13 +2194,12 @@ function learn_press_setup_object_data( $post ) {
 	}
 
 	if ( $post->post_type == LP_COURSE_CPT ) {
-		///echo "123456";learn_press_debug($post, debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
-
 		if ( isset( $GLOBALS['course'] ) ) {
 			unset( $GLOBALS['course'] );
 		}
+
 		$object = learn_press_get_course( $post );
-		$object->prepare();
+		// $object->prepare();
 		LP()->global['course'] = $GLOBALS['course'] = $GLOBALS['lp_course'] = $object;
 	}
 

@@ -681,10 +681,11 @@ class LP_Page_Controller {
 			if ( is_post_type_archive( LP_COURSE_CPT ) || LEARNPRESS_IS_CATEGORY ) {
 				$wp_query->is_page    = false;
 				$wp_query->is_archive = true;
+
 				// Fixed issue with Yoast Seo plugin
 				$wp_query->is_category = learn_press_is_course_category();
 				// Remove causing an error wp-error :: $ taxonomy when yoast seo active
-				//$wp_query->is_tax      = learn_press_is_course_tax();
+				// $wp_query->is_tax      = learn_press_is_course_tax();
 				$wp_query->is_single   = false;
 			} else {
 				$wp_query->found_posts          = 1;
@@ -734,7 +735,7 @@ class LP_Page_Controller {
 
 		#@NOTE: make sure current page is not lesson or quiz before return cache content of single course page
 		// 		if ( function_exists( 'learn_press_content_single_course' ) && false !== ( $_content = LP_Object_Cache::get( 'course-' . get_the_ID(), 'course-content' ) ) ) {
-		// 			return $_co ntent;
+		// 			return $_content;
 		// 		}
 
 		remove_filter( 'the_content', array( $this, 'single_content' ), $this->_filter_content_priority );
