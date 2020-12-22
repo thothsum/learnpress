@@ -491,11 +491,12 @@ function learn_press_count_orders( $args = array() ) {
 	$format     = array_fill( 0, $size_of_status, '%s' );
 	$counts     = array_fill_keys( $statuses, 0 );
 	$statuses[] = LP_ORDER_CPT;
+	// remove auto-draft when count order
 	$query      = $wpdb->prepare( "
 		SELECT COUNT(ID) AS count, post_status AS status
 		FROM {$wpdb->posts} o
 		WHERE post_status IN(" . join( ',', $format ) . ")
-		AND post_type = %s
+		AND post_type = %s AND post_parent = 0 AND post_status <> 'auto-draft'
 		GROUP BY o.post_status
 	", $statuses );
 
