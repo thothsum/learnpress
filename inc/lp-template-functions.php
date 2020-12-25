@@ -1407,12 +1407,14 @@ if ( ! function_exists( 'learn_press_single_quiz_args' ) ) {
 			} else {
 				$remaining_time = false;
 			}
-			$args = array(
+		$args = array(
 				'id'            => $quiz->get_id(),
 				'totalTime'     => $quiz->get_duration()->get(),
 				'remainingTime' => $remaining_time ? $remaining_time->get() : $quiz->get_duration()->get(),
-				'status'        => $user->get_item_status( $quiz->get_id(), LP_Global::course( true ) )
-			);
+				'status'        => $user->get_item_status( $quiz->get_id(), LP_Global::course( true ) ),
+                'daysLeft'      => _x( 'days left', 'quiz_duration', 'learnpress' ),
+                'dayLeft'       => _x('day left','quiz_duration','learnpress')
+		);
 		}
 
 		return $args;
