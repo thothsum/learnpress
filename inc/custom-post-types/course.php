@@ -605,6 +605,13 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 						'std'  => 'no',
 					),
 					array(
+						'name' => __( 'Allow repurchase ', 'learnpress' ),
+						'id'   => '_lp_allow_course_repurchase',
+						'type' => 'yes_no',
+						'desc' => __( 'Allow users to repurchase this course after y finished it', 'learnpress' ),
+						'std'  => 'no',
+					),
+					array(
 						'name' => __( 'Maximum Students', 'learnpress' ),
 						'id'   => '_lp_max_students',
 						'type' => 'number',

@@ -149,8 +149,13 @@ class LP_Request {
 						 */
 						if ( $order->has_status( array( 'completed' ) ) && ! $user->has_course_status( $course->get_id(),
 								array( 'finished' ) ) ) {
-							throw new Exception( __( 'You have already purchased this course and haven\'t finished it.',
-								'learnpress' ) );
+							if($course->is_allow_repurchase_course() || $user->user_check_blocked_duration( $course->get_id() ) == true){
+								$enroll_course = true;
+								$add_to_cart = true;
+							}else{
+								throw new Exception( __( 'You have already purchased this course and haven\'t finished it.',
+									'learnpress' ) );
+							}
 						}
 
 						/**
@@ -176,13 +181,19 @@ class LP_Request {
 
 					// Enroll button
 					case 'enroll-course':
-
 						if ( $order->has_status( 'completed' ) ) {
 							/**
 							 * Order is completed and course is finished/enrolled
 							 */
 							if ( $user->has_course_status( $course->get_id(), array( 'finished', 'enrolled' ) ) ) {
-								throw new Exception( __( 'You have finished course.', 'learnpress' ) );
+
+								if($course->is_allow_repurchase_course() || $user->user_check_blocked_duration( $course->get_id() ) == true){
+									$enroll_course = true;
+									$add_to_cart = true;
+								}else{
+									throw new Exception( __( 'You have finished course.', 'learnpress' ) );
+								}
+
 							} else {
 								// TODO: enroll
 								//do_action( "learn-press/{$action}-handler", $course_id, $order->get_id() );
@@ -196,6 +207,7 @@ class LP_Request {
 								//do_action( "learn-press/{$action}-handler", $course_id, $order->get_id() );
 								// TODO: Complete order + enroll
 								$enroll_course = true;
+								$add_to_cart = true;
 
 							} else {
 								throw new Exception( __( 'You have to purchase the course before enrolling.',

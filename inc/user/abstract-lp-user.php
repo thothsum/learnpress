@@ -1668,7 +1668,6 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
 					}
 				}
 			}
-
 			return apply_filters( 'learn_press_user_can_retake_course', $can, $course->get_id(), $this->get_id() );
 		}
 
@@ -2906,6 +2905,20 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
 			}
 
 			return $remain > 0 ? $remain : false;
+		}
+
+		/**
+		 * @param $course_id
+		 *
+		 * @return bool
+		 */
+		public function user_check_blocked_duration($course_id){
+			$course = learn_press_get_course( $course_id );
+			$is_blocked = false;
+			if($course->is_block_item_content_duration() && $course->expires_to_milliseconds() <= '0' ){
+				$is_blocked = true;
+			}
+			return $is_blocked;
 		}
 	}
 }
