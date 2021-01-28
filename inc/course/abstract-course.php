@@ -136,11 +136,11 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
 						'_lp_block_course_item_duration_content',
 						true
 					),
-					'course_repurchase'              => get_post_meta( $id, '_lp_allow_course_repurchase', true ),
+					'course_repurchase'          => get_post_meta( $id, '_lp_allow_course_repurchase', true ),
 					'course_result'              => get_post_meta( $id, '_lp_course_result', true ),
 					'passing_condition'          => get_post_meta( $id, '_lp_passing_condition', true ),
 					'payment'                    => get_post_meta( $id, '_lp_payment', true ),
-					'final_quiz'                 => get_post_meta( $id, '_lp_final_quiz', true ),
+					'final_quiz'                 => (int) get_post_meta( $id, '_lp_final_quiz', true ),
 					'external_link'              => get_post_meta( $id, '_lp_external_link_buy_course', true ),
 					'external_link_text'         => get_post_meta( $id, '_lp_external_link_text', true ),
 				)
@@ -1509,8 +1509,8 @@ if ( ! function_exists( 'LP_Abstract_Course' ) ) {
 		 * @since  3.2.8.3
 		 * @author hungkv
 		 */
-		public function is_allow_repurchase_course(){
-			return $this->get_data( 'course_repurchase' ) === 'yes';
+		public function is_allow_repurchase_course() {
+			return $this->get_data( 'course_repurchase', 'no' ) === 'yes';
 		}
 
 		/**

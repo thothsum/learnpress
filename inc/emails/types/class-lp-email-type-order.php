@@ -20,16 +20,19 @@ class LP_Email_Type_Order extends LP_Email {
 	public function __construct() {
 		parent::__construct();
 
-		$this->support_variables = array_merge(
-			$this->general_variables,
-			array(
-				'{{order_id}}',
-				'{{order_user_id}}',
-				'{{order_user_name}}',
-				'{{order_items_table}}',
-				'{{order_detail_url}}',
-				'{{order_number}}',
-				'{{order_key}}'
+		$this->support_variables = apply_filters(
+			'lp/email/order/support_variable',
+			array_merge(
+				$this->general_variables,
+				array(
+					'{{order_id}}',
+					'{{order_user_id}}',
+					'{{order_user_name}}',
+					'{{order_items_table}}',
+					'{{order_detail_url}}',
+					'{{order_number}}',
+					'{{order_key}}'
+				)
 			)
 		);
 	}
@@ -37,9 +40,9 @@ class LP_Email_Type_Order extends LP_Email {
 	/**
 	 * Get courses instructor.
 	 *
+	 * @return array
 	 * @since 3.0.0
 	 *
-	 * @return array
 	 */
 	public function get_course_instructors() {
 		$order_id = $this->order_id;
@@ -67,7 +70,7 @@ class LP_Email_Type_Order extends LP_Email {
 	 * Get template data object.
 	 *
 	 * @param int $order_id
-	 * @param     array
+	 * @param array
 	 *
 	 * @return array
 	 */
@@ -78,20 +81,26 @@ class LP_Email_Type_Order extends LP_Email {
 		$order        = learn_press_get_order( $order_id );
 		$content_type = $this->email_format == 'plain' ? 'plain' : '';
 
-		$this->object = $this->get_common_template_data(
-			$this->email_format,
-			array(
-				'order_id'          => $order_id,
-				'order_user_id'     => $order->get_user_id(),
-				'order_user_name'   => $order->get_user_name(),
-				'order_items_table' => learn_press_get_template_content( "emails/{$content_type}/order-items-table.php", array( 'order_id' => $order_id ) ),
-				'order_detail_url'  => $order->get_view_order_url(),
-				'order_number'      => $order->get_order_number(),
-				'order_subtotal'    => $order->get_formatted_order_subtotal(),
-				'order_total'       => $order->get_formatted_order_total(),
-				'order_date'        => date_i18n( get_option( 'date_format' ), strtotime( $order->get_order_date() ) ),
-				'order_key'         => $order->get_order_key()
-			)
+		$this->object = apply_filters(
+			'lp/email/type-order/object',
+			$this->get_common_template_data(
+				$this->email_format,
+				array(
+					'order_id'          => $order_id,
+					'order_user_id'     => $order->get_user_id(),
+					'order_user_name'   => $order->get_user_name(),
+					'order_items_table' => learn_press_get_template_content( "emails/{$content_type}/order-items-table.php",
+						array( 'order_id' => $order_id ) ),
+					'order_detail_url'  => $order->get_view_order_url(),
+					'order_number'      => $order->get_order_number(),
+					'order_subtotal'    => $order->get_formatted_order_subtotal(),
+					'order_total'       => $order->get_formatted_order_total(),
+					'order_date'        => date_i18n( get_option( 'date_format' ),
+						strtotime( $order->get_order_date() ) ),
+					'order_key'         => $order->get_order_key()
+				)
+			),
+			$order
 		);
 
 		$this->get_variable();
@@ -148,7 +157,8 @@ class LP_Email_Type_Order extends LP_Email {
 			}
 		}
 
-		return $this->get_email_format() == 'html' ? learn_press_format_price( $total, learn_press_get_currency_symbol( $order->get_currency() ) ) : $total . " " . $order->get_currency();
+		return $this->get_email_format() == 'html' ? learn_press_format_price( $total,
+			learn_press_get_currency_symbol( $order->get_currency() ) ) : $total . " " . $order->get_currency();
 	}
 
 	/**

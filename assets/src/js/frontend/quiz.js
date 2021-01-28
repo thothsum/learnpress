@@ -6,7 +6,7 @@
  * @version 1.1
  */
 ( function( $ ) {
-	! Number.prototype.toTime && ( Number.prototype.toTime = function(daysLeft,dayLeft) {
+	! Number.prototype.toTime && ( Number.prototype.toTime = function() {
 		let MINUTE_IN_SECONDS = 60,
 			HOUR_IN_SECONDS = 3600,
 			DAY_IN_SECONDS = 24 * 3600,
@@ -15,7 +15,7 @@
 
 		if ( seconds > DAY_IN_SECONDS ) {
 			const days = Math.ceil( seconds / DAY_IN_SECONDS );
-			str = days + ' ' +( days > 1 ? daysLeft : dayLeft);
+			str = days + ( days > 1 ? ' ' + lpQuizSettings.daysLeft : ' ' + lpQuizSettings.dayLeft );
 		} else {
 			let hours = Math.floor( seconds / HOUR_IN_SECONDS ),
 				minutes = 0;
@@ -94,7 +94,7 @@
 			if ( remainingTime < 0 ) {
 				remainingTime = 0;
 			}
-			$timeElement.html( remainingTime.toTime(thisSettings.daysLeft,thisSettings.dayLeft) );
+			$timeElement.html( remainingTime.toTime() );
 		}
 
 		function submit() {

@@ -766,11 +766,11 @@ function learn_press_get_chart_students( $from = null, $by = null, $time_ago = 0
  *
  * @param null $from
  * @param null $by
- * @param      $time_ago
+ * @param float $time_ago
  *
  * @return array
  */
-function learn_press_get_chart_users( $from = null, $by = null, $time_ago ) {
+function learn_press_get_chart_users( $from = null, $by = null, $time_ago = 0 ) {
 	global $wpdb;
 
 	$labels   = array();
@@ -792,10 +792,10 @@ function learn_press_get_chart_users( $from = null, $by = null, $time_ago ) {
 			$date_format = 'M d Y';
 			$_from       = - $time_ago + 1;
 			$_from       = date( 'Y-m-d', strtotime( "{$_from} {$by}", $from_time ) );
-			$_to         = date( 'Y-m-d', strtotime(("+1 day"),$from_time ));
+			$_to         = date( 'Y-m-d', strtotime( ( "+1 day" ), $from_time ) );
 			$_sql_format = '%Y-%m-%d';
 			$_key_format = 'j';
-			$groupby = 'DAY';
+			$groupby     = 'DAY';
 			break;
 		case 'months':
 			$date_format = 'M Y';
@@ -805,7 +805,7 @@ function learn_press_get_chart_users( $from = null, $by = null, $time_ago ) {
 			$_to         = date( 'Y-m-' . $days, $from_time );
 			$_sql_format = '%Y-%m';
 			$_key_format = 'm';
-			$groupby = 'MONTH';
+			$groupby     = 'MONTH';
 			break;
 		case 'years':
 			$date_format = 'Y';
@@ -815,7 +815,7 @@ function learn_press_get_chart_users( $from = null, $by = null, $time_ago ) {
 			$_to         = date( 'Y-12-' . $days, $from_time );
 			$_sql_format = '%Y';
 			$_key_format = 'Y';
-			$groupby = 'YEAR';
+			$groupby     = 'YEAR';
 			break;
 	}
 	$query = $wpdb->prepare( "
@@ -825,7 +825,7 @@ function learn_press_get_chart_users( $from = null, $by = null, $time_ago ) {
 				AND user_registered BETWEEN %s AND %s
 				GROUP BY {$groupby}(user_registered)
 				ORDER BY d ASC
-			",  $_from, $_to );
+			", $_from, $_to );
 
 	if ( $_results = $wpdb->get_results( $query ) ) {
 		foreach ( $_results as $k => $v ) {
@@ -840,7 +840,8 @@ function learn_press_get_chart_users( $from = null, $by = null, $time_ago ) {
 				AND user_registered BETWEEN %s AND %s
 				GROUP BY d
 				ORDER BY d ASC
-			",  'wp_capabilities', '%' . $wpdb->esc_like( 's:13:"administrator"' ) . '%', '%' . $wpdb->esc_like( 's:10:"lp_teacher"' ) . '%', $_from, $_to );
+			", 'wp_capabilities', '%' . $wpdb->esc_like( 's:13:"administrator"' ) . '%',
+		'%' . $wpdb->esc_like( 's:10:"lp_teacher"' ) . '%', $_from, $_to );
 
 	if ( $_results = $wpdb->get_results( $query ) ) {
 		foreach ( $_results as $k => $v ) {
@@ -896,6 +897,7 @@ function learn_press_get_chart_users( $from = null, $by = null, $time_ago ) {
 	);
 }
 
+
 /**
  * Get data about students to render in chart
  *
@@ -905,7 +907,7 @@ function learn_press_get_chart_users( $from = null, $by = null, $time_ago ) {
  *
  * @return array
  */
-function learn_press_get_chart_courses( $from = null, $by = null, $time_ago ) {
+function learn_press_get_chart_courses( $from = null, $by = null, $time_ago = 0 ) {
 	global $wpdb;
 	$labels   = array();
 	$datasets = array();
@@ -928,10 +930,10 @@ function learn_press_get_chart_courses( $from = null, $by = null, $time_ago ) {
 			$date_format = 'M d Y';
 			$_from       = - $time_ago + 1;
 			$_from       = date( 'Y-m-d', strtotime( "{$_from} {$by}", $from_time ) );
-			$_to         = date( 'Y-m-d', strtotime(("+1 day"),$from_time ));
+			$_to         = date( 'Y-m-d', strtotime( ( "+1 day" ), $from_time ) );
 			$_sql_format = '%Y-%m-%d';
 			$_key_format = 'j';
-			$groupby = 'DAY';
+			$groupby     = 'DAY';
 			break;
 		case 'months':
 			$date_format = 'M Y';
@@ -941,7 +943,7 @@ function learn_press_get_chart_courses( $from = null, $by = null, $time_ago ) {
 			$_to         = date( 'Y-m-' . $days, $from_time );
 			$_sql_format = '%Y-%m';
 			$_key_format = 'n';
-			$groupby = 'MONTH';
+			$groupby     = 'MONTH';
 			break;
 		case 'years':
 			$date_format = 'Y';
@@ -951,7 +953,7 @@ function learn_press_get_chart_courses( $from = null, $by = null, $time_ago ) {
 			$_to         = date( 'Y-12-' . $days, $from_time );
 			$_sql_format = '%Y';
 			$_key_format = 'Y';
-			$groupby = 'YEAR';
+			$groupby     = 'YEAR';
 			break;
 	}
 	$query_where = '';
@@ -971,7 +973,7 @@ function learn_press_get_chart_courses( $from = null, $by = null, $time_ago ) {
          post_date BETWEEN %s AND %s
          GROUP BY {$groupby}(post_date)
          ORDER BY d ASC
-			",'lp_course', $_from, $_to );
+			", 'lp_course', $_from, $_to );
 	if ( $_results = $wpdb->get_results( $query ) ) {
 
 		foreach ( $_results as $k => $v ) {
@@ -1007,7 +1009,7 @@ function learn_press_get_chart_courses( $from = null, $by = null, $time_ago ) {
 				AND post_date BETWEEN %s AND %s
 				GROUP BY {$groupby}(post_date)
 				ORDER BY d ASC
-			", '_lp_price',0,'publish', 'lp_course', $_from, $_to );
+			", '_lp_price', 0, 'publish', 'lp_course', $_from, $_to );
 
 	if ( $_results = $wpdb->get_results( $query ) ) {
 
@@ -1021,7 +1023,7 @@ function learn_press_get_chart_courses( $from = null, $by = null, $time_ago ) {
 		$labels[] = date( $date_format, $date );
 		$key      = date( $_key_format, $date );
 
-		$all     = ! empty( $results['all'][ $key ] ) ? $results['all'][ $key ]->c : 0;
+		$all = ! empty( $results['all'][ $key ] ) ? $results['all'][ $key ]->c : 0;
 
 		$publish = ! empty( $results['publish'][ $key ] ) ? $results['publish'][ $key ]->c : 0;
 		$paid    = ! empty( $results['paid'][ $key ] ) ? $results['paid'][ $key ]->c : 0;
@@ -1083,11 +1085,11 @@ function learn_press_get_chart_courses( $from = null, $by = null, $time_ago ) {
  *
  * @param null $from
  * @param null $by
- * @param      $time_ago
+ * @param int $time_ago
  *
  * @return array
  */
-function learn_press_get_chart_general( $from = null, $by = null, $time_ago ) {
+function learn_press_get_chart_general( $from = null, $by = null, $time_ago = 0 ) {
 	global $wpdb;
 
 	$labels   = array();
@@ -1102,9 +1104,9 @@ function learn_press_get_chart_general( $from = null, $by = null, $time_ago ) {
 	}
 
 	$results = array(
-		'user'  => array(),
-		'course'  => array(),
-		'order'    => array()
+		'user'   => array(),
+		'course' => array(),
+		'order'  => array()
 	);
 
 	$from_time   = is_numeric( $from ) ? $from : strtotime( $from );
@@ -1117,10 +1119,10 @@ function learn_press_get_chart_general( $from = null, $by = null, $time_ago ) {
 			$date_format = 'M d Y';
 			$_from       = - $time_ago + 1;
 			$_from       = date( 'Y-m-d', strtotime( "{$_from} {$by}", $from_time ) );
-			$_to         = date( 'Y-m-d', strtotime(("+1 day"),$from_time ));
+			$_to         = date( 'Y-m-d', strtotime( ( "+1 day" ), $from_time ) );
 			$_sql_format = '%Y-%m-%d';
 			$_key_format = 'j';
-			$groupby = 'DAY';
+			$groupby     = 'DAY';
 			break;
 		case 'months':
 			$date_format = 'M Y';
@@ -1130,7 +1132,7 @@ function learn_press_get_chart_general( $from = null, $by = null, $time_ago ) {
 			$_to         = date( 'Y-m-' . $days, $from_time );
 			$_sql_format = '%Y-%m';
 			$_key_format = 'n';
-			$groupby = 'MONTH';
+			$groupby     = 'MONTH';
 			break;
 		case 'years':
 			$date_format = 'Y';
@@ -1140,7 +1142,7 @@ function learn_press_get_chart_general( $from = null, $by = null, $time_ago ) {
 			$_to         = date( 'Y-12-' . $days, $from_time );
 			$_sql_format = '%Y';
 			$_key_format = 'Y';
-			$groupby = 'YEAR';
+			$groupby     = 'YEAR';
 			break;
 	}
 	$query_where = '';
@@ -1160,7 +1162,7 @@ function learn_press_get_chart_general( $from = null, $by = null, $time_ago ) {
          post_date BETWEEN %s AND %s
          GROUP BY {$groupby}(post_date)
          ORDER BY d ASC
-			",'lp_course', $_from, $_to );
+			", 'lp_course', $_from, $_to );
 	if ( $_results = $wpdb->get_results( $query ) ) {
 		foreach ( $_results as $k => $v ) {
 			$results['course'][ $v->d ] = $v;
@@ -1206,9 +1208,9 @@ function learn_press_get_chart_general( $from = null, $by = null, $time_ago ) {
 		$labels[] = date( $date_format, $date );
 		$key      = date( $_key_format, $date );
 
-		$course     = ! empty( $results['course'][ $key ] ) ? $results['course'][ $key ]->c : 0;
-		$user = ! empty( $results['user'][ $key ] ) ? $results['user'][ $key ]->c : 0;
-		$order    = ! empty( $results['order'][ $key ] ) ? $results['order'][ $key ]->c : 0;
+		$course = ! empty( $results['course'][ $key ] ) ? $results['course'][ $key ]->c : 0;
+		$user   = ! empty( $results['user'][ $key ] ) ? $results['user'][ $key ]->c : 0;
+		$order  = ! empty( $results['order'][ $key ] ) ? $results['order'][ $key ]->c : 0;
 
 		$datasets[0]['data'][] = $course;
 		$datasets[1]['data'][] = $user;
@@ -1256,16 +1258,16 @@ function learn_press_get_chart_general( $from = null, $by = null, $time_ago ) {
  *
  * @param null $from
  * @param null $by
- * @param      $time_ago
+ * @param float $time_ago
  *
  * @return array
  */
-function learn_press_get_chart_orders( $from = null, $by = null, $time_ago ) {
+function learn_press_get_chart_orders( $from = null, $by = null, $time_ago = 0 ) {
 	global $wpdb;
 	$report_sales_by = learn_press_get_request( 'report_sales_by' );
 	$course_id       = learn_press_get_request( 'course_id' );
-	$labels   = array();
-	$datasets = array();
+	$labels          = array();
+	$datasets        = array();
 	if ( is_null( $from ) ) {
 		$from = current_time( 'mysql' );
 	}
@@ -1284,10 +1286,10 @@ function learn_press_get_chart_orders( $from = null, $by = null, $time_ago ) {
 			$date_format = 'M d Y';
 			$_from       = - $time_ago + 1;
 			$_from       = date( 'Y-m-d', strtotime( "{$_from} {$by}", $from_time ) );
-			$_to         = date( 'Y-m-d', strtotime(("+1 day"),$from_time ));
+			$_to         = date( 'Y-m-d', strtotime( ( "+1 day" ), $from_time ) );
 			$_sql_format = '%Y-%m-%d';
 			$_key_format = 'j';
-			$groupby = 'DAY';
+			$groupby     = 'DAY';
 			break;
 		case 'months':
 			$date_format = 'M Y';
@@ -1297,7 +1299,7 @@ function learn_press_get_chart_orders( $from = null, $by = null, $time_ago ) {
 			$_to         = date( 'Y-m-' . $days, $from_time );
 			$_sql_format = '%Y-%m';
 			$_key_format = 'n';
-			$groupby = 'MONTH';
+			$groupby     = 'MONTH';
 			break;
 		case 'years':
 			$date_format = 'Y';
@@ -1307,10 +1309,10 @@ function learn_press_get_chart_orders( $from = null, $by = null, $time_ago ) {
 			$_to         = date( 'Y-12-' . $days, $from_time );
 			$_sql_format = '%Y';
 			$_key_format = 'Y';
-			$groupby = 'YEAR';
+			$groupby     = 'YEAR';
 			break;
 	}
-	$sql_join = '';
+	$sql_join    = '';
 	$query_join  = '';
 	$query_where = '';
 	if ( 'course' === $report_sales_by ) {
@@ -1365,7 +1367,7 @@ function learn_press_get_chart_orders( $from = null, $by = null, $time_ago ) {
 				AND post_date BETWEEN %s AND %s
 				GROUP BY {$groupby}(post_date)
 				ORDER BY d ASC
-			",'lp_order', $_from, $_to );
+			", 'lp_order', $_from, $_to );
 	if ( $_results = $wpdb->get_results( $query ) ) {
 		foreach ( $_results as $k => $v ) {
 			//			$results['completed'][$v->d] = $v;
@@ -1421,7 +1423,6 @@ function learn_press_get_chart_orders( $from = null, $by = null, $time_ago ) {
 		'sql'      => $query
 	);
 }
-
 
 /**
  * Get colors setting up by admin user
@@ -2032,16 +2033,6 @@ if ( ! function_exists( 'learn_press_duplicate_quiz' ) ) {
 
 }
 
-/**
- * Get general data to render in chart
- *
- * @param null $from
- * @param null $by
- * @param float $time_ago
- *
- * @return array
- */
-
 function learn_press_get_default_section( $section = null ) {
 	if ( ! $section ) {
 		$section = new stdClass();
@@ -2153,11 +2144,9 @@ add_filter( 'learn-press/modal-search-items/context-id', 'learn_press_modal_sear
  */
 /*function learn_press_preview_post_link( $link, $post ) {
 	$items = learn_press_course_get_support_item_types( true );
-
 	if ( in_array( $post->post_type, $items ) ) {
 		$link = lp_course_set_link_backend( $link, $post->ID, false, false, $post );
 	}
-
 	return $link;
 }*/
 
@@ -2196,7 +2185,7 @@ add_action( 'save_post', 'learn_press_maybe_sync_data' );
  * @since 3.2.6
  *
  */
-function learn_press_is_admin_page( $screen_id = '' ) {
+/*function learn_press_is_admin_page( $screen_id = '' ) {
 	$is_learnpress = false;
 
 	// Is editing post-type of LP
@@ -2217,7 +2206,7 @@ function learn_press_is_admin_page( $screen_id = '' ) {
 	}
 
 	return apply_filters( 'learn-press/is-admin-page', $is_learnpress, $screen_id );
-}
+}*/
 
 function learn_press_get_orders_status_chart_data() {
 	$data = array(

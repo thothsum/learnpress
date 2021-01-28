@@ -51,7 +51,7 @@ if ( ! class_exists( 'LP_Admin_Ajax' ) ) {
 				// Update order status
 				//'update_order_status'     => false,
 				'update_order_exports'    => false,
-				'search_course_by_name'  => false,
+				'search_course_by_name'   => false,
 			);
 			foreach ( $ajaxEvents as $ajaxEvent => $nopriv ) {
 				add_action( 'wp_ajax_learnpress_' . $ajaxEvent, array( __CLASS__, $ajaxEvent ) );
@@ -96,6 +96,7 @@ if ( ! class_exists( 'LP_Admin_Ajax' ) ) {
 				'sync-remove-older-data',
 				'sync-calculate-course-results',
 				'lp-get-blog-post-thimpess',
+				'lp-database-optimize' //@see lp_database_optimize
 				//'sync-user-courses',
 			);
 			foreach ( $ajax_events as $action => $callback ) {
@@ -1226,49 +1227,74 @@ if ( ! class_exists( 'LP_Admin_Ajax' ) ) {
 				wp_send_json( $result );
 			}
 
-			$res = wp_remote_get( 'https://thimpress.com/blog/' );
+			$res = wp_remote_get( 'https://thimpress.com/feed/' );
 
 			if ( ! $res instanceof WP_Error ) {
-				$thimpress_response_body = wp_remote_retrieve_body( $res );
-				$content_sanitize        = wp_kses_post_deep( $thimpress_response_body );
-
 				$result->status = 'success';
-				$result->data   = $content_sanitize;
+				$result->data   = wp_remote_retrieve_body( $res );
 			} else {
 				$result->message = $res->get_error_message();
 			}
 
 			wp_send_json( $result );
 		}
+
+		public static function lp_database_optimize() {
+			$result = new LP_REST_Response();
+
+			if ( ! is_admin() ) {
+				$result->message = 'Invalid request';
+				wp_send_json( $result );
+			}
+
+			if ( ! isset( $_POST['lp-nonce'] )
+			     || ! check_admin_referer( 'lp-optimize-database', 'lp-nonce' ) ) {
+				$result->message = 'Invalid nonce';
+				wp_send_json( $result );
+			}
+
+			$results        = LP_Database::getInstance()->create_index();
+			$result->status = 'success';
+			$result->data   = $results;
+
+			wp_send_json( $result );
+		}
+
 		/**
-		 * Search course by name.
+		 * Search course by name on page Statistics
+		 *
 		 * @since 3.2.8.1
 		 * @author Physcode - Hungkv
 		 */
 		public static function search_course_by_name() {
-			$search = $_GET['q'];
-			if(!isset($search)){
-				$json = [];
-			}else{
-				global $wpdb;
-				$query = "
-        SELECT      $wpdb->posts.post_title as title, $wpdb->posts.ID as id
-        FROM        $wpdb->posts
-        WHERE       $wpdb->posts.post_title LIKE '%$search%'
-        AND         $wpdb->posts.post_type = 'lp_course'
-        ORDER BY    $wpdb->posts.post_title
-        LIMIT 10
-        ";
-				if ( $_results = $wpdb->get_results( $query ) ) {
-					foreach ( $_results as $result ) {
-						$json[] = ['id'=>$result->id, 'text'=>$result->title];
-					}
+			global $wpdb;
+			$search = '';
+			$json   = [];
+
+			if ( isset( $_GET['q'] ) ) {
+				$search = LP_Helper::sanitize_params_submitted( $_GET['q'] );
+			} else {
+				wp_send_json( $json );
+			}
+
+			$query = $wpdb->prepare( "
+                SELECT      $wpdb->posts.post_title as title, $wpdb->posts.ID as id
+                FROM        $wpdb->posts
+                WHERE       $wpdb->posts.post_title LIKE '%$search%'
+                AND         $wpdb->posts.post_type = %s
+                ORDER BY    $wpdb->posts.post_title
+                LIMIT 10
+                ", LP_COURSE_CPT );
+			if ( $_results = $wpdb->get_results( $query ) ) {
+				foreach ( $_results as $result ) {
+					$json[] = [ 'id' => $result->id, 'text' => $result->title ];
 				}
 			}
-			echo json_encode($json);
-			exit();
+
+			wp_send_json( $json );
 		}
 	}
+
 
 	if ( defined( 'DOING_AJAX' ) ) {
 		add_action( 'wp_ajax_learnpress_upload-user-avatar', array( 'LP_Admin_Ajax', 'upload_user_avatar' ) );

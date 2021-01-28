@@ -67,15 +67,22 @@ class LP_Request {
 
 	public static function maybe_redirect_checkout( $result, $order_id ) {
 		$course_id = get_transient( 'checkout_enroll_course_id' );
+
 		if ( ! $course_id ) {
 			if ( isset( $_REQUEST['enroll-course'] ) && $_REQUEST['enroll-course'] ) {
 				$course_id = absint( $_REQUEST['enroll-course'] );
 			}
 		}
+
 		if ( $course_id ) {
-			$course       = learn_press_get_course( $course_id );
-			$course_items = $course->get_items();
-			$first_item   = ( $course_items[0] ) ? $course_items[0] : 0;
+			$course = learn_press_get_course( $course_id );
+
+			if ( ! $course ) {
+				return $result;
+			}
+
+			$first_item = LP_Course_DB::getInstance()->get_first_item( $course_id );
+
 			self::do_enroll( $course_id, $order_id, 'enroll-course', $first_item );
 			delete_transient( 'checkout_enroll_course_id' );
 			unset( $result['redirect'] );
@@ -147,14 +154,16 @@ class LP_Request {
 						 * If user has already purchased course but did not finish.
 						 * This mean user has to finish course before purchasing that course itself.
 						 */
-						if ( $order->has_status( array( 'completed' ) ) && ! $user->has_course_status( $course->get_id(),
-								array( 'finished' ) ) ) {
-							if($course->is_allow_repurchase_course() || $user->user_check_blocked_duration( $course->get_id() ) == true){
+						if ( $order->has_status( array( 'completed' ) ) &&
+						     ! $user->has_course_status( $course->get_id(), array( 'finished' ) ) ) {
+							if ( $course->is_allow_repurchase_course() || $user->user_check_blocked_duration( $course->get_id() ) == true ) {
 								$enroll_course = true;
-								$add_to_cart = true;
-							}else{
-								throw new Exception( __( 'You have already purchased this course and haven\'t finished it.',
-									'learnpress' ) );
+								$add_to_cart   = true;
+							} else {
+								throw new Exception(
+									__( 'You have already purchased this course and haven\'t finished it.',
+										'learnpress' )
+								);
 							}
 						}
 
@@ -187,11 +196,11 @@ class LP_Request {
 							 */
 							if ( $user->has_course_status( $course->get_id(), array( 'finished', 'enrolled' ) ) ) {
 
-								if($course->is_allow_repurchase_course() || $user->user_check_blocked_duration( $course->get_id() ) == true){
+								if ( $course->is_allow_repurchase_course() || $user->user_check_blocked_duration( $course->get_id() ) ) {
 									$enroll_course = true;
-									$add_to_cart = true;
-								}else{
-									throw new Exception( __( 'You have finished course.', 'learnpress' ) );
+									$add_to_cart   = true;
+								} else {
+									throw new Exception( __( 'have finished course.', 'learnpress' ) );
 								}
 
 							} else {
@@ -207,7 +216,7 @@ class LP_Request {
 								//do_action( "learn-press/{$action}-handler", $course_id, $order->get_id() );
 								// TODO: Complete order + enroll
 								$enroll_course = true;
-								$add_to_cart = true;
+								$add_to_cart   = true;
 
 							} else {
 								throw new Exception( __( 'You have to purchase the course before enrolling.',
@@ -242,8 +251,7 @@ class LP_Request {
 				/**
 				 * @see LP_Request::do_enroll()
 				 */
-				$course_items = $course->get_items();
-				$first_item   = ( $course_items[0] ) ? $course_items[0] : 0;
+				$first_item = LP_Course_DB::getInstance()->get_first_item( $course_id );
 				do_action( "learn-press/{$action}-handler/enroll", $course_id, $order->get_id(), $action, $first_item );
 			}
 

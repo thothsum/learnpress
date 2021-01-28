@@ -226,7 +226,7 @@ add_filter( 'post_type_link', 'learn_press_course_post_type_link', 10, 2 );
  */
 function learn_press_get_final_quiz( $course_id ) {
 
-	if ( false === ( $final_quiz = LP_Object_Cache::get( 'final-quiz-' . $course_id, 'learn-press/final-quiz' ) ) ) {
+	if ( false == ( $final_quiz = LP_Object_Cache::get( 'final-quiz-' . $course_id, 'learn-press/final-quiz' ) ) ) {
 
 		$course = learn_press_get_course( $course_id );
 		if ( ! $course ) {
@@ -262,7 +262,7 @@ function learn_press_get_final_quiz( $course_id ) {
 function learn_press_item_meta_format( $item, $nonce = '' ) {
 	if ( current_theme_supports( 'post-formats' ) ) {
 		$format = get_post_format( $item );
-		if ( false === $format ) {
+		if ( false == $format ) {
 			$format = 'standard';
 		}
 
@@ -1071,7 +1071,7 @@ if ( ! function_exists( 'learn_press_course_item_type_link' ) ) {
 	global $wpdb;
 	$query = $wpdb->prepare( "
         SELECT section_course_id
-        FROM {$wpdb->learnpress_sections} s 
+        FROM {$wpdb->learnpress_sections} s
         INNER JOIN {$wpdb->learnpress_section_items} si ON si.section_id = s.section_id
         WHERE si.item_id = %d
     ", $item_id );
@@ -1144,10 +1144,16 @@ function learn_press_get_course_results_tooltip( $course_id ) {
 
 function learn_press_course_passing_condition( $value, $format, $course_id ) {
 
-	$course = learn_press_get_course( $course_id );
+	$course  = learn_press_get_course( $course_id );
+	$quiz_id = $course->get_final_quiz();
 
-	if ( $quiz_id = $course->get_final_quiz() ) {
-		$quiz  = learn_press_get_quiz( $quiz_id );
+	if ( $quiz_id ) {
+		$quiz = learn_press_get_quiz( $quiz_id );
+
+		if ( ! $quiz ) {
+			return $value;
+		}
+
 		$value = absint( $quiz->get_passing_grade() );
 
 		if ( $format ) {
@@ -1260,9 +1266,11 @@ function learn_press_reload_page_when_duration_expires() {
 	}
 
 	$course = learn_press_get_the_course();
+	$user = learn_press_get_current_user();
+	$course_data = $user->get_course_data( $course->get_id() );
 
 	if ( $course->is_block_item_content_duration() === true &&
-		! empty( $course ) && $course->expires_to_milliseconds() > 0 ) {
+	     ! empty( $course ) && $course->expires_to_milliseconds() > 0 && $course_data->get_status() == 'enrolled' ) {
 		echo '<input type="hidden" class="course-item-is-blocked" value="' . $course->expires_to_milliseconds() . '">';
 	}
 }

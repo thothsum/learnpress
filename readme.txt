@@ -5,7 +5,7 @@ Tags: elearning, education, course, lms, learning management system
 Requires at least: 5.3
 Tested up to: 5.6
 Requires PHP: 7.0
-Stable tag: 3.2.8.2
+Stable tag: 3.2.8.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -197,8 +197,33 @@ https://www.transifex.com/projects/p/learnpress/
 
 == Changelog ==
 
-= 3.2.8.3 =
+= 3.2.8.6 =
+~ Fix minor bug
+~ Optimize enroll course
+~ Add cache get items' course
+~ Add reset progress by course_id
+~ Fix "Enroll Button" is not appearing when disable "Auto Enroll" option
 
+= 3.2.8.5 =
+~ Fix header lesson style error on iphone
+~ Fix scrollbar error some themes
+~ Fix scroll js to item user viewing
+~ Add filter 'lp/email/type-order/object', 'lp/email/order/support_variable'
+
+= 3.2.8.4 =
+~ Add function Scan database if have not index in table will create
+~ Add function Repurchase course when course finished or block duration expire
+~ Fix function Statistics
+~ Fix error content lesson conflict when activated elementor & yoast seo
+~ Fix order status on Dashboard screen
+~ Remove js scrollbar jquery
+~ Add option 'Enable Popup Confirm Finish Course, Complete Item
+~ Add message block duration
+
+= 3.2.8.3 =
+~ Fix compatible PHP 8.0
+~ Fix checkout message error
+~ Optimize
 
 = 3.2.8.2 =
 ~ Fix compatible WP 5.6

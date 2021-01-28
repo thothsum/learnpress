@@ -345,7 +345,11 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 				$passing_grade = LP_Request::get_string( '_lp_course_result_final_quiz_passing_condition' );
 				$quiz_id       = $course->get_final_quiz();
 
+//				var_dump($passing_grade, $quiz_id);
+
 				update_post_meta( $quiz_id, '_lp_passing_grade', $passing_grade );
+
+//				var_dump(123123);die;
 			}
 
 		}
@@ -605,10 +609,18 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 						'std'  => 'no',
 					),
 					array(
+						'name' => __( '', 'learnpress' ),
+						'id'   => '_lp_block_lesson_content',
+						'type' => 'yes_no',
+						'desc' => __( 'Block of course when finished course.',
+							'learnpress' ),
+						'std'  => 'no',
+					),
+					array(
 						'name' => __( 'Allow repurchase ', 'learnpress' ),
 						'id'   => '_lp_allow_course_repurchase',
 						'type' => 'yes_no',
-						'desc' => __( 'Allow users to repurchase this course after y finished it', 'learnpress' ),
+						'desc' => __( 'Allow users to repurchase this course after course finished or blocked (Do not apply to free courses)', 'learnpress' ),
 						'std'  => 'no',
 					),
 					array(
@@ -639,14 +651,6 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 						'id'   => '_lp_featured',
 						'type' => 'yes_no',
 						'desc' => __( 'Set course as featured.', 'learnpress' ),
-						'std'  => 'no',
-					),
-					array(
-						'name' => __( 'Block content items course', 'learnpress' ),
-						'id'   => '_lp_block_lesson_content',
-						'type' => 'yes_no',
-						'desc' => __( 'Block content item(lesson, quiz, v.v...) of course when completed course.',
-							'learnpress' ),
 						'std'  => 'no',
 					),
 					array(
@@ -1458,7 +1462,6 @@ if ( ! class_exists( 'LP_Course_Post_Type' ) ) {
 		 * Before save curriculum action.
 		 */
 		public function before_save_curriculum() {
-
 			global $post, $pagenow;
 
 			// Ensure that we are editing course in admin side

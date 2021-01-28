@@ -74,7 +74,7 @@ class LP_Checkout {
 	 * Process customer when checking out.
 	 *
 	 * @param array $result
-	 * @param int   $order_id
+	 * @param int $order_id
 	 *
 	 * @return mixed
 	 */
@@ -118,8 +118,7 @@ class LP_Checkout {
 			}
 
 			$order->save();
-		}
-		catch ( Exception $ex ) {
+		} catch ( Exception $ex ) {
 			if ( $ex->getCode() && $message = $ex->getMessage() ) {
 				$result['message'] = $message;
 			}
@@ -147,8 +146,8 @@ class LP_Checkout {
 	}
 
 	/**
-	 * @param array       $errors
-	 * @param array       $fields
+	 * @param array $errors
+	 * @param array $fields
 	 * @param LP_Checkout $checkout
 	 *
 	 * @return array
@@ -334,8 +333,7 @@ class LP_Checkout {
 			}
 			$wpdb->query( 'COMMIT' );
 
-		}
-		catch ( Exception $e ) {
+		} catch ( Exception $e ) {
 			// There was an error adding order data!
 			$wpdb->query( 'ROLLBACK' );
 			learn_press_add_message( $e->getMessage() );
@@ -571,13 +569,19 @@ class LP_Checkout {
 					LP()->session->order_awaiting_payment = $order_id;
 					// Process Payment
 					$result = $this->payment_method->process_payment( $order_id );
-					if ( isset( $result['result'] ) && 'success' === $result['result'] ) {
-						$result = apply_filters( 'learn-press/payment-successful-result', $result, $order_id );
-						if ( learn_press_is_ajax() ) {
+
+					if ( isset( $result['result'] ) ) {
+						if ( 'success' === $result['result'] ) {
+							$result = apply_filters( 'learn-press/payment-successful-result', $result, $order_id );
+
+							if ( learn_press_is_ajax() ) {
+								learn_press_send_json( $result );
+							} else {
+								wp_redirect( $result['redirect'] );
+								exit;
+							}
+						} elseif ( learn_press_is_ajax() ) {
 							learn_press_send_json( $result );
-						} else {
-							wp_redirect( $result['redirect'] );
-							exit;
 						}
 					}
 
@@ -603,8 +607,7 @@ class LP_Checkout {
 					}
 				}
 			}
-		}
-		catch ( Exception $e ) {
+		} catch ( Exception $e ) {
 			$has_error = $e->getMessage();
 			learn_press_add_message( $has_error, 'error' );
 		}

@@ -44,15 +44,18 @@ class LP_Email_Type_Enrolled_Course extends LP_Email {
 	public function __construct() {
 		parent::__construct();
 
-		$this->support_variables = array_merge(
-			$this->general_variables,
-			array(
-				'{{course_id}}',
-				'{{course_name}}',
-				'{{course_url}}',
-				'{{user_id}}',
-				'{{user_name}}',
-				'{{user_email}}'
+		$this->support_variables = apply_filters(
+			'lp/email/type_enrolled/support_variable',
+			array_merge(
+				$this->general_variables,
+				array(
+					'{{course_id}}',
+					'{{course_name}}',
+					'{{course_url}}',
+					'{{user_id}}',
+					'{{user_name}}',
+					'{{user_email}}'
+				)
 			)
 		);
 
@@ -72,20 +75,24 @@ class LP_Email_Type_Enrolled_Course extends LP_Email {
 	 * @return array|object|void
 	 */
 	public function get_object( $object_id = '', $more = '' ) {
-
 		$user   = learn_press_get_user( $this->user_id );
 		$course = learn_press_get_course( $this->course_id );
-
+		$order_id = $user->get_course_order( $this->course_id, false );
+		$order = learn_press_get_order($order_id);
+		
 		$object = array();
-
 		if ( $course ) {
-			$object = array_merge(
-				$object,
-				array(
-					'course_id'   => $course->get_id(),
-					'course_name' => $course->get_title(),
-					'course_url'  => $course->get_permalink()
-				)
+			$object = apply_filters(
+				'lp/email/type_enrolled/data',
+				array_merge(
+					$object,
+					array(
+						'course_id'   => $course->get_id(),
+						'course_name' => $course->get_title(),
+						'course_url'  => $course->get_permalink()
+					)
+				),
+				$order
 			);
 		}
 

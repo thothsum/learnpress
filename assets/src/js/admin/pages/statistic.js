@@ -359,4 +359,3 @@
 
 	drawCoursesChart( data, config );
 }( jQuery ) );
-

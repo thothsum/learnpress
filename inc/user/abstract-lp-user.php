@@ -110,8 +110,12 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
 				$course_id = get_the_ID();
 			}
 
-			if ( false === ( $object_course_data = LP_Object_Cache::get( 'course-' . $this->get_id() . '-' . $course_id,
-					'learn-press/user-item-object-courses' ) ) ) {
+			$object_course_data = LP_Object_Cache::get(
+				'course-' . $this->get_id() . '-' . $course_id,
+				'learn-press/user-item-object-courses'
+			);
+
+			if ( false === $object_course_data ) {
 				$result = $this->_curd->read_course( $this->get_id(), $course_id );
 
 				if ( $result ) {
@@ -721,18 +725,6 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
 			}
 
 			return false;
-			$item = false;
-			if ( false !== ( $items = LP_Object_Cache::get( 'course-item-' . $this->get_id() . '-' . $course_id . '-' . $item_id,
-					'learn-press/user-course-items' ) ) ) {
-				// Only get status of a newest record.
-				if ( $last ) {
-					$item = reset( $items );
-				} else {
-					$item = $items;
-				}
-			}
-
-			return $item;
 		}
 
 		/**
@@ -779,8 +771,8 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
 			}
 
 			$status = false;
-
-			if ( false !== ( $item = $this->get_item( $item_id, $course_id, true ) ) ) {
+			$item   = $this->get_item( $item_id, $course_id, true );
+			if ( $item ) {
 				$status = $item['status'];
 			}
 
@@ -1668,6 +1660,7 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
 					}
 				}
 			}
+
 			return apply_filters( 'learn_press_user_can_retake_course', $can, $course->get_id(), $this->get_id() );
 		}
 
@@ -2908,16 +2901,22 @@ if ( ! class_exists( 'LP_Abstract_User' ) ) {
 		}
 
 		/**
+		 * Check course of user is blocked by duration expire
+		 *
 		 * @param $course_id
 		 *
 		 * @return bool
+		 * @author hungkv
+		 * @since 3.2.8.4
 		 */
-		public function user_check_blocked_duration($course_id){
-			$course = learn_press_get_course( $course_id );
+		public function user_check_blocked_duration( $course_id ) {
+			$course     = learn_press_get_course( $course_id );
 			$is_blocked = false;
-			if($course->is_block_item_content_duration() && $course->expires_to_milliseconds() <= '0' ){
+
+			if ( $course->is_block_item_content_duration() && $course->expires_to_milliseconds() <= '0' ) {
 				$is_blocked = true;
 			}
+
 			return $is_blocked;
 		}
 	}
