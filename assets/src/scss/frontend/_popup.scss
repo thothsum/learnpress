@@ -27,7 +27,6 @@
 	.section-header {
 		//padding: 10px 0;
 		//
-
 	}
 
 	.section-title {
@@ -63,29 +62,22 @@
 			}
 		}
 	}
-
-
 }
 
 #popup-course {
-	display: flex;
-	position: fixed;
-	z-index: 999;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
+	display: grid;
+	position: relative;
 	background: #fff;
+	grid-template-areas: "b a" "b c" "b d";
+	grid-template-rows: 70px auto 70px;
+	grid-template-columns: 475px auto;
 
 	#popup-header {
 		display: flex;
-		position: fixed;
-		z-index: 100;
-		right: 0;
-		left: 475px;
 		padding: 0;
 		border-bottom: 1px solid #d9e0f1;
 		background: var(--lp-secondary-color);
+		grid-area: a;
 
 		@include transition(left 0.25s);
 
@@ -165,8 +157,8 @@
 			background: var(--lp-primary-color);
 			font-size: 14px;
 			font-weight: 400;
-			justify-content: center;
 			line-height: 40px;
+			justify-content: center;
 			align-items: center;
 
 			&:hover {
@@ -197,9 +189,13 @@
 	}
 
 	#popup-sidebar {
-		overflow: auto;
-		position: relative;
+		width: 475px;
 		box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.1);
+		//overflow: auto;
+		// position: absolute;
+		// top: 0;
+		// left: 0;
+		grid-area: b;
 		flex: 0 0 475px;
 
 		@include transition(0.25s);
@@ -584,7 +580,6 @@
 								}
 							}
 						}
-
 					}
 				}
 
@@ -640,9 +635,10 @@
 	}
 
 	#popup-content {
-		overflow: auto;
-		position: relative;
-		margin: 70px 0 50px 0;
+		margin: 20px 0 50px 0;
+		//overflow: auto;
+		//position: absolute;
+		grid-area: c;
 		flex: 1;
 
 		.lp-button {
@@ -657,7 +653,6 @@
 				.instant-check {
 
 					&__icon {
-
 						margin-right: 5px;
 
 						&::before {
@@ -708,7 +703,6 @@
 						}
 					}
 				}
-
 			}
 
 			&:hover {
@@ -815,8 +809,8 @@
 
 			.quiz-buttons {
 				display: flex;
-				justify-content: center;
 				text-align: center;
+				justify-content: center;
 
 				.button-right {
 
@@ -869,7 +863,6 @@
 					display: block;
 					text-align: center;
 
-
 					.button-left {
 						text-align: center;
 
@@ -895,7 +888,6 @@
 						}
 
 						.next {
-
 						}
 					}
 
@@ -984,7 +976,6 @@
 			}
 		}
 
-
 		&.fixed-quiz-status {
 
 			.quiz-status {
@@ -998,16 +989,11 @@
 	}
 
 	#popup-footer {
-		position: fixed;
-		z-index: 999;
-		right: 0;
-		bottom: 0;
-		left: 475px;
-		width: 792px;
-		height: 50px;
+		width: calc(100% - 475px);
 		margin: 0 auto;
 		border-top: 1px solid #ebebeb;
 		background: #fff;
+		grid-area: d;
 
 		@include transition(left 0.25s);
 
@@ -1046,7 +1032,6 @@
 						color: var(--lp-primary-color);
 					}
 				}
-
 			}
 
 			.next {
@@ -1312,7 +1297,7 @@
 			font-weight: 400;
 			align-items: center;
 
-			>span {
+			> span {
 				display: inline-block;
 				width: 20px;
 				height: 20px;
@@ -1453,10 +1438,10 @@
 
 		.question-response {
 			display: flex;
-			align-items: center;
-			justify-content: flex-start;
 			margin-bottom: 10px;
 			font-size: 14px;
+			align-items: center;
+			justify-content: flex-start;
 
 			.label {
 				display: inline-block;
@@ -1625,12 +1610,34 @@
 
 body {
 
-	&.admin-bar {
+	// &.admin-bar {
 
-		#popup-course {
-			top: 32px;
+	// 	#popup-course {
+	// 		top: 50px;
+	// 	}
+	// }
+
+	&.viewing-course-item {
+
+		.widget-area,
+		ul.learn-press-breadcrumb {
+			display: none;
 		}
+
+		.site-header,
+		.site-footer {
+			display: none;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		.site-main {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
 	}
+
 }
 
 .course-curriculum {

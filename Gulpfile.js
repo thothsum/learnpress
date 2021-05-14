@@ -84,7 +84,7 @@ gulp.task( 'styles', () => {
 	return gulp
 		.src( [ 'assets/src/scss/**/*.scss' ] )
 		.pipe( plumber( errorHandler ) )
-		// .pipe( sourcemaps.init() )
+		.pipe( sourcemaps.init() )
 		.pipe(
 			sass( {
 				errLogToConsole: true,
@@ -93,7 +93,7 @@ gulp.task( 'styles', () => {
 			} )
 		)
 		.on( 'error', sass.logError )
-		// .pipe( sourcemaps.write( './' ) )
+		.pipe( sourcemaps.write( './' ) )
 		.pipe( lineec() )
 		.pipe( gulp.dest( 'assets/css' ) );
 } );
