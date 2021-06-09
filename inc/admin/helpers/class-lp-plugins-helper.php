@@ -277,6 +277,10 @@ class LP_Plugins_Helper {
 		return $action_links;
 	}
 
+	public static function get_addon_status( $plugin ) {
+
+	}
+
 	/**
 	 * @param $icons
 	 *
@@ -413,6 +417,25 @@ class LP_Plugins_Helper {
 		$headers['Last updated']      = 'Last updated';
 
 		return $headers;
+	}
+
+	/**
+	 * Install plugin form wp.org
+	 *
+	 * @param string $package The full local path or URI of the package.
+	 * @return mixed
+	 */
+	public static function install_addon_free( string $package ) {
+		include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
+		include_once( ABSPATH . 'wp-admin/includes/plugin-install.php' );
+
+		$skin            = new WP_Ajax_Upgrader_Skin();
+		$plugin_upgrader = new Plugin_Upgrader( $skin );
+		return $plugin_upgrader->install( $package );
+	}
+
+	public static function active_addon(string $plugin_base) {
+
 	}
 
 	/**

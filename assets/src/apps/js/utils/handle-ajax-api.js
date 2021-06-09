@@ -1,7 +1,7 @@
-const handleAjax = function( url, params, functions ) {
+const handleAjax = function( url, params, functions, method = 'POST' ) {
 	wp.apiFetch( {
 		path: url,
-		method: 'POST',
+		method,
 		data: params,
 	} ).then( ( res ) => {
 		if ( 'function' === typeof functions.success ) {

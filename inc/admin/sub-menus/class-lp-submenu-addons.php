@@ -22,7 +22,8 @@ class LP_Submenu_Addons extends LP_Abstract_Submenu {
 
 	public function add_ons_tabs() {
 		$tabs = array(
-			'more'      => sprintf( __( 'Get more (%d)', 'learnpress' ), LP_Plugins_Helper::count_plugins() ),
+			'free'      => sprintf( __( 'Addons free %s', 'learnpress' ), '<span id="total-addons-free"></span>' ),
+			'premium'      => sprintf( __( 'Addons Premium %s', 'learnpress' ), '<span id="total-addons-premium"></span>' ),
 			'installed' => sprintf( __( 'Installed (%d)', 'learnpress' ), LP_Plugins_Helper::count_plugins( 'installed' ) ),
 			'themes'    => sprintf( __( 'Themes (%d)', 'learnpress' ), LP_Plugins_Helper::count_themes() ),
 		);
@@ -33,15 +34,25 @@ class LP_Submenu_Addons extends LP_Abstract_Submenu {
 		);
 	}
 
+	public function page_content_free() {
+		$this->page_content_search_form();
+		learn_press_admin_view( 'addons/html-plugins-free' );
+	}
+
+	public function page_content_premium() {
+		$this->page_content_search_form();
+		learn_press_admin_view( 'addons/html-plugins-premium' );
+	}
+
 	public function page_content_installed() {
 		$this->page_content_search_form();
 		learn_press_admin_view( 'addons/html-plugins-installed' );
 	}
 
-	public function page_content_more() {
+	/*public function page_content_more() {
 		$this->page_content_search_form();
 		learn_press_admin_view( 'addons/html-plugins-more' );
-	}
+	}*/
 
 	public function page_content_themes() {
 		$this->page_content_search_form();

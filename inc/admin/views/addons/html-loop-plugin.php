@@ -9,6 +9,10 @@
 
 defined( 'ABSPATH' ) || exit();
 
+if ( empty( $add_on ) && empty( $file ) ) {
+	return;
+}
+
 $action_links = LP_Plugins_Helper::get_add_on_action_link( $add_on, $file );
 ?>
 

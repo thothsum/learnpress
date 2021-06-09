@@ -59,7 +59,7 @@ class LP_Admin_Assets extends LP_Abstract_Assets {
 			0,
 			1
 		);
-		$lp_admin_js->exclude_screen( array( 'plugin-install' ) );
+		$lp_admin_js->exclude_screen( array( 'plugin-install', 'learnpress_page_learn-press-addons' ) );
 
 		return apply_filters(
 			'learn-press/admin-default-scripts',
@@ -77,7 +77,7 @@ class LP_Admin_Assets extends LP_Abstract_Assets {
 				),
 				'themes-addons'                     => new LP_Asset_Key(
 					$this->url( 'js/dist/admin/pages/themes-addons' . self::$_min_assets . '.js' ),
-					array( 'jquery' ),
+					array( 'jquery', 'wp-api-fetch' ),
 					array( 'learnpress_page_learn-press-addons' ),
 					0,
 					1
